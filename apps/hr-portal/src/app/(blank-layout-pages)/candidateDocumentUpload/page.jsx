@@ -213,8 +213,6 @@ export default function CandidateDocumentUpload() {
   const candidateId = searchParams.get("candidateId")
   const organizationId = searchParams.get("organizationId")
 
-  console.log("organization id--", organizationId)
-  console.log("candidate id -- ", candidateId)
 
   const [templateId, setTemplateId] = useState("")
   const { callApi, loading } = useApi() // Assuming useApi is correctly implemented
@@ -256,7 +254,6 @@ export default function CandidateDocumentUpload() {
         method: "GET",
         disableSnackbar: true,
       })
-      console.log("get Document", result)
       if (result.success && result.data?.items?.fields) {
         setTemplateId(result.data.items._id)
         const activeFields = Array.isArray(result.data.items.fields)
@@ -357,7 +354,6 @@ export default function CandidateDocumentUpload() {
       method: "GET",
       disableSnackbar: true,
     })
-    console.log("uploaded doc", result)
     // Try to extract documents from result
     if (result.success && result.data?.items?.values) {
       setUploadedDocuments(result.data.items.values)
@@ -446,7 +442,6 @@ export default function CandidateDocumentUpload() {
       organizationId,
       values,
     }
-    console.log("payload 12", payload)
 
     // Add the documents
     const result = await callApi({
@@ -455,7 +450,6 @@ export default function CandidateDocumentUpload() {
       data: payload,
     })
 
-    console.log("resultadf", result)
 
     if (result.success) {
       setFiles({})

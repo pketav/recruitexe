@@ -62,7 +62,6 @@ const PDFTemplatesPage = () => {
       const res = await getAllVariablesAPI()
       if (res && res.items) {
         setVariables(res.items)
-        console.log('Variables loaded:', res.items.length)
       }
     } catch (error) {
       console.error('Error fetching variables:', error)
@@ -75,7 +74,6 @@ const PDFTemplatesPage = () => {
       const data = await getPartnerProductsAPI(partnerId)
       if (data.status && data.items) {
         setProducts(data.items)
-        console.log('Products loaded for partner:', data.items.length)
       }
     } catch (error) {
       console.error('Error fetching products:', error)
@@ -87,7 +85,6 @@ const PDFTemplatesPage = () => {
       const data = await getMyPartnersAPI()
       if (data.status && data.items) {
         setPartners(data.items)
-        console.log('Partners loaded:', data.items.length)
       }
     } catch (error) {
       console.error('Error fetching partners:', error)
@@ -100,7 +97,6 @@ const PDFTemplatesPage = () => {
       const res = await getAllPDFtemplatesAPI()
       if (res && res.items) {
         setTemplates(res.items)
-        console.log('Templates loaded:', res.items.length)
       }
     } catch (error) {
       console.error('Error fetching templates:', error)
@@ -136,13 +132,6 @@ const PDFTemplatesPage = () => {
         throw new Error('Template content cannot be empty')
       }
 
-      console.log('Saving template with Jodit PRO features:', {
-        templateName,
-        productId,
-        partnerId,
-        contentLength: content.length,
-        hasProFeatures: content.includes('jodit-pro') || content.includes('todo-list') || content.includes('page-break')
-      })
 
       const response = await addTemplate(content, productId, templateName)
 
@@ -172,29 +161,15 @@ const PDFTemplatesPage = () => {
   // Handle content changes for any additional processing
   const handleContentChange = (content) => {
     // Optional: Add any real-time content processing here
-    console.log('Content updated with Jodit PRO features:', {
-      length: content.length,
-      hasImages: content.includes('<img'),
-      hasTables: content.includes('<table'),
-      hasTodoLists: content.includes('todo-list'),
-      hasPageBreaks: content.includes('page-break'),
-      hasEmojis: content.includes('emoji'),
-      hasSignatures: content.includes('signature-highlight')
-    })
   }
 
   // Handle variable copy for additional functionality
   const handleVariableCopy = (variableName) => {
-    console.log('Variable copied:', variableName)
     // Optional: Add analytics or tracking here
   }
 
   // Handle template load for additional processing
   const handleTemplateLoad = (htmlContent) => {
-    console.log('Template loaded:', {
-      size: htmlContent.length,
-      hasProFeatures: htmlContent.includes('jodit-pro')
-    })
   }
 
   if (loading) {

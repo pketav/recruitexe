@@ -15,11 +15,8 @@ export const fetchWithCache = async (url, cacheDurationMinutes = 5, options = {}
   // Check if we have a valid cached response
   const cachedItem = cache.get(cacheKey);
   if (cachedItem && Date.now() < cachedItem.expiry) {
-    console.log(`Cache hit for ${url}`);
     return cachedItem.data;
   }
-  
-  console.log(`Fetching ${url} with options:`, options);
   
   try {
     // Build query string from params if provided
@@ -62,14 +59,12 @@ export const fetchWithCache = async (url, cacheDurationMinutes = 5, options = {}
       expiry: Date.now() + (cacheDurationMinutes * 60 * 1000),
     });
     
-    console.log(`Successfully fetched ${url}`);
     return result;
   } catch (error) {
     console.error(`Error fetching ${url}:`, error.message);
     
     // If we have stale cache data, return it instead of failing
     if (cachedItem) {
-      console.log(`Returning stale cache data for ${url}`);
       return cachedItem.data;
     }
     
@@ -104,7 +99,6 @@ export const clearCache = (urlPattern = null) => {
 export const preloadCache = async (url, cacheDurationMinutes = 5, options = {}) => {
   try {
     await fetchWithCache(url, cacheDurationMinutes, options);
-    console.log(`Preloaded ${url} into cache`);
   } catch (error) {
     console.error(`Failed to preload ${url}:`, error);
   }

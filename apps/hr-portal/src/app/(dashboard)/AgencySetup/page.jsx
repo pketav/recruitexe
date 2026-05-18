@@ -1244,7 +1244,6 @@ export default function AgencySetup() {
 
 
   ]
-  console.log("form", changesMade, selectedClient)
 
   return (
     <Container maxWidth="xl">

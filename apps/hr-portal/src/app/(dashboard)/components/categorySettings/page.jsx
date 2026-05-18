@@ -155,7 +155,6 @@ const CategorySettings = () => {
   }
 
   const handleNavigateToExpenseType = () => {
-    console.log("router", router)
     if (router) {
       router.push("/expenseTypeSettings")
     }

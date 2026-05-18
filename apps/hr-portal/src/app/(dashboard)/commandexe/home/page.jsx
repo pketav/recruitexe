@@ -160,7 +160,6 @@ export default function Page() {
   
     const fetchDashboardData = async () => {
       const response = await getAllCount()
-      console.log("Dashboard Data Response:", response);
       
       if (response.status && response?.items) {
         setDashboardData(response.items)
@@ -170,7 +169,6 @@ export default function Page() {
     const fetchAllClient = async () => {
       try {
         const response = await getMyPartnersAPI()
-        console.log("Clients Response:", response);
         if (response.status && response?.items) {
           setClients(response.items)
         }
@@ -182,7 +180,6 @@ export default function Page() {
     const fetchAllEmployee = async () => {
       try {
         const response = await getAllEmployeeApi()
-        console.log("Employees Response:", response);
         if (response.status && response?.items) {
           setEmployees(response.items.employees)
         }
@@ -195,7 +192,6 @@ export default function Page() {
     try {
       const response = await taskByEmpCountAPI()
 
-      console.log('Employee task Count API Response:', response)
       setEmpTaskCount(response.items)
     } catch (error) {
       console.error('Error fetching Employee count:', error)
@@ -205,7 +201,6 @@ export default function Page() {
     try {
       const response = await getProductWisecountCountAPI()
 
-      console.log('Product Wise Count API Response:', response)
 
       if (response && response.items) {
         setProductWiseData(response.items)
@@ -218,7 +213,6 @@ export default function Page() {
     try {
       const response = await getServiceWisecountCountAPI()
 
-      console.log('Service Wise Count API Response:', response)
 
       if (response && response.items) {
         setServiceWiseData(response.items)

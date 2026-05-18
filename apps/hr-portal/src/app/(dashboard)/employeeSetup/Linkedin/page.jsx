@@ -421,7 +421,6 @@ const createAndConnectLinkedInOrg = async ({
               await axios.delete(`${baseUrl}/v1/api/organizations/${orgId}`, {
                 headers: { Authorization: token },
               })
-              console.log("Organization deleted: Polling error.")
             } catch (delErr) {
               console.error("Cleanup failed:", delErr)
               showAlert("Error cleaning up organization after failure.", "error")
@@ -439,7 +438,6 @@ const createAndConnectLinkedInOrg = async ({
         await axios.delete(`${baseUrl}/v1/api/organizations/${orgId}`, {
           headers: { Authorization: token },
         })
-        console.log("Organization deleted: Setup failed.")
       } catch (delErr) {
         console.error("Cleanup failed:", delErr)
         showAlert("Failed to clean up organization after setup error.", "error")
@@ -538,7 +536,6 @@ function Organizations() {
       });
 
       const data = await res.json();
-      console.log("Fetched Gmail Users:", data);
 
       if (!res.ok) {
         console.error("API Error:", data.message || "Unknown error");
@@ -551,10 +548,8 @@ function Organizations() {
       // ✅ Set default email from isDefault
       const defaultAccount = data.items?.find((acc) => acc.isDefault);
       if (defaultAccount) {
-        console.log("Resolved defaultEmail:", defaultAccount._id);
         setDefaultEmailId(defaultAccount?._id || null);
       } else {
-        console.log("No default email found");
       }
     } catch (error) {
       console.error("Failed to fetch accounts:", error);
@@ -638,7 +633,6 @@ function Organizations() {
         setLoading((l) => ({ ...l, linkedin: true }))
         createAndConnectLinkedInOrg({
           clientId: process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID,
-          clientSecret: process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_SECRET,
           redirectUri,
           onConnected: () => {
             fetchOrganizations()

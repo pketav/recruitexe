@@ -540,7 +540,6 @@ export default function NewPartner() {
     setClientProductForms(prevForms =>
       prevForms.map(product => (product.userProductId === productId ? { ...product, charge: Number(value) } : product))
     )
-    console.log("handleClientChargeChange")
   })
 
   const handleCloseSnackbar = useCallback(() => {
@@ -551,7 +550,6 @@ export default function NewPartner() {
     try {
       const response = await getAllProductsAPI()
 
-      console.log('product library', response)
 
       if (response && response.items) {
         setProductsLibrary(response.items)
@@ -565,7 +563,6 @@ export default function NewPartner() {
   const fetchEmployees = useCallback(async () => {
     try {
       const response = await getAllEmployeeApi()
-      console.log('response employees--', response)
 
       if (response?.items) {
         setEmp(response.items.employees || [])
@@ -598,7 +595,6 @@ export default function NewPartner() {
   //   //     }))
   //   //   )
   //   } catch (error) {
-  //     console.log('error', error)
   //     setSnackbar({
   //       open: true,
   //       message: 'Failed to fetch users: ' + error.message,
@@ -611,7 +607,6 @@ export default function NewPartner() {
       try {
         const res = await getMyPartnersAPI()
   
-        console.log('partner ', res)
   
         if (res && res.items) {
           setRows(
@@ -650,7 +645,6 @@ export default function NewPartner() {
 
       setUserProducts(response.items || [])
     } catch (error) {
-      console.log('error', error)
     }
   }, [])
 
@@ -658,11 +652,9 @@ export default function NewPartner() {
     try {
       const response = await getAllFormAPI()
 
-      console.log('response forms--', response)
 
       setForm(response.items || [])
     } catch (error) {
-      console.log('error', error)
     }
   }, [])
 
@@ -683,7 +675,6 @@ const handleBack = () => {
 }
 
   const handleOpen = useCallback(data => {
-    console.log('handleOpen data', data);
     router.push(`/commandexe/partner/${data._id}`)
   }, [])
 
@@ -735,7 +726,6 @@ const handleBack = () => {
           : product
       )
     )
-    console.log("handleCLientSectionToggle")
   }, [])
 
   const handleClientFieldChange = useCallback((productId, fieldType, index, fieldKey, value) => {
@@ -770,7 +760,6 @@ const handleBack = () => {
         return product
       })
     })
-console.log("handleClientFieldChange")
     // Skip the debounce for better responsiveness
     // We could add it back if performance becomes an issue
   }, [])
@@ -798,7 +787,6 @@ console.log("handleClientFieldChange")
         return product
       })
     })
-    console.log("handleClientAddField")
   }, [])
 
   const handleClientRemoveField = useCallback((productId, fieldType, index) => {
@@ -821,7 +809,6 @@ console.log("handleClientFieldChange")
         return product
       })
     )
-    console.log("handleClientRemoveField")
 
   }, [])
 
@@ -951,7 +938,6 @@ console.log("handleClientFieldChange")
         productForm: formattedProductForms
       }
 
-      console.log('client add', payload)
 
       try {
         const res = await AddClientApi(payload)
@@ -971,7 +957,6 @@ console.log("handleClientFieldChange")
           })
         }
       } catch (error) {
-        console.log('error', error)
         setSnackbar({
           open: true,
           message: 'An error occurred while adding client',
@@ -1029,11 +1014,9 @@ console.log("handleClientFieldChange")
       })
       setClientSelectedProducts(initialSelectedState)
     }
-    console.log("useEffect")
 
   }, [clientProductLibrary, openCLientAdd])
 
-  console.log("clientProductForms",clientProductForms)
 
   // Memoize product accordions for the client add form
   const clientProductAccordions = useMemo(() => {

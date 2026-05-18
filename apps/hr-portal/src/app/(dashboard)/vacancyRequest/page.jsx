@@ -148,7 +148,6 @@ const [orgs, setOrgs] = useState([])
                  Authorization: token
               }
             })
-            console.log("deprt",res)
             if(res.data.status){
               setDepartments(res.data.items.filter(i=>i.isActive===true) || []);
             }
@@ -275,7 +274,6 @@ const [orgs, setOrgs] = useState([])
           }
     }
 
-    console.log("userData",userData)
 
     const handleApproveReject = async (stat,id) => {
       try {
@@ -550,7 +548,6 @@ const [orgs, setOrgs] = useState([])
     }
 
       const handleEditModal = (row) => {
-        console.log("row",row)
         setMode("edit")
         setOpenAdd(true)
         setEditVacancy(
@@ -677,7 +674,6 @@ const [orgs, setOrgs] = useState([])
             setJobDescription([])
           }
       }
-console.log("orfs",orgs)
     return (
         <Container maxWidth='xl'>
             <Box sx={{display:'flex', justifyContent:"space-between", alignItems:"center"}}>

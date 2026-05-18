@@ -1,5 +1,4 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-// const LOCAL_URL = 'http://localhost:4000';
 
 // Helper function to get headers with auth token
 const getHeaders = () => {
@@ -68,7 +67,6 @@ export const rolePermissionService = {
       }
 
       const data = await response.json()
-      console.log("📦 Raw role assignments data:", data)
 
       // Return raw data without transformation
       return data

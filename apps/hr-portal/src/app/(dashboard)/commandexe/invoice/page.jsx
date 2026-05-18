@@ -154,7 +154,6 @@ const [errors, setErrors] = useState({});
 
       if (data.status) {
         setPartners(data.items)
-        console.log('partners', data.items)
       } else {
         console.error('Failed to fetch partners:', data)
       }
@@ -168,7 +167,6 @@ const [errors, setErrors] = useState({});
       setIsLoading(true)
 
       const res = await getInvoiceDashBoardCount()
-      console.log('Dashboard counts response:', res)
 
       if (res && res.status) {
         setCounts({
@@ -205,17 +203,9 @@ const [errors, setErrors] = useState({});
       const statusParam = status === 'all' ? 'all' : status
       const partnerParam = selectedEmployee === 'all' ? '' : selectedEmployee
 
-      console.log('Fetching cases with filters:', {
-        status: statusParam,
-        partner: partnerParam,
-        range: dateRange,
-        startDate: startDateFilter,
-        endDate: endDateFilter
-      })
 
       const data = await getInvoiceDataApi(statusParam, partnerParam, dateRange, startDateFilter, endDateFilter)
 
-      console.log('All invoice cases data:', data)
 
       if (data?.items) {
         setRows(
@@ -273,7 +263,6 @@ const [errors, setErrors] = useState({});
   // Fixed employee selection handler
   const handleEmployeeSelectChange = event => {
     const selectedValue = event.target.value
-    console.log('Employee selection changed:', selectedValue)
     setSelectedEmployee(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
@@ -281,14 +270,12 @@ const [errors, setErrors] = useState({});
   // Fixed status change handler
   const handleStatusChange = event => {
     const selectedValue = event.target.value
-    console.log('Status change event:', selectedValue)
     setStatus(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
 
   const handleDateRangeChange = event => {
     const selectedValue = event.target.value
-    console.log('Date range change event:', selectedValue)
     setDateRange(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
@@ -690,7 +677,6 @@ const [errors, setErrors] = useState({});
         discountper: invoiceData.discountper
       }
       // const response = await updateAddCasesApi(payload)
-      console.log('Invoice update response:', response)
 
       if (response.status) {
         setSnackbar({
@@ -726,7 +712,6 @@ const [errors, setErrors] = useState({});
             paymentStatus: 'paid'
         }
         const response = await updateAddCasesApi(payload)
-        console.log('Mark as paid response:', response)
         if (response.status) {
             setSnackbar({
                 open: true,
@@ -796,7 +781,6 @@ const [errors, setErrors] = useState({});
     try {
       setLoading(true)
       const response = await getAllServicesApi()
-      console.log('services', response)
 
       if (response?.items) {
         setServices(response.items)
@@ -893,12 +877,11 @@ const [errors, setErrors] = useState({});
    // Handler for selection change
   const handleSelectionModelChange = newSelection => {
     setSelectedRowIds(newSelection)
-    console.log('Selected IDs:', newSelection) // Optional: for debugging
+// Optional: for debugging
   }
 
 const handleSendMail = (data) => {
   setOpenMail(true);
-  console.log('maildata', data);
   setEmailData(prevEmailData => ({
     ...prevEmailData, 
     initId: data._id
@@ -932,7 +915,6 @@ const handleSubmitEmail = async () => {
 if (!validate()) return;
 try {
   const res = await sendEmailAPI(emailData);
-  console.log('email send res',res);
   
   if (res?.status) {
     setSnackbar({
@@ -967,7 +949,6 @@ try {
       try {
         const res = await getAllEmailtemplatesAPI()
   
-        console.log('fetched templates', res)
   
         if (res && res.items) {
           setTemplates(res.items)

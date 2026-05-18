@@ -49,7 +49,6 @@ export const getEmployeeData = async (filter = {}) => {
 export const getBranchData = async (filter = {}) => {
   try {
     const response = await apiClient.get("/v1/api/branch/all", { params: filter }) // Adjust endpoint as needed
-    console.log("Branch API response:", response.data)
 
     // Ensure we're returning an array even if the API response structure is unexpected
     if (response.data && Array.isArray(response.data)) {
@@ -199,10 +198,6 @@ export const convertEmployeesToGeoJson = (employees) => {
         }
 
         // Log successful coordinate extraction for debugging
-        console.log(`Extracted coordinates for employee ${employee._id || employee.id || "unknown"}:`, {
-          lat: latitude,
-          lng: longitude,
-        })
 
         return {
           type: "Feature",
@@ -226,7 +221,6 @@ export const convertEmployeesToGeoJson = (employees) => {
       })
       .filter(Boolean) // Remove null entries
 
-    console.log(`Converted ${features.length} employees to GeoJSON features`)
 
     return {
       type: "FeatureCollection",
@@ -284,10 +278,6 @@ export const convertBranchesToGeoJson = (branches) => {
         }
 
         // Log successful coordinate extraction for debugging
-        console.log(`Extracted coordinates for branch ${branch._id || branch.id || "unknown"}:`, {
-          lat: latitude,
-          lng: longitude,
-        })
 
         // Create GeoJSON feature with fallbacks for all properties
         return {
@@ -310,7 +300,6 @@ export const convertBranchesToGeoJson = (branches) => {
       })
       .filter(Boolean) // Remove null entries
 
-    console.log(`Converted ${features.length} branches to GeoJSON features`)
 
     return {
       type: "FeatureCollection",

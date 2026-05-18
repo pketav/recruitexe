@@ -116,7 +116,6 @@ function Explorer() {
 
     // Add request tracking for debugging
     const requestId = Date.now();
-    console.log(`[${requestId}] Starting request for path: "${path}"`);
 
     try {
       const response = await axios.get(`${baseUrl}/v1/api/fileShare/list-objects`, {
@@ -134,11 +133,6 @@ function Explorer() {
         }
       });
 
-      console.log(`[${requestId}] Response received:`, {
-        status: response.status,
-        statusText: response.statusText,
-        data: response.data
-      });
 
       // Handle different HTTP status codes
       if (response.status === 408) {
@@ -187,7 +181,6 @@ function Explorer() {
         // Some APIs might return data directly without wrapping in 'items'
         // Check if files and folders are at the root level
         if (response.data.files && response.data.folders) {
-          console.log(`[${requestId}] Found files and folders at root level`);
           const data = response.data;
 
           setFiles(data.files || []);
@@ -235,11 +228,6 @@ function Explorer() {
         setHistoryIndex(newHistoryIndex);
       }
 
-      console.log(`[${requestId}] Successfully loaded:`, {
-        files: filesArray.length,
-        folders: foldersArray.length,
-        path: data.prefix || path
-      });
 
     } catch (err) {
       console.error(`[${requestId}] Failed to fetch contents:`, err);

@@ -274,7 +274,6 @@ export default function BudgetDashboard({ period }) {
 
         if (result.success) {
           const responseData = safeObject(result.data.items)
-          console.log("Budget API Response:", responseData)
           setBudgetData(responseData)
         } else {
           console.error("API Error:", result.message)

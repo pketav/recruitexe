@@ -200,7 +200,6 @@ const TasksList = ({ tasks, type, employeeId  }) => {
 
   const fetchTasksByStatus = async (status, setTasksFunction) => {
     const idToUse = employeeId || employeeIdFromToken;
-    // console.log("employeeId", employeeId);
 
     setLoading(true)
     try {

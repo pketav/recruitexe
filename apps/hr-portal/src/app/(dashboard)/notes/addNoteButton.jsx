@@ -299,7 +299,6 @@ const ReminderOptionsPopup = ({ anchorEl, open, onClose, onClearReminder, onRese
 const api = {
   addNote: async noteData => {
     try {
-      console.log('API addNote called with:', noteData)
 
       const response = await fetch(`${baseUrl}/v1/api/notes/add`, {
         method: 'POST',
@@ -310,14 +309,12 @@ const api = {
         body: JSON.stringify(noteData)
       })
 
-      console.log('API response status:', response.status)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const data = await response.json()
-      console.log('API response data:', data)
       return data
     } catch (error) {
       console.error('Error adding note:', error)
@@ -818,9 +815,6 @@ const handleResetReminder = () => {
 
   // Enhanced table size selection handler
   const handleTableSizeSelect = (rows, cols) => {
-    console.log(`Table size selected: ${rows}x${cols}`)
-    console.log('Editor ref current:', editorRef.current)
-    console.log('Can edit:', canEdit)
 
     insertTableWithSize(rows, cols)
     setTableSelectorOpen(false)
@@ -828,8 +822,6 @@ const handleResetReminder = () => {
 
   // Table selector button handler
   const handleTableButtonClick = event => {
-    console.log('Table button clicked')
-    console.log('Editor ref:', editorRef.current)
 
     setTableSelectorAnchor(event.currentTarget)
     setTableSelectorOpen(true)
@@ -838,12 +830,10 @@ const handleResetReminder = () => {
   // Enhanced table creation with custom size
   const insertTableWithSize = (rows, cols) => {
     if (!editorRef.current) {
-      console.log('Editor ref not available')
       return
     }
 
     try {
-      console.log(`Inserting ${rows}x${cols} table...`)
 
       // Create table HTML string
       let tableHTML = `
@@ -901,7 +891,6 @@ const handleResetReminder = () => {
             editorRef.current.innerHTML += tableHTML
           }
         } catch (selectionError) {
-          console.log('Selection method failed, using append method:', selectionError)
           // Fallback to append
           editorRef.current.innerHTML += tableHTML
         }
@@ -927,7 +916,6 @@ const handleResetReminder = () => {
         editorRef.current.focus()
       }, 150)
 
-      console.log(`${rows}x${cols} table inserted successfully`)
       showSnackbar(`${rows}x${cols} table inserted successfully`)
     } catch (error) {
       console.error('Error inserting table:', error)
@@ -958,7 +946,6 @@ const handleResetReminder = () => {
         }, 100)
 
         showSnackbar(`${rows}x${cols} table inserted (simple method)`)
-        console.log(`${rows}x${cols} table inserted using simple method`)
       } catch (finalError) {
         console.error('All table insertion methods failed:', finalError)
         showSnackbar('Failed to insert table', 'error')
@@ -971,7 +958,6 @@ const handleResetReminder = () => {
     if (typeof window === 'undefined' || !editorRef.current) return
 
     const tables = editorRef.current.querySelectorAll('table')
-    console.log(`Adding event listeners to ${tables.length} tables`)
 
     tables.forEach((table, tableIndex) => {
       // Add table options button if not already added
@@ -1027,7 +1013,6 @@ const handleResetReminder = () => {
       }
 
       const cells = table.querySelectorAll('td, th')
-      console.log(`Table ${tableIndex + 1} has ${cells.length} cells`)
 
       cells.forEach((cell, cellIndex) => {
         // Remove existing event listeners to avoid duplicates
@@ -1071,7 +1056,6 @@ const handleResetReminder = () => {
           cell.style.outline = 'none'
         })
 
-        console.log(`Added listeners to cell ${cellIndex + 1} in table ${tableIndex + 1}`)
       })
 
       // Ensure table has proper styling
@@ -1831,7 +1815,6 @@ const handleResetReminder = () => {
   }, [isAddingNote, isEditing])
 
   const handleAddNote = async () => {
-    console.log('handleAddNote called')
     setIsLoading(true)
     try {
       const editorContent = editorRef.current ? editorRef.current.innerHTML : content

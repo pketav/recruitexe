@@ -249,7 +249,6 @@ export default function JobDescription({ row, setJd, portalData ,organizationId}
         })
         if(res.data.status){
               setJobDesc(res.data.items)
-              console.log("res",res)
           }
       } catch (error) {
           console.error("error",error)
@@ -485,7 +484,6 @@ export default function JobDescription({ row, setJd, portalData ,organizationId}
       })
 
       if (res.data.status) {
-        console.log('Submitted successfully:', res)
         setFormData({
           name: '',
           mobileNumber: '',

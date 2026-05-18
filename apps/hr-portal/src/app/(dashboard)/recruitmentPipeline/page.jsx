@@ -323,7 +323,6 @@ const getemployeeType = async () => {
        }));
        setScheduleModal(true)
         setScheduleModal(true)
-        console.log("row",selectedCandidate)
     }
 
     const handleChangeRowsPerPage = (event) => {
@@ -418,7 +417,6 @@ const getemployeeType = async () => {
                  authorization: token
               }
             })
-            console.log("response",res)
             if(res.data.status){
                setCandidates(res.data.items.data)
                setTotalItems(res.data.items.totalCount)
@@ -455,7 +453,6 @@ const getemployeeType = async () => {
                 authorization: token
               }
             });
-            console.log("res",res)
             if(res.data.status){
               setSnackbar({
                 message:res.data.message,
@@ -530,7 +527,6 @@ const getemployeeType = async () => {
     }
 
     const handlePreOffer = async (id) => {
-      console.log("idd",id)
       try {
         const res = await axios.post(`${baseUrl}/v1/api/candidate/preofferletter`,{"Id":id}, {
           headers: {
@@ -673,7 +669,6 @@ const getemployeeType = async () => {
   }
   }
 
-  console.log("form",sendOfferData)
 
   return (
     <Container>

@@ -112,13 +112,11 @@ const ChatWithNotifications = () => {
       fetchChatList()
 
       const handleNewNotification = () => {
-        console.log("🔔 New notification received, refreshing chat list")
         refreshOnNotification()
       }
 
       const handleOpenConversation = (event) => {
         const { conversationId, notification } = event.detail
-        console.log("🎯 Opening conversation from notification:", conversationId)
         const conversation = chatList.find((chat) => chat.id === conversationId || chat._id === conversationId)
         if (conversation) {
           handleChatSelect(conversation)
@@ -139,55 +137,40 @@ const ChatWithNotifications = () => {
   useEffect(() => {
     const handleBackgroundMessage = async (event) => {
       const { conversationId, message, fromUser, shouldAutoSelect } = event.detail
-      console.log("🔔 Background message received:", {
-        conversationId,
-        fromUser,
-        message: getMessageText(message.content),
-        shouldAutoSelect,
-      })
 
       const conversation = chatList.find((chat) => chat.id === conversationId || chat._id === conversationId)
 
       if (conversation) {
-        console.log("✅ Found conversation in list")
         if (shouldAutoSelect) {
-          console.log("🎯 Auto-selecting conversation and adding message")
           handleChatSelect(conversation)
           setTimeout(() => {
             setChatMessages((prev) => {
               const exists = prev.some((msg) => msg._id === message._id || msg.id === message._id)
               if (!exists) {
-                console.log("✨ Adding background message directly to chat")
                 return [...prev, message]
               }
               return prev
             })
           }, 100)
         } else {
-          console.log("📱 Message for different conversation, refreshing chat list")
           refreshOnNotification()
         }
       } else {
-        console.log("⚠️ Conversation not found in list")
         if (shouldAutoSelect) {
-          console.log("🔍 Trying to fetch conversation")
           try {
             const fetchedConversation = await fetchSpecificConversation(conversationId)
             if (fetchedConversation) {
-              console.log("✅ Successfully fetched conversation, selecting it")
               handleChatSelect(fetchedConversation)
               setTimeout(() => {
                 setChatMessages((prev) => {
                   const exists = prev.some((msg) => msg._id === message._id || msg.id === message._id)
                   if (!exists) {
-                    console.log("✨ Adding fetched conversation message directly to chat")
                     return [...prev, message]
                   }
                   return prev
                 })
               }, 100)
             } else {
-              console.log("❌ Could not fetch conversation, refreshing chat list")
               refreshOnNotification()
             }
           } catch (error) {
@@ -278,7 +261,6 @@ const ChatWithNotifications = () => {
           isGroupChat: false,
           userInfo: { id: userData?.empID },
         })
-        console.log(response);
         
         if (response.data?.items._id) {
           const newConversationId = response.data.items._id
@@ -393,7 +375,6 @@ const ChatWithNotifications = () => {
               isGroupChat: isGroupChat,
             }
 
-        console.log("📤 Sending socket message:", socketMessageData)
         const sent = sendMessage(socketMessageData)
         if (sent) {
           setChatMessages((prev) => prev.map((msg) => (msg.id === tempId ? { ...msg, pending: false } : msg)))
@@ -401,7 +382,6 @@ const ChatWithNotifications = () => {
           throw new Error("Failed to send via socket")
         }
       } else {
-        console.log("📡 Socket not connected, sending via API")
         const response = await sendChatMessage({
           messageText: isTextMessage ? messageText : messageData.content,
           selectedEmployee,
@@ -452,29 +432,24 @@ const ChatWithNotifications = () => {
   }
 
   const handleGroupCreated = () => {
-    console.log("🎯 New group created, force refreshing chat list")
     forceRefreshChatList()
   }
 
   const handleReactToMessage = (messageId, emoji) => {
-    console.log("😊 Reacting to message:", messageId, emoji)
     reactToMessage(messageId, emoji)
   }
 
   const handleRemoveReaction = (messageId) => {
-    console.log("🗑️ Removing reaction from message:", messageId)
     removeReaction(messageId)
   }
 
   const handleDeleteMessage = (messageId, forBoth) => {
-    console.log("🗑️ Deleting message:", messageId, forBoth)
     if (selectedConversationId) {
       deleteMessage(selectedConversationId, messageId, forBoth)
     }
   }
 
   const handleEditMessage = (messageId, newContent, newContentType) => {
-    console.log("🗑️ Edit message:", messageId)
     if (selectedConversationId) {
       updateMessage(messageId, newContent, newContentType)
     }
@@ -485,7 +460,6 @@ const ChatWithNotifications = () => {
     if (!socket) return
 
     const unsubscribeReaction = onReaction((eventType, data) => {
-      console.log("🎯 Reaction event:", eventType, data)
 
       if (eventType === "updated" || eventType === "removed") {
         setChatMessages((prev) =>
@@ -500,7 +474,6 @@ const ChatWithNotifications = () => {
     })
 
     const unsubscribeDelete = onDelete((eventType, data) => {
-      console.log("🎯 Delete event:", eventType, data)
 
       if (eventType === "deleted" || eventType === "deletedForEveryone") {
         setChatMessages((prev) =>

@@ -273,13 +273,11 @@ const PDDashboard = () => {
   }
 
   const handleExcelSubmit = async (event) => {
-    console.log("Submitting Excel data:", excelData)
 
     event.preventDefault()
     try {
       const response = await uploadReadExcelAPI(excelData.partnerId, excelData.serviceId, excelData.documents)
 
-      console.log("Excel data submitted successfully:", response)
 
       if (response.status) {
         setSnackbar({
@@ -325,7 +323,6 @@ const PDDashboard = () => {
     try {
       const response = await getInitDownloadExcelAPI(partnerId)
 
-      console.log("Sample Excel response:", response)
 
       if (response && response.items) {
         const excelUrl = response.items
@@ -592,7 +589,7 @@ const PDDashboard = () => {
     initFields: initFieldsData,
   }
 
-  console.log("Submitting data:", dataToSend) // Debug log to verify date is included
+// Debug log to verify date is included
 
   try {
     const response = await postAddCasesApi(dataToSend)
@@ -839,7 +836,6 @@ const PDDashboard = () => {
       }
 
       const aiResponse = await postAddCaseForAiApi(payload)
-      console.log("AI Response:", aiResponse)
 
       // Auto-populate form fields based on AI response
       if (aiResponse?.items) {
@@ -1349,7 +1345,6 @@ const PDDashboard = () => {
 
     try {
       const response = await uploadImageApi(file)
-      console.log("Edit single upload response:", response)
       if (response?.items?.fileUrl) {
         setEditFieldValues((prev) => ({
           ...prev,
@@ -1395,7 +1390,6 @@ const PDDashboard = () => {
       })
 
       const response = await uploadMultiImageApi(formData)
-      console.log("Edit multi upload response:", response)
 
       if (response?.items?.files) {
         setEditFieldValues((prev) => ({
@@ -1431,7 +1425,6 @@ const PDDashboard = () => {
 
   // Update the handleOpen function to initialize edit field values
   const handleOpen = (addCases) => {
-    console.log("Opening edit cases dialog with:", addCases)
     setSelectedAddCases(addCases)
 
     // Initialize edit field values from the selected case's initFields
@@ -1511,7 +1504,6 @@ const PDDashboard = () => {
   //       initFields: updatedInitFields,
   //     }
 
-  //     console.log("Updating case with data:", updatedData)
   //     const res = await updateAddCasesApi(updatedData)
 
   //     if (res?.status) {
@@ -1621,7 +1613,7 @@ const PDDashboard = () => {
       initFields: updatedInitFields,
     }
 
-    console.log("Updating case with data:", updatedData) // Debug log
+// Debug log
     const res = await updateAddCasesApi(updatedData)
 
     if (res?.status) {
@@ -1676,7 +1668,6 @@ const PDDashboard = () => {
       //   formData.append('file', file);
 
       const response = await uploadImageApi(file) // Your single upload API
-      console.log("Single upload response:", response)
       if (response?.items?.fileUrl) {
         setFieldValues((prev) => ({
           ...prev,
@@ -1693,7 +1684,6 @@ const PDDashboard = () => {
   // Handle multiple file upload
   const handleMultiFileUpload = async (files, fieldName) => {
     setUploadingFields((prev) => ({ ...prev, [fieldName]: true }))
-    console.log("Uploading files:", files, "for field:", fieldName)
 
     try {
       let fileArray
@@ -1720,7 +1710,6 @@ const PDDashboard = () => {
       })
 
       const response = await uploadMultiImageApi(formData) // Your multi upload API
-      console.log("Multi upload response:", response)
 
       if (response?.items?.files) {
         setFieldValues((prev) => ({
@@ -2204,7 +2193,6 @@ const PDDashboard = () => {
     try {
       setLoading(true)
       const response = await getAllServicesApi()
-      console.log("services", response)
 
       if (response?.items) {
         setServices(response.items)
@@ -2219,7 +2207,6 @@ const PDDashboard = () => {
   const fetchInitFields = async () => {
     try {
       const response = await getInitFormApi()
-      console.log("Init fields", response)
 
       if (response?.status) {
         setInitFields(response.items)
@@ -2272,7 +2259,6 @@ const PDDashboard = () => {
 
       if (data.status) {
         setPartners(data.items)
-        console.log("partners", data.items)
       } else {
         console.error("Failed to fetch partners:", data)
       }
@@ -2286,7 +2272,6 @@ const PDDashboard = () => {
       setIsLoading(true)
 
       const res = await getDashBoardCount()
-      console.log("Dashboard counts response:", res)
 
       if (res && res.status) {
         setCounts({
@@ -2318,13 +2303,6 @@ const PDDashboard = () => {
       const statusParam = status === "all" ? "all" : status
       const partnerParam = selectedEmployee === "all" ? "" : selectedEmployee
 
-      console.log("Fetching cases with filters:", {
-        status: statusParam,
-        partner: partnerParam,
-        range: dateRange,
-        startDate: startDateFilter,
-        endDate: endDateFilter,
-      })
 
       const data = await getAllUnfilteredCasesApi(
         selectedService,
@@ -2334,7 +2312,6 @@ const PDDashboard = () => {
         endDateFilter,
       )
 
-      console.log("All cases data:", data)
 
       if (data?.items) {
         setRows(
@@ -2380,7 +2357,7 @@ const PDDashboard = () => {
   // Handler for selection change
   const handleSelectionModelChange = (newSelection) => {
     setSelectedRowIds(newSelection)
-    console.log("Selected IDs:", newSelection) // Optional: for debugging
+// Optional: for debugging
   }
 
   // Close snackbar
@@ -2391,13 +2368,11 @@ const PDDashboard = () => {
   // Fixed employee selection handler
   const handleEmployeeSelectChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Employee selection changed:", selectedValue)
     setSelectedEmployee(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
   const handleServiceSelectChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Service selection changed:", selectedValue)
     setSelectedService(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
@@ -2405,13 +2380,11 @@ const PDDashboard = () => {
   // Fixed status change handler
   const handleStatusChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Status change event:", selectedValue)
     setStatus(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
   const handleDateRangeChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Date range change event:", selectedValue)
     setDateRange(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
@@ -3641,7 +3614,6 @@ const PDDashboard = () => {
                       const fileExt = file.name.split(".").pop().toLowerCase()
 
                       if (fileExt === "xlsx" || fileExt === "xls" || fileExt === "csv") {
-                        console.log("File selected:", file)
                         setExcelData({ ...excelData, documents: file })
                       } else {
                         e.target.value = ""

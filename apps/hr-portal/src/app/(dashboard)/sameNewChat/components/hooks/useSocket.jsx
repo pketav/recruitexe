@@ -36,7 +36,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
   const connectSocket = useCallback(() => {
     if (!userId) return
 
-    console.log('🔌 Initializing socket connection...')
     const socketInstance = initSocket()
     setSocket(socketInstance)
 
@@ -61,7 +60,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
       // Handle typing indicators - Updated for backend structure
       const unsubscribeTyping = onTyping((type, data) => {
-        console.log('⌨️ Typing event received:', type, data)
         
         // Only handle typing for current conversation
         if (data.conversationId === selectedConversationId) {
@@ -92,9 +90,7 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
       const unsubscribeConnection = onConnection((status, error) => {
         setConnectionStatus(status)
         if (status === 'connected') {
-          console.log('✅ Socket connected successfully')
         } else if (status === 'disconnected') {
-          console.log('❌ Socket disconnected')
           // Clear typing users on disconnect
           setTypingUsers([])
         } else if (status === 'error') {
@@ -104,7 +100,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
       // Handle user status changes
       const unsubscribeUserStatus = onUserStatus((statusData) => {
-        console.log('👤 User status update in hook:', statusData)
         setOnlineUsers(prev => {
           const newSet = new Set(prev)
           if (statusData.status === 'online') {
@@ -131,34 +126,25 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
   // Handle incoming messages
   const handleIncomingMessage = useCallback((messageData) => {
-    console.log('🔥 Processing incoming message:', messageData)
-    console.log('🏠 Current selectedConversationId:', selectedConversationId)
-    console.log('📍 Message conversationId:', messageData.conversationId)
 
     // Extract message data from the nested structure
     const message = messageData.message
-    console.log('📨 Extracted message:', message)
 
     // Check if this message is from the current user (to avoid duplicates)
     const currentUserId = userId
     const messageSenderId = message.senderId?._id || message.senderId
 
-    console.log('👤 Message sender ID:', messageSenderId)
-    console.log('👤 Current user ID:', currentUserId)
 
     if (messageSenderId === currentUserId) {
-      console.log('⚠️ This is my own message - handling appropriately')
       
       // If this is for the current conversation, update pending message
       if (messageData.conversationId === selectedConversationId) {
         setChatMessages(prev => {
-          console.log('📝 Current messages before update:', prev.length)
           const updated = prev.map(msg => {
             // Find pending message with similar content
             if (msg.pending &&
                 msg.content?.text === message.content?.text &&
                 msg.sender === currentUserId) {
-              console.log('🔄 Updating pending message to confirmed')
               return {
                 ...msg,
                 _id: message._id,
@@ -168,7 +154,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
             }
             return msg
           })
-          console.log('📝 Messages after update:', updated.length)
           return updated
         })
       }
@@ -176,7 +161,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
     }
 
     // This is a message from someone else
-    console.log('👥 This is a message from another user')
 
     const newMessage = {
       _id: message._id,
@@ -195,14 +179,11 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
       isDeleted: message.isDeleted || false
     }
 
-    console.log('💬 Formatted new message:', newMessage)
 
     // Check if this message is for the current conversation
     if (messageData.conversationId === selectedConversationId) {
-      console.log('✅ Message is for current conversation - adding to chat')
 
       setChatMessages(prev => {
-        console.log('📊 Current chat messages count:', prev.length)
 
         // Check if message already exists to prevent duplicates
         const exists = prev.some(msg =>
@@ -211,11 +192,9 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
         )
 
         if (!exists) {
-          console.log('✅ Adding new message to chat - NEW COUNT WILL BE:', prev.length + 1)
           const updated = [...prev, newMessage]
           return updated
         } else {
-          console.log('⚠️ Message already exists, skipping')
           return prev
         }
       })
@@ -227,7 +206,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
         }, 1000)
       }
     } else {
-      console.log('📱 Message for different/no conversation - handling as background message')
       
       // Handle messages for other conversations or when no conversation is selected
       // Emit custom event for the parent component to handle
@@ -247,14 +225,12 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
           }
         }))
         
-        console.log(`🔔 Dispatched ${eventType} event for background handling`)
       }
     }
   }, [selectedConversationId, setChatMessages, userId])
 
   // Handle message sent confirmation
   const handleMessageSent = useCallback((data) => {
-    console.log('✅ Message sent confirmation:', data)
     setChatMessages(prev =>
       prev.map(msg =>
         (msg.pending && msg.id === data.localId) || msg.id === data.tempId
@@ -271,7 +247,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
   // Handle message failed
   const handleMessageFailed = useCallback((data) => {
-    console.log('❌ Message failed:', data)
     setChatMessages(prev =>
       prev.map(msg =>
         msg.id === data.localId || msg.id === data.tempId
@@ -283,7 +258,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
   // Handle message delivered
   const handleMessageDelivered = useCallback((data) => {
-    console.log('📬 Message delivered:', data)
     setChatMessages(prev =>
       prev.map(msg => {
         if (msg._id === data.messageId || msg.id === data.messageId) {
@@ -296,7 +270,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
   // Handle message read receipts
   const handleMessageRead = useCallback((data) => {
-    console.log('👁️ Message read receipt:', data)
     setChatMessages(prev =>
       prev.map(msg => {
         if (msg._id === data.messageId || msg.id === data.messageId) {
@@ -309,12 +282,10 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
   // Handle typing start - Updated for backend structure
   const handleTypingStart = useCallback((data) => {
-    console.log('⌨️ User started typing:', data.userId, 'in conversation:', data.conversationId)
     
     setTypingUsers(prev => {
       if (!prev.includes(data.userId)) {
         const updated = [...prev, data.userId]
-        console.log('⌨️ Updated typing users:', updated)
         return updated
       }
       return prev
@@ -326,7 +297,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
     }
 
     const timeoutId = setTimeout(() => {
-      console.log('⏰ Auto-removing typing indicator for user:', data.userId)
       setTypingUsers(prev => prev.filter(user => user !== data.userId))
       typingUsersTimeoutRef.current.delete(data.userId)
     }, 5000)
@@ -336,11 +306,9 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
 
   // Handle typing stop - Updated for backend structure
   const handleTypingStop = useCallback((data) => {
-    console.log('⏹️ User stopped typing:', data.userId, 'in conversation:', data.conversationId)
     
     setTypingUsers(prev => {
       const updated = prev.filter(user => user !== data.userId)
-      console.log('⏹️ Updated typing users:', updated)
       return updated
     })
 
@@ -376,7 +344,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
   // Handle user typing start
   const handleUserTypingStart = useCallback(() => {
     if (selectedConversationId && !isTyping && isSocketConnected()) {
-      console.log('⌨️ Starting typing indicator for conversation:', selectedConversationId)
       setIsTyping(true)
       startTyping(selectedConversationId)
 
@@ -393,7 +360,6 @@ export const useSocket = (userId, selectedConversationId, setChatMessages) => {
   // Handle user typing stop
   const handleUserTypingStop = useCallback(() => {
     if (selectedConversationId && isTyping && isSocketConnected()) {
-      console.log('⌨️ Stopping typing indicator for conversation:', selectedConversationId)
       setIsTyping(false)
       stopTyping(selectedConversationId)
 

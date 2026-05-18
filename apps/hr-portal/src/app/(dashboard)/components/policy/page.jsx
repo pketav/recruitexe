@@ -57,7 +57,6 @@ const page = () => {
       nameInputRef.current.focus();
     }
   }, [openDialog]);
-  console.log("FormData", formData)
   const getAllpolicy = async () => {
     try {
       setLoading(true);

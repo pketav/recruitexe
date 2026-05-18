@@ -53,7 +53,6 @@
 //         },
 //       });
 
-//       console.log('Fetched view Form Data:', response.data);
 
 //       const form = response.data?.items;
 //       if (form) {
@@ -193,7 +192,6 @@ const ViewFormDialog = ({ open, onClose, formId, baseUrl, token }) => {
           authorization: token,
         },
       })
-      console.log("Fetched view Form Data:", response.data)
       const form = response.data?.items
       if (form) {
         setFormData(form)

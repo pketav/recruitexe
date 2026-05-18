@@ -44,7 +44,6 @@ const JoditEditorComponent = ({ onChange, initialValue = '' }) => {
 
   const handleChange = useCallback(
     newContent => {
-      console.log('new content', newContent)
 
       if (newContent !== content) {
         setContent(newContent)
@@ -65,19 +64,16 @@ const JoditEditorComponent = ({ onChange, initialValue = '' }) => {
     // Retrieve template data from localStorage
     const storedData = localStorage.getItem('templateData')
 
-    console.log('storedData', storedData)
 
     if (storedData) {
       const parsedData = JSON.parse(storedData)
 
-      console.log('parsedData', parsedData)
       setTemplateData(parsedData)
       // Extract only content inside <body>
       const parser = new DOMParser()
       const doc = parser.parseFromString(parsedData.htmlContent, 'text/html')
       const bodyContent = doc.body.innerHTML
 
-      console.log('Body Content:', bodyContent)
       // You can now use bodyContent in your editor or preview
       setContent(bodyContent) // You can define a new state if needed
 
@@ -99,7 +95,6 @@ const JoditEditorComponent = ({ onChange, initialValue = '' }) => {
     try {
       const res = await getAllVariablesAPI()
 
-      console.log('res', res)
 
       if (res && res.items) {
         // setVariables(res.items.map((item) => ({
@@ -116,7 +111,6 @@ const JoditEditorComponent = ({ onChange, initialValue = '' }) => {
     try {
       const data = await getAllUserProductsAPI()
 
-      console.log('products', data.items)
 
       if (data.status) {
         setProducts(data.items)
@@ -159,15 +153,12 @@ const JoditEditorComponent = ({ onChange, initialValue = '' }) => {
         </body>
         </html>`
   }
-  console.log('content', content)
 
   const handleSubmit = async () => {
     try {
       const fullHTML = generateFullHTML()
-      console.log('fullhtml', fullHTML)
       const response = await updateTemplate(fullHTML, templateData._id)
 
-      console.log('Response:', response)
 
       if (response.status) {
         alert('Content saved successfully!')
@@ -206,7 +197,6 @@ const JoditEditorComponent = ({ onChange, initialValue = '' }) => {
         onChange={handleChange}
         variables={variables}
         onSave={async data => {
-          console.log('update data', data)
 
           const fullHTML = generateFullHTML()
           const response = await updateEmailTemplate(fullHTML, data.templateName, templateData._id)

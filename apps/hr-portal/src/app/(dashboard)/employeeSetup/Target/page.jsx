@@ -26,9 +26,6 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import { useRouter } from "next/navigation"
 
-const API_GET = "http://localhost:4000/"
-const API_ADD = "http://localhost:4000/v1/api/targetCompany/add"
-
 export default function Target() {
   const router = useRouter()
   const [prioritized, setPrioritized] = useState([])

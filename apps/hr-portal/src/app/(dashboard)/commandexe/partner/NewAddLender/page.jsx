@@ -895,7 +895,6 @@ export default function NewPartner() {
     if (file) {
       try {
         const response = await uploadImageApi(file)
-        console.log("image res--", response)
 
         setFormData((prev) => ({
           ...prev,
@@ -916,7 +915,6 @@ export default function NewPartner() {
   //       throw new Error("Invalid response format")
   //     }
   //   } catch (error) {
-  //     console.log("error", error)
   //     setSnackBar({
   //       open: true,
   //       message: "Failed to fetch users: " + (error.message || "Unknown error"),
@@ -1014,7 +1012,6 @@ export default function NewPartner() {
       }
 
       const res = await postClientDataApi(payload)
-      console.log("client add response--", res)
 
       if (res.status) {
         setRequestId(res.items._id)
@@ -1058,8 +1055,6 @@ export default function NewPartner() {
       if (res.status && res.items && res.items.productForm) {
         // Set all user products from the productForm array
         setAllUserProduct(res.items.productForm)
-        console.log("AllUserProduct", res.items)
-        console.log("update ID", res.items._id)
 
         setUpdateId(res.items._id)
 
@@ -1103,7 +1098,6 @@ export default function NewPartner() {
   }, [requestId])
 
   const handleRemoveProduct = async (product) => {
-    console.log("delete product", product)
 
     try {
       setLoading(true)
@@ -1112,7 +1106,6 @@ export default function NewPartner() {
       }
 
       const res = await deleteUserProductApi(payload)
-      console.log("delete res", res)
 
       if (res.status) {
         setSnackBar({
@@ -1306,7 +1299,6 @@ export default function NewPartner() {
       const response = await getAllUserProductsAPI()
       setUserProducts(response.items || [])
     } catch (error) {
-      console.log("error", error)
       setSnackBar({
         open: true,
         message: "Failed to fetch user products: " + (error.message || "Unknown error"),
@@ -1323,7 +1315,6 @@ export default function NewPartner() {
       const response = await getAllFormAPI()
       setForms(response.items || [])
     } catch (error) {
-      console.log("Error fetching forms:", error)
       setSnackBar({
         open: true,
         message: "Error fetching forms: " + (error.message || "Unknown error"),
@@ -1541,7 +1532,6 @@ export default function NewPartner() {
   }, [allUserProduct])
 
   const handleFormChange = (key, value) => {
-    console.log("name,value", key, value)
     setFormData((prev) => ({ ...prev, [key]: value }))
 
     // Clear error for this field if it exists
@@ -1549,7 +1539,6 @@ export default function NewPartner() {
       setFormErrors((prev) => ({ ...prev, [key]: false }))
     }
   }
-  console.log("for", formData)
 
   const handleCommunicationChange = (communicationType, field, value) => {
     setFormData((prev) => ({
@@ -1687,11 +1676,9 @@ export default function NewPartner() {
         productForm: formattedProductForms,
         allocationId: allocationId,
       }
-      console.log("Updating products with payload:", payload)
 
       // Simulate API response for now
       const response = await UpdatePartnerProductAPI(payload)
-      console.log("UpdatePartnerProductAPI", response)
 
       if (response.status) {
         setSnackBar({

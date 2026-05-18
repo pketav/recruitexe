@@ -759,7 +759,6 @@ export default function NewProductForm(activeStep, setActiveStep) {
       const response = await getAllFormAPI()
       setForms(response.items || [])
     } catch (error) {
-      console.log("Error fetching forms:", error)
       setSnackbar({
         open: true,
         message: "Error fetching forms",
@@ -773,8 +772,6 @@ export default function NewProductForm(activeStep, setActiveStep) {
     try {
       setLoading(true)
       const response = await getAllFormProductsAPI(id)
-      console.log("form Products", response)
-      console.log("id", id)
 
       if (response && response.items) {
         setAllocationId(response.items.allocationId || [])
@@ -809,7 +806,6 @@ export default function NewProductForm(activeStep, setActiveStep) {
         setEmployees(res.items.employees || [])
       }
     } catch (error) {
-      console.log("Error fetching employees:", error)
       setSnackbar({
         open: true,
         message: "Error fetching employees",
@@ -1154,7 +1150,6 @@ export default function NewProductForm(activeStep, setActiveStep) {
         allocationId: allocationId,
       }
 
-      console.log("Update payload:", payload)
 
       const response = await UpdatePartnerProductAPI(payload)
 
@@ -1181,7 +1176,6 @@ export default function NewProductForm(activeStep, setActiveStep) {
     }
   }
 
-  console.log("active====>", allocationId)
 
   const fieldSections = [
     { id: "initFields", label: "Initial Fields" },

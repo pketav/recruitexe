@@ -60,7 +60,6 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
-  console.log("verificxat",verification)
 
   return (
     <>

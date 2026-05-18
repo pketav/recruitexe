@@ -37,7 +37,6 @@ const Fields = () => {
     try {
       setLoading(true)
       const data = await getAllFields()
-      console.log("Fetched fields:", data)
       // Ensure data is an array before setting it to state
       setFields(Array.isArray(data) ? data : [])
       setError(null)

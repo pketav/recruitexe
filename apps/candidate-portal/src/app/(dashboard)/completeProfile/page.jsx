@@ -1107,7 +1107,6 @@ const removeLanguage = (index) => {
         timeout: 60000, // 60 second timeout for file uploads
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          console.log(`Upload Progress: ${percentCompleted}%`)
         },
       })
 
@@ -1299,7 +1298,7 @@ const removeLanguage = (index) => {
     //   experienceIndex !== null
     // ) {
     //   url = formData.professional_Experience?.[experienceIndex]?.[documentType]
-    // } 
+    // }
     // else if (documentType === "salarysleep" && experienceIndex !== null) {
     //   urls = formData.professional_Experience?.[experienceIndex]?.salarysleep || []
     // }
@@ -2165,7 +2164,7 @@ const removeLanguage = (index) => {
                         disabled={exp.currentEmployer == 'Yes'}
                       />
                     </Grid>
-                   
+
 
                   </Grid> */}
 
@@ -2505,7 +2504,7 @@ const removeLanguage = (index) => {
                         variant="outlined"
                       />
                     </Grid>
-             
+
                   </Grid> */}
 
                   {/* Education Certificate */}
@@ -3540,7 +3539,7 @@ const removeLanguage = (index) => {
                       variant="outlined"
                     />
                   </Grid>
-              
+
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
@@ -3951,9 +3950,8 @@ const removeLanguage = (index) => {
 
       // Create a clean copy of formData without internal React state or circular references
       const cleanFormData = JSON.parse(JSON.stringify(formData))
-    console.log("innnsubmit",formData)
 
-      
+
 
       // Remove any fields that shouldn't be sent to the API
       delete cleanFormData._id
@@ -4465,7 +4463,6 @@ const removeLanguage = (index) => {
         setAiResponseData(response.data.items.aiResponse.ResumeAnalysis)
         applyAiAnalysis(response.data.items.resumeUrl)
         // setResumeUrl(response.data.items.resumeUrl)
-        console.log("response.data.items.resumeUrl==>",response.data.items.resumeUrl)
 
 
 
@@ -4500,7 +4497,6 @@ const JobApply = async () => {
     );
 
     // ✅ Handle success
-    console.log("Response Data:", response.data);
 
     if (response.data.success) {
        setSnackbar({
@@ -4519,7 +4515,7 @@ const JobApply = async () => {
   } catch (error) {
     // ❌ Handle error
     console.error("Error applying for job:", error);
-    
+
     if (error.response) {
       alert(`Error: ${error.response.data.message || "Something went wrong."}`);
     } else {
@@ -4530,7 +4526,6 @@ const JobApply = async () => {
 
   // Add this function to handle applying AI analysis to form data
   const applyAiAnalysis = (resumeUrl) => {
-    console.log("innnnnresumeUrl===>",resumeUrl)
     if (!aiResponseData) {
       setSnackbar({
         open: true,
@@ -4639,7 +4634,7 @@ const JobApply = async () => {
       const missingFields = getMissingRequiredFields()
       if (missingFields.length > 0) {
         setShowMissingFieldsDialog(true)
-      } 
+      }
     }, 1000)
 
     handleSubmit()
@@ -4863,7 +4858,6 @@ const JobApply = async () => {
 
     const handleSave = () => {
       // Update the main form data with the filled values
-      console.log("localFormData==>", localFormData)
       const updatedFormData = {
         ...formData,
         userName: localFormData.userName || formData.userName,

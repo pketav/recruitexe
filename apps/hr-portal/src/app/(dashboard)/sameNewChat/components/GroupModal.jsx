@@ -137,12 +137,10 @@ employeeIdFromToken,
         }
       })
 
-      console.log('Photo upload response:', response.data)
 
       if (response.data && response.data.status) {
         const fileUrl = response.data.items.image
         setGroupPhotoUrl(fileUrl)
-        console.log('Group photo uploaded successfully:', fileUrl)
       } else {
         console.error('Group photo upload failed:', response.data?.message)
         // Try alternative upload if first fails
@@ -164,7 +162,6 @@ employeeIdFromToken,
       const reader = new FileReader()
       reader.onload = (e) => {
         setGroupPhotoUrl(e.target.result) // Use base64 for preview
-        console.log('Using local preview for group photo')
       }
       reader.readAsDataURL(file)
     } catch (error) {
@@ -183,7 +180,6 @@ employeeIdFromToken,
       setCreating(true)
 
       // First, let's test if the server is reachable
-      console.log('Testing server connectivity...')
       try {
         const testResponse = await fetch(`${process.env.NEXT_PUBLIC_CHAT_SOCKET_URL}/api/users/`, {
           method: 'GET',
@@ -192,7 +188,6 @@ employeeIdFromToken,
             Authorization:`Bearer ${localStorage.getItem("authToken")}`,
           }
         })
-        console.log('Server test response:', testResponse.status)
 
         if (!testResponse.ok) {
           throw new Error(`Server not accessible: ${testResponse.status}`)
@@ -217,8 +212,6 @@ employeeIdFromToken,
         }
       }
 
-      console.log('Creating group with payload:', payload)
-      console.log('Using employeeIdFromToken:', employeeIdFromToken)
 
       // Try a different endpoint pattern that might work
       const endpoints = [
@@ -233,7 +226,6 @@ employeeIdFromToken,
 
       for (let i = 0; i < endpoints.length && !success; i++) {
         const endpoint = endpoints[i]
-        console.log(`Trying endpoint ${i + 1}/${endpoints.length}: ${endpoint}`)
 
         try {
           const response = await fetch(endpoint, {
@@ -247,18 +239,14 @@ employeeIdFromToken,
             body: JSON.stringify(payload)
           })
 
-          console.log(`Endpoint ${i + 1} response status:`, response.status)
 
           if (response.status === 404) {
-            console.log(`Endpoint ${i + 1} not found, trying next...`)
             continue
           }
 
           const responseData = await response.json()
-          console.log(`Endpoint ${i + 1} response data:`, responseData)
 
           if (response.ok && responseData && responseData.status) {
-            console.log(`Group created successfully with endpoint ${i + 1}!`)
             alert('Group created successfully!')
             handleClose()
 
@@ -278,7 +266,6 @@ employeeIdFromToken,
             throw new Error(`HTTP ${response.status}`)
           }
         } catch (endpointError) {
-          console.log(`Endpoint ${i + 1} failed:`, endpointError.message)
           lastError = endpointError
 
           if (i === endpoints.length - 1) {
@@ -297,7 +284,6 @@ employeeIdFromToken,
 
       // For now, let's simulate group creation for testing
       if (error.message.includes('Network Error') || error.message.includes('Failed to fetch')) {
-        console.log('Network error detected. For testing, simulating group creation...')
 
         // Simulate successful group creation for development
         const confirm = window.confirm(
@@ -308,7 +294,6 @@ employeeIdFromToken,
         )
 
         if (confirm) {
-          console.log('Simulating successful group creation')
           alert('Group created successfully! (Simulated for testing)')
           handleClose()
 

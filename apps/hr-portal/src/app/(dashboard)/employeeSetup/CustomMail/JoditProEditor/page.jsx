@@ -173,7 +173,6 @@ const JoditProEditor = ({
             authorization: token
           }
         })
-console.log("res",res)
         if(res.data.status){
             setSenders(res.data.items)
         }
@@ -196,7 +195,6 @@ console.log("res",res)
     setVariablesType(selectedTemplate?.modelType)
     getVariables(selectedTemplate?.modelType)
     setTemplateName(selectedTemplate?.title)
-    console.log('initial value', selectedTemplate)
     setTemplateId(selectedTemplate?.id)
     setSenderId(selectedTemplate?.senderId)
     setSubject(selectedTemplate?.subject)
@@ -767,7 +765,6 @@ console.log("res",res)
       // Enhanced events with PRO features
       events: {
         afterInit: jodit => {
-          console.log('Jodit PRO initialized successfully with ALL features!')
           setEditorReady(true)
 
           // Initialize speech recognition
@@ -795,21 +792,17 @@ console.log("res",res)
         },
 
         beforeCommand: command => {
-          console.log('Executing PRO command:', command)
           return true
         },
 
         afterCommand: command => {
-          console.log('PRO command executed:', command)
         },
 
         beforePaste: (event, text, html) => {
-          console.log('PRO paste processing - enhanced Word/Excel support')
           return true
         },
 
         afterPaste: event => {
-          console.log('PRO paste completed with advanced processing')
         },
 
         speechRecognizeStart: () => {
@@ -1210,7 +1203,6 @@ console.log("res",res)
 
   // PRO Feature: Export to PDF
   const handleExportPDF = () => {
-    console.log(editor.current, editor.current.jodit)
 
     if (editor.current && editor.current.jodit) {
       try {

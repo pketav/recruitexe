@@ -197,7 +197,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched all submissions:", res.data)
 //       const expenses = res.data?.items?.submissions || []
 //       const formatted = expenses.map((item, index) => ({
 //         id: item._id || index,
@@ -227,7 +226,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched all expense types:", res.data)
 //       const expenseTypes = res.data?.items?.expenseTypes || []
 //       setExpenses(expenseTypes)
 //     } catch (error) {
@@ -248,7 +246,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched all workflows:", res.data)
 //       const workflows = res.data?.items?.workflows || []
 //       setWorkflows(workflows)
 //     } catch (error) {
@@ -269,7 +266,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched expense details by ID:", res.data)
 //       const formFields = res.data?.items?.formId?.fields || []
 //       setDynamicFormFields(formFields)
 
@@ -402,7 +398,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Files uploaded successfully:", res.data)
 //       const uploadedUrls = res.data?.items || []
 
 //       setDynamicFormData((prevData) => ({
@@ -509,7 +504,6 @@
 //       formData: dynamicFormData,
 //     }
 
-//     console.log("Submitting new expense payload:", payload)
 
 //     try {
 //       const res = await axios.post(`${baseUrl}/v1/api/expenseSubmission`, payload, {
@@ -518,7 +512,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Expense submitted successfully:", res.data)
 //       setSnackbar({ open: true, message: "Expense submitted successfully!", severity: "success" })
 //       handleCloseAddExpenseDialog()
 //       getAllSubmissions()
@@ -538,7 +531,6 @@
 //   }
 
 //   const handleViewExpense = (row) => {
-//     console.log("Viewing expense:", row)
 //   }
 
 //   return (
@@ -1202,7 +1194,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched all submissions:", res.data)
 //       const expenses = res.data?.items?.submissions || []
 //       const formatted = expenses.map((item, index) => ({
 //         id: item._id || index,
@@ -1232,7 +1223,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched all expense types:", res.data)
 //       const expenseTypes = res.data?.items?.expenseTypes || []
 //       setExpenses(expenseTypes)
 //     } catch (error) {
@@ -1253,7 +1243,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched all workflows:", res.data)
 //       const workflows = res.data?.items?.workflows || []
 //       setWorkflows(workflows)
 //     } catch (error) {
@@ -1274,7 +1263,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Fetched expense details by ID:", res.data)
 //       const formFields = res.data?.items?.formId?.fields || []
 //       setDynamicFormFields(formFields)
 
@@ -1417,7 +1405,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Files uploaded successfully:", res.data)
 //       const uploadedUrls = res.data?.items || []
 
 //       setDynamicFormData((prevData) => ({
@@ -1541,7 +1528,6 @@
 //       formData: dynamicFormData,
 //     }
 
-//     console.log("Submitting new expense payload:", payload)
 
 //     try {
 //       const res = await axios.post(`${baseUrl}/v1/api/expenseSubmission`, payload, {
@@ -1550,7 +1536,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Expense submitted successfully:", res.data)
 //       setSnackbar({ open: true, message: "Expense submitted successfully!", severity: "success" })
 //       handleCloseAddExpenseDialog()
 //       getAllSubmissions()
@@ -2430,7 +2415,6 @@ export default function Expense() {
           authorization: token,
         },
       })
-      console.log("Fetched all submissions:", res.data)
       const expenses = res.data?.items?.submissions || []
       const formatted = expenses.map((item, index) => ({
         id: item._id || index,
@@ -2460,7 +2444,6 @@ export default function Expense() {
           authorization: token,
         },
       })
-      console.log("Fetched all expense types:", res.data)
       const expenseTypes = res.data?.items?.expenseTypes || []
       setExpenses(expenseTypes)
     } catch (error) {
@@ -2481,7 +2464,6 @@ export default function Expense() {
           authorization: token,
         },
       })
-      console.log("Fetched all workflows:", res.data)
       const workflows = res.data?.items?.workflows || []
       setWorkflows(workflows)
     } catch (error) {
@@ -2503,7 +2485,6 @@ export default function Expense() {
           authorization: token,
         },
       })
-      console.log("Fetched expense details by ID:", res.data)
       const formFields = res.data?.items?.formId?.fields || []
       setDynamicFormFields(formFields)
 
@@ -2655,7 +2636,6 @@ export default function Expense() {
           authorization: token,
         },
       })
-      console.log("Files uploaded successfully:", res.data)
       const uploadedUrls = res.data?.items || []
 
       setDynamicFormData((prevData) => ({
@@ -2779,7 +2759,6 @@ export default function Expense() {
       formData: dynamicFormData,
     }
 
-    console.log("Submitting new expense payload:", payload)
 
     try {
       const res = await axios.post(`${baseUrl}/v1/api/expenseSubmission`, payload, {
@@ -2788,7 +2767,6 @@ export default function Expense() {
           authorization: token,
         },
       })
-      console.log("Expense submitted successfully:", res.data)
       setSnackbar({ open: true, message: "Expense submitted successfully!", severity: "success" })
       handleCloseAddExpenseDialog()
       getAllSubmissions()

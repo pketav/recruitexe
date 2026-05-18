@@ -30,7 +30,6 @@ const MessageContent = ({ message }) => {
   }
 
   const { content } = message
-  console.log("content", content)
 
   if (!content) return null
 
@@ -82,7 +81,6 @@ const MessageContent = ({ message }) => {
     const imageUrl = content?.media?.url || content.url
     const fileName = content?.media?.fileName || content.fileName
     const fileSize = content?.media?.fileSize || content.fileSize
-    console.log("image content", imageUrl, fileName, fileSize)
 
     // Format file size
     const formatFileSize = (bytes) => {

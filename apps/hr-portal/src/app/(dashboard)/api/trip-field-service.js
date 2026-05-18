@@ -14,9 +14,7 @@ const getLocalStorage = () => {
   
     getToken() {
       const localStorage = getLocalStorage()
-      // In production, you should fetch this from localStorage, not hard-code it
-      const token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjpbImFkbWluIl0sImlhdCI6MTc0NzIyNTE5M30.DoKKTpbXwWHWHbGFpeYlsnRT29IJ0eAn7iwLwO6jimw"
-      return token
+      return localStorage?.getItem("authToken") || ""
     },
   
     /**
@@ -25,7 +23,6 @@ const getLocalStorage = () => {
      */
     async getAllFields() { 
       try {
-        console.log("Fetching all fields...")
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/field/all?type=trips`, {
@@ -41,7 +38,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("All fields data:", data)
         return data.items || []
       } catch (error) {
         console.error("Error fetching all fields:", error)
@@ -56,7 +52,6 @@ const getLocalStorage = () => {
      */
     async addField(fieldData) {
       try {
-        console.log("Adding field with data:", fieldData)
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/field/add`, {
@@ -73,7 +68,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Add field response:", data)
         return data
       } catch (error) {
         console.error("Error adding field:", error)
@@ -88,7 +82,6 @@ const getLocalStorage = () => {
      */
     async updateField(fieldData) {
       try {
-        console.log("Updating field with data:", fieldData)
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/field/update`, {
@@ -105,7 +98,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Update field response:", data)
         return data
       } catch (error) {
         console.error("Error updating field:", error)
@@ -120,7 +112,6 @@ const getLocalStorage = () => {
      */
     async updateMultipleFields(fieldsData) {
       try {
-        console.log("Updating multiple fields with data:", fieldsData)
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/field/update`, {
@@ -137,7 +128,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Update multiple fields response:", data)
         return data
       } catch (error) {
         console.error("Error updating multiple fields:", error)
@@ -152,7 +142,6 @@ const getLocalStorage = () => {
      */
     async deleteField(fieldId) {
       try {
-        console.log("Deleting field with ID:", fieldId)
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/field/delete`, {
@@ -169,7 +158,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Delete field response:", data)
         return data
       } catch (error) {
         console.error("Error deleting field:", error)

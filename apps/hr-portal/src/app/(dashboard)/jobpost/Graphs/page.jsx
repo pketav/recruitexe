@@ -310,7 +310,6 @@ export default function DashboardAnalytics({ period }) {
 
       if (result.success) {
         const responseData = safeObject(result.data.items?.data)
-        console.log("Analytics API Response:", responseData)
         setAnalyticsData(responseData)
       } else {
         console.error("API Error:", result.message)

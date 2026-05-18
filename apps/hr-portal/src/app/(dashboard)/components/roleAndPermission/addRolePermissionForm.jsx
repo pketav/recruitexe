@@ -124,7 +124,6 @@ const AddRolePermissionForm = ({ open, onClose, onSubmit }) => {
       setExpenseTypes(Array.isArray(expenseTypes) ? expenseTypes : [])
       setEmployees(Array.isArray(employees) ? employees : [])
       setDepartments(Array.isArray(departments) ? departments : [])
-      console.log("roleAssign", roleAssign)
 
       if (roleAssign.length > 0) {
         const currentRoleAssign = roleAssign[0]
@@ -144,8 +143,6 @@ const AddRolePermissionForm = ({ open, onClose, onSubmit }) => {
         const maxApproverLevel = currentRoleAssign.approverLevel
         const maxRemitterLevel = currentRoleAssign.remitterLevel
 
-        console.log("Setting levels with maxApproverLevel:", maxApproverLevel)
-        console.log("Setting remitterLevels with maxRemitterLevel:", maxRemitterLevel)
 
         const generatedLevels = generateLevels(maxApproverLevel, "L")
         const generatedRemitterLevels = generateLevels(maxRemitterLevel, "R")
@@ -340,7 +337,6 @@ const AddRolePermissionForm = ({ open, onClose, onSubmit }) => {
         }
       }
 
-      console.log("Submitting role permission data:", rolePermissionData)
 
       const response = await rolePermissionService.addRolePermission(rolePermissionData)
 

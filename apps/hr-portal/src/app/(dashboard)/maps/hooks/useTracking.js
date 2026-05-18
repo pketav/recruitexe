@@ -24,7 +24,6 @@ export const useTracking = () => {
       // Extract userId from the data (may need to adjust based on your server's data format)
       const userId = data.userId.split('_')[0];
       
-      console.log('Received live location update for user:', userId, data);
       
       // Update live location data
       setLiveLocationData(prev => ({
@@ -129,7 +128,6 @@ export const useTracking = () => {
     
     // If no data available, we can't track
     if (!hasInitialData && !liveLocationData[employeeId]) {
-      console.log('No tracking data available for this employee');
       return false;
     }
     
@@ -149,7 +147,6 @@ export const useTracking = () => {
       if (liveLocationData[employeeId]) {
         const lastUpdateTime = new Date(liveLocationData[employeeId].timestamp);
         if (lastUpdateTime < fiveMinutesAgo) {
-          console.log('Live tracking data is stale, stopping tracking');
           setLiveTrackingActive(false);
           clearInterval(intervalRef.current);
           intervalRef.current = null;

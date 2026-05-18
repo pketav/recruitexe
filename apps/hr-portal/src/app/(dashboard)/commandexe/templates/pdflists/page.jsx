@@ -142,7 +142,6 @@ export default function PDFLists() {
     try {
       const res = await getAllPDFtemplatesAPI()
 
-      console.log('res', res)
 
       if (res && res.items) {
         setRows(
@@ -162,7 +161,6 @@ export default function PDFLists() {
   }
 
   const handlePreview = row => {
-    console.log('params', row)
 
     setPreviewContent(row.htmlContent)
     setQueryParams(row)
@@ -186,7 +184,6 @@ export default function PDFLists() {
     setLoading(true)
     try {
       const response = await getDeletePDFtemplatesAPI(templateToDelete._id)
-      console.log('response delete', response)
 
       if (response.status) {
         // Remove the deleted template from the rows
@@ -224,11 +221,9 @@ export default function PDFLists() {
 
   const handleUpdate = row => {
     // Your existing update logic
-    console.log('Update', row)
   }
 
   const handleNavigate = row => {
-    console.log('navigate', queryParams)
 
     if (queryParams) {
       // Navigate to update page with template data from modal

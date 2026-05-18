@@ -195,7 +195,6 @@ const CandidateProfileSetup = () => {
 
   // Toggle field enabled state
   const toggleFieldEnabled = (stageIndex, stageKey, fieldId) => {
-    console.log("Toggling field:", { stageIndex, stageKey, fieldId })
 
     setStagesData((prevStagesData) => {
       const newStagesData = JSON.parse(JSON.stringify(prevStagesData)) // Deep clone
@@ -209,7 +208,6 @@ const CandidateProfileSetup = () => {
             const fieldIndex = stageKeyData.fields.findIndex((f) => f._id === fieldId)
             if (fieldIndex !== -1) {
               stageKeyData.fields[fieldIndex].enabled = !stageKeyData.fields[fieldIndex].enabled
-              console.log("Field toggled:", stageKeyData.fields[fieldIndex])
             }
           }
         }
@@ -283,7 +281,7 @@ const CandidateProfileSetup = () => {
           isActive: stageKeyData.isActive, // Ensure isActive is included
         }
 
-        console.log("Saving stage key configuration:", payload) // Debug log
+// Debug log
 
         await axios.post(`${baseUrl}/v1/api/formStageset/toggleFieldAttributes?stageKey=${stageKey}`, payload, {
           headers: {
@@ -338,7 +336,7 @@ const CandidateProfileSetup = () => {
               }))
             }
 
-            console.log("Stage key toggled:", { stageKey, newActiveState }) // Debug log
+// Debug log
           }
         }
       }
@@ -362,7 +360,7 @@ const CandidateProfileSetup = () => {
           isActive: newActiveState, // Use the NEW state, not the old one
         }
 
-        console.log("Saving stage key activation:", { stageKey, isActive: newActiveState, payload }) // Debug log
+// Debug log
 
         await axios.post(`${baseUrl}/v1/api/formStageset/toggleFieldAttributes?stageKey=${stageKey}`, payload, {
           headers: {

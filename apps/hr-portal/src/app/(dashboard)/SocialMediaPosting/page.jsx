@@ -142,7 +142,6 @@ export default function SocialMediaManager() {
 
   useEffect(() => {
     if (tabvalue) {
-      console.log('Tab value from query:', tabvalue)
       const tabMap = {
         'new-post': 0,
         drafts: 1,

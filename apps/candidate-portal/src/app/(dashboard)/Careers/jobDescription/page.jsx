@@ -278,7 +278,6 @@ useEffect(()=>{
     } 
   }
 
-  console.log("jobDesc",jobDesc)
 
   return (
     <Box sx={{ p: 4, maxWidth: 1200, mx: "auto" }}>

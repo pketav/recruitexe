@@ -285,7 +285,6 @@ const TabbedVerificationSuite = () => {
         data: payload,
       })
       if (result.success) {
-        console.log("Report created successfully:", result.data)
         setCreateReportDialog(false)
         setReportName("")
         setReportDescription("")

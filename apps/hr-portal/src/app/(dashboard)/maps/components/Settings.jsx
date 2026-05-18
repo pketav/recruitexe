@@ -83,11 +83,6 @@ const Settings = () => {
 
   const handleSaveSettings = () => {
     // In a real app, this would save settings to the backend
-    console.log('Saving settings:', {
-      map: mapSettings,
-      tracking: trackingSettings,
-      notification: notificationSettings
-    });
     setSnackbarOpen(true);
   };
 

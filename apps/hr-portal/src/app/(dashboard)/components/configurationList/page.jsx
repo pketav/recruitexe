@@ -72,7 +72,6 @@ const ConfigurationList = () => {
     try {
       setLoading(true)
       const response = await configurationService.getConfigList()
-      console.log("config current", response)
 
       if (response && response.items && response.items.length > 0) {
         const currentConfig = response.items[0]
@@ -137,7 +136,6 @@ const ConfigurationList = () => {
         id: activeConfigId,
       }
 
-      console.log("Submitting configuration:", configData)
       await configurationService.toggleConfiguration(configData)
       showSnackbar(`${activeConfig} configuration submitted successfully`, "success")
 

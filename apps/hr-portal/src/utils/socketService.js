@@ -26,8 +26,6 @@ const getUserIdFromToken = () => {
   }
 };
 
-console.log("token",getUserIdFromToken())
-
 export const initSocket = () => {
   const userId = getUserIdFromToken();
 
@@ -52,16 +50,12 @@ export const initSocket = () => {
     reconnectionDelay: 1000,
   });
 
-  console.log('Socket initialized:', socket);
-
   // Connection events
   socket.on('connect', () => {
-    console.log('✅ Socket connected');
     connectionHandlers.forEach(handler => handler('connected'));
   });
 
   socket.on('disconnect', () => {
-    console.log('❌ Socket disconnected');
     connectionHandlers.forEach(handler => handler('disconnected'));
   });
 
@@ -76,34 +70,28 @@ export const initSocket = () => {
 
   // Message events
   socket.on('message:received', (data) => {
-    console.log('📨 Real-time message received:', data);
     messageHandlers.forEach(handler => handler('received', data));
   });
 
   socket.on('message:sent', (data) => {
-    console.log('✅ Message sent confirmation:', data);
     messageHandlers.forEach(handler => handler('sent', data));
   });
 
   socket.on('message:failed', (data) => {
-    console.log('❌ Message failed:', data);
     messageHandlers.forEach(handler => handler('failed', data));
   });
 
   socket.on('message:read', (data) => {
-    console.log('👁️ Message read receipt:', data);
     readReceiptHandlers.forEach(handler => handler(data));
   });
 
   // Message notification event (for messages when not in room)
   socket.on('message:notification', (data) => {
-    console.log('🔔 Message notification received:', data);
     notificationHandlers.forEach(handler => handler(data));
   });
 
   // Typing events - Updated to match backend
   socket.on('typing:update', (data) => {
-    console.log('⌨️ Typing update received:', data);
     // data = { userId, conversationId, isTyping: true/false }
     typingHandlers.forEach(handler => {
       if (data.isTyping) {
@@ -116,101 +104,82 @@ export const initSocket = () => {
 
   // Keep old events for backward compatibility
   socket.on('typing:start', (data) => {
-    console.log('⌨️ User started typing (legacy):', data);
     typingHandlers.forEach(handler => handler('start', data));
   });
 
   socket.on('typing:stop', (data) => {
-    console.log('⏹️ User stopped typing (legacy):', data);
     typingHandlers.forEach(handler => handler('stop', data));
   });
 
   // User presence events
   socket.on('user:status', (data) => {
-    console.log('👤 User status changed:', data);
     userStatusHandlers.forEach(handler => handler(data));
   });
 
   socket.on('user:online', (data) => {
-    console.log('🟢 User came online:', data);
     userStatusHandlers.forEach(handler => handler({ ...data, status: 'online' }));
   });
 
   socket.on('user:offline', (data) => {
-    console.log('🔴 User went offline:', data);
     userStatusHandlers.forEach(handler => handler({ ...data, status: 'offline' }));
   });
 
   // Room events
   socket.on('room:joined', (data) => {
-    console.log('🏠 Joined room:', data);
   });
 
   socket.on('room:left', (data) => {
-    console.log('🚪 Left room:', data);
   });
 
   // Message delivery status
   socket.on('message:delivered', (data) => {
-    console.log('📬 Message delivered:', data);
     messageHandlers.forEach(handler => handler('delivered', data));
   });
 
   // Message read status
   socket.on('message:read_status', (data) => {
-    console.log('👁️ Message read status:', data);
     readReceiptHandlers.forEach(handler => handler(data));
   });
 
   // Reaction events
   socket.on('message:reactionUpdated', (data) => {
-    console.log('😊 Reaction updated:', data);
     reactionHandlers.forEach(handler => handler('updated', data));
   });
 
   socket.on('message:reactionSuccess', (data) => {
-    console.log('✅ Reaction success:', data);
     reactionHandlers.forEach(handler => handler('success', data));
   });
 
   socket.on('message:reactionRemoved', (data) => {
-    console.log('🗑️ Reaction removed:', data);
     reactionHandlers.forEach(handler => handler('removed', data));
   });
 
   socket.on('message:removeReactionSuccess', (data) => {
-    console.log('✅ Reaction removed successfully:', data);
     reactionHandlers.forEach(handler => handler('removeSuccess', data));
   });
 
   socket.on('message:reactionNotification', (data) => {
-    console.log('🔔 Reaction notification:', data);
     notificationHandlers.forEach(handler => handler(data));
   });
 
   // Delete events
   socket.on('message:deleted', (data) => {
-    console.log('🗑️ Message deleted:', data);
     deleteHandlers.forEach(handler => handler('deleted', data));
   });
 
   socket.on('message:deleteForMeSuccess', (data) => {
-    console.log('✅ Message deleted for me:', data);
     deleteHandlers.forEach(handler => handler('deleteForMeSuccess', data));
   });
 
   socket.on('message:deleteForEveryoneSuccess', (data) => {
-    console.log('✅ Message deleted for everyone:', data);
     deleteHandlers.forEach(handler => handler('deleteForEveryoneSuccess', data));
   });
 
   socket.on('message:deletedForEveryone', (data) => {
-    console.log('🗑️ Message deleted for everyone:', data);
     deleteHandlers.forEach(handler => handler('deletedForEveryone', data));
   });
 
   socket.on('message:updated', (data) => {
-    console.log('✏️ Message updated:', data);
     messageHandlers.forEach(handler => handler('updated', data));
   });
 
@@ -308,7 +277,6 @@ export const onUserStatus = (handler) => {
 export const joinRoom = (conversationId) => {
   if (socket && socket.connected) {
     socket.emit('room:join', conversationId);
-    console.log('🏠 Joining room:', conversationId);
   } else {
     console.error('❌ Socket not connected - cannot join room');
   }
@@ -317,7 +285,6 @@ export const joinRoom = (conversationId) => {
 export const leaveRoom = (conversationId) => {
   if (socket && socket.connected) {
     socket.emit('room:leave', conversationId);
-    console.log('🚪 Leaving room:', conversationId);
   } else {
     console.error('❌ Socket not connected - cannot leave room');
   }
@@ -327,7 +294,6 @@ export const leaveRoom = (conversationId) => {
 export const sendMessage = (data) => {
   if (socket && socket.connected) {
     socket.emit('message:send', data);
-    console.log('📤 Sending message:', data);
     return true;
   } else {
     console.error('❌ Socket not connected - cannot send message');
@@ -338,7 +304,6 @@ export const sendMessage = (data) => {
 export const markMessageAsRead = (conversationId, messageId) => {
   if (socket && socket.connected) {
     socket.emit('message:read', { conversationId, messageId });
-    console.log('👁️ Marking message as read:', { conversationId, messageId });
   } else {
     console.error('❌ Socket not connected - cannot mark as read');
   }
@@ -348,14 +313,12 @@ export const markMessageAsRead = (conversationId, messageId) => {
 export const startTyping = (conversationId) => {
   if (socket && socket.connected) {
     socket.emit('typing:start', { conversationId });
-    console.log('⌨️ Started typing in:', conversationId);
   }
 };
 
 export const stopTyping = (conversationId) => {
   if (socket && socket.connected) {
     socket.emit('typing:stop', { conversationId });
-    console.log('⏹️ Stopped typing in:', conversationId);
   }
 };
 
@@ -363,7 +326,6 @@ export const stopTyping = (conversationId) => {
 export const updateRoom = (conversationId) => {
   if (socket && socket.connected) {
     socket.emit('room:update', { conversationId });
-    console.log('🔄 Updating room:', conversationId);
   }
 };
 
@@ -406,7 +368,6 @@ export const onDelete = (handler) => {
 export const reactToMessage = (messageId, emoji) => {
   if (socket && socket.connected) {
     socket.emit('message:react', { messageId, emoji });
-    console.log('😊 Reacting to message:', { messageId, emoji });
     return true;
   } else {
     console.error('❌ Socket not connected - cannot react to message');
@@ -417,7 +378,6 @@ export const reactToMessage = (messageId, emoji) => {
 export const removeReaction = (messageId) => {
   if (socket && socket.connected) {
     socket.emit('message:removeReaction', { messageId });
-    console.log('🗑️ Removing reaction from message:', messageId);
     return true;
   } else {
     console.error('❌ Socket not connected - cannot remove reaction');
@@ -429,7 +389,6 @@ export const removeReaction = (messageId) => {
 export const deleteMessage = (conversationId, messageId, forBoth = false) => {
   if (socket && socket.connected) {
     socket.emit('message:delete', { conversationId, messageId, forBoth });
-    console.log('🗑️ Deleting message:', { conversationId, messageId, forBoth });
     return true;
   } else {
     console.error('❌ Socket not connected - cannot delete message');
@@ -446,7 +405,6 @@ export const updateMessage = (messageId, newContent, newContentType = 'text', fi
       newContentType,
       ...fileInfo
     });
-    console.log('✏️ Updating message:', { messageId, newContent });
     return true;
   } else {
     console.error('❌ Socket not connected - cannot update message');

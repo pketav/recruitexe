@@ -210,7 +210,6 @@ const JoditProEditor = ({
 
   useEffect(()=>{
     setContent(initialValue)
-    console.log('initial value',initialValue);
   },[initialValue])
 
   // Variable management
@@ -658,7 +657,6 @@ const JoditProEditor = ({
     // Enhanced events with PRO features
     events: {
       afterInit: (jodit) => {
-        console.log('Jodit PRO initialized successfully with ALL features!')
         setEditorReady(true)
         
         // Initialize speech recognition
@@ -686,21 +684,17 @@ const JoditProEditor = ({
       },
       
       beforeCommand: (command) => {
-        console.log('Executing PRO command:', command)
         return true
       },
       
       afterCommand: (command) => {
-        console.log('PRO command executed:', command)
       },
       
       beforePaste: (event, text, html) => {
-        console.log('PRO paste processing - enhanced Word/Excel support')
         return true
       },
       
       afterPaste: (event) => {
-        console.log('PRO paste completed with advanced processing')
       },
       
       speechRecognizeStart: () => {
@@ -1061,7 +1055,6 @@ const JoditProEditor = ({
 
   // PRO Feature: Export to PDF
   const handleExportPDF = () => {
-    console.log(editor.current , editor.current.jodit);
     
     if (editor.current && editor.current.jodit) {
       try {

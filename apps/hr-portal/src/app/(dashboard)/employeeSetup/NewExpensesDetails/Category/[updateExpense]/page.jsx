@@ -13,8 +13,6 @@
 //       try {
 //         const resolvedParams = await Promise.resolve(params)
 //         const { updateExpense } = resolvedParams
-//         console.log('Resolved Params:', resolvedParams)
-//         console.log('Update Expense:', updateExpense)
 //         setExpenseId(updateExpense)
 //       } catch (error) {
 //         console.error('Error resolving params:', error)
@@ -31,7 +29,6 @@
 //                 }
 //             })
 //             const data = await response.json()
-//             console.log('Expense Types:', data)
 //         } catch (error) {
 //             console.error('Error fetching expense types:', error)
 //         }
@@ -217,8 +214,6 @@
 //       try {
 //         const resolvedParams = await Promise.resolve(params)
 //         const { updateExpense } = resolvedParams
-//         console.log("Resolved Params:", resolvedParams)
-//         console.log("Update Expense:", updateExpense)
 //         setExpenseId(updateExpense)
 //       } catch (error) {
 //         console.error("Error resolving params:", error)
@@ -240,7 +235,6 @@
 //       })
 
 //       const expenseData = response.data.items
-//       console.log("Expense Details:", expenseData)
 
 //       // Set expense form data
 //       setExpenseForm({
@@ -284,7 +278,6 @@
 //       })
 
 //       const formDetails = response.data.items
-//       console.log("Custom Form Details:", formDetails)
 
 //       setFormData({
 //         name: formDetails.name || "",
@@ -1720,8 +1713,6 @@
 //       try {
 //         const resolvedParams = await Promise.resolve(params)
 //         const { updateExpense } = resolvedParams
-//         console.log("Resolved Params:", resolvedParams)
-//         console.log("Update Expense:", updateExpense)
 //         setExpenseId(updateExpense)
 //       } catch (error) {
 //         console.error("Error resolving params:", error)
@@ -1743,7 +1734,6 @@
 //       })
 
 //       const expenseData = response.data.items
-//       console.log("Expense Details:", expenseData)
 
 //       // Set expense form data
 //       setExpenseForm({
@@ -1801,7 +1791,6 @@
 //       })
 
 //       const formDetails = response.data.items
-//       console.log("Custom Form Details:", formDetails)
 
 //       setFormData({
 //         name: formDetails.name || "",
@@ -3326,8 +3315,6 @@ export default function ExpenseTypeUpdate({ params }) {
       try {
         const resolvedParams = await Promise.resolve(params)
         const { updateExpense } = resolvedParams
-        console.log("Resolved Params:", resolvedParams)
-        console.log("Update Expense:", updateExpense)
         setExpenseId(updateExpense)
       } catch (error) {
         console.error("Error resolving params:", error)
@@ -3490,7 +3477,6 @@ export default function ExpenseTypeUpdate({ params }) {
         },
       })
       const expenseData = response.data.items
-      console.log("Expense Details:", expenseData)
 
       // Set expense form data
       setExpenseForm({
@@ -3557,7 +3543,6 @@ export default function ExpenseTypeUpdate({ params }) {
         },
       })
       const formDetails = response.data.items
-      console.log("Custom Form Details:", formDetails)
       setFormData({
         name: formDetails.name || "",
         description: formDetails.description || "",

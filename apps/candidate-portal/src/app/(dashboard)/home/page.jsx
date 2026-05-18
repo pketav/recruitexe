@@ -139,7 +139,6 @@ const WelcomePage = () => {
 
   const handleViewAllApplications = () => {
     router.push("/applications")
-    console.log("Navigating to applications route: /applications")
   }
 
   const handleNewApplication = () => {

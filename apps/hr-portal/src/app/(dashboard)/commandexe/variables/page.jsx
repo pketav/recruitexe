@@ -223,7 +223,6 @@ const VariablesPage = () => {
   }
 
   const handleView = row => {
-    console.log('Viewing variable:', row)
     setSnackbar({ open: true, message: `Viewing ${row.variableName}`, severity: 'info' })
     setTimeout(() => setSnackbar({ ...snackbar, open: false }), 3000)
   }

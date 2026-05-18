@@ -95,7 +95,6 @@ export default function PDFLists() {
     try {
       const res = await getAllEmailtemplatesAPI()
 
-      console.log('res', res)
 
       if (res && res.items) {
         setRows(
@@ -114,7 +113,6 @@ export default function PDFLists() {
   }
 
   const handlePreview = row => {
-    console.log('params', row)
 
     setPreviewContent(row.htmlContent)
     setQueryParams(row)
@@ -128,7 +126,6 @@ export default function PDFLists() {
   }
 
   const handleNavigate = row => {
-    console.log('navigate', queryParams)
 
     if (queryParams) {
       // Navigate to update page with template data from modal

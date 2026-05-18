@@ -20,7 +20,6 @@ export const useBrowserNotifications = () => {
     try {
       const result = await Notification.requestPermission()
       setPermission(result)
-      console.log('🔔 Notification permission:', result)
       return result === 'granted'
     } catch (error) {
       console.error('Error requesting notification permission:', error)

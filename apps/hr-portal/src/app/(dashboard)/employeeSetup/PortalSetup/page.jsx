@@ -262,7 +262,6 @@ export default function PortalSetup() {
 
   const handleEditOpen = () => {
     if (!portal) return
-    console.log("portal",portal)
     setEditData({
       organizationId: portal?.organizationId?._id || '',
       PortalName: portal?.PortalName || '',
@@ -395,7 +394,6 @@ export default function PortalSetup() {
     }
   }
 
-  console.log("edit",editData)
 
   const [orgs, setOrgs] = useState([])
 

@@ -446,7 +446,6 @@ const CandidateManagement = ({ candidates,fetchCandidates }) => {
     return Math.max(30, score - 10 + Math.random() * 20) // Confidence related to score
   }
 
-  console.log("candidates", candidates)
   // Process candidates with mock data
   const processedCandidates = useMemo(() => {
     return candidates?.map((candidate) => {

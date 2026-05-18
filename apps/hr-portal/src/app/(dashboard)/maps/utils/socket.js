@@ -18,7 +18,6 @@ const socket = io(socketUrl, {
 
 // Add event listeners and logging
 socket.on('connect', () => {
-  console.log('Connected to tracking WebSocket server!');
 });
 
 socket.on('connect_error', (err) => {
@@ -26,7 +25,6 @@ socket.on('connect_error', (err) => {
 });
 
 socket.on('disconnect', (reason) => {
-  console.log('Disconnected from WebSocket server:', reason);
 });
 
 // Export the socket instance

@@ -148,7 +148,6 @@ const boardsApi = {
 
   getSubboards: async boardId => {
     try {
-      console.log('Fetching subboards for boardId:', boardId)
       const response = await fetch(`${baseUrl}/v1/api/notes/getAllSubBoard?boardId=${boardId}`, {
         method: 'GET',
         headers: {
@@ -157,7 +156,6 @@ const boardsApi = {
       })
       if (!response.ok) throw new Error('Failed to fetch subboards')
       const data = await response.json()
-      console.log('Subboards API response:', data)
       return data?.status ? data.items : []
     } catch (error) {
       console.error('Error fetching subboards:', error)
@@ -186,7 +184,6 @@ const boardsApi = {
 
   getSubboardNotes: async subboardId => {
     try {
-      console.log('Fetching notes for subboardId:', subboardId)
       const response = await fetch(
         `${baseUrl}/v1/api/notes/getAllBoardNotesBysubBoardId?subBoardId=${subboardId}`,
         {
@@ -198,7 +195,6 @@ const boardsApi = {
       )
       if (!response.ok) throw new Error('Failed to fetch subboard notes')
       const data = await response.json()
-      console.log('Subboard notes API response:', data)
       return data?.status ? data.items : []
     } catch (error) {
       console.error('Error fetching subboard notes:', error)
@@ -659,7 +655,6 @@ const NotesBoards = () => {
         setAnchorEl(null)
         setMenuBoardId(null)
         // Add delete functionality here
-        console.log('Delete board:', boardId)
         break
       default:
         break
@@ -709,7 +704,6 @@ const NotesBoards = () => {
     setIsLoading(true)
     try {
       const subboardsData = await boardsApi.getSubboards(boardId)
-      console.log('Fetched subboards:', subboardsData)
       setSubboards(subboardsData)
 
       // Fetch notes for each subboard
@@ -724,7 +718,6 @@ const NotesBoards = () => {
         }
       }
 
-      console.log('Fetched notes data:', notesData)
       setSubboardNotes(notesData)
     } catch (error) {
       console.error('Error fetching subboards:', error)
@@ -850,7 +843,6 @@ const NotesBoards = () => {
 
   // Handle note management for specific subboard
   const handleNoteAdded = async (newNote, subboardId) => {
-    console.log('Note added:', newNote, 'to subboard:', subboardId)
 
     // Refresh notes for this specific subboard
     try {
@@ -867,7 +859,6 @@ const NotesBoards = () => {
   }
 
   const handleNoteEdited = async editedNote => {
-    console.log('Note edited:', editedNote)
 
     // Find which subboard this note belongs to and refresh
     const noteSubboardId = editingSubboardId || editedNote.subboardId
@@ -890,7 +881,6 @@ const NotesBoards = () => {
   }
 
   const handleNoteDeleted = async noteId => {
-    console.log('Note deleted:', noteId)
 
     // Refresh notes for the current subboard
     if (editingSubboardId) {
@@ -913,28 +903,16 @@ const NotesBoards = () => {
 
   // Handle note click for editing
   const handleNoteClick = (note, subboardId) => {
-    console.log('Note clicked for editing:', note, 'subboardId:', subboardId)
     setSelectedNote(note) // Set existing note for editing
     setShowNoteDialog(true)
     setEditingSubboardId(subboardId)
-    console.log('Dialog state after note click:', {
-      showNoteDialog: true,
-      selectedNote: note,
-      editingSubboardId: subboardId
-    })
   }
 
   // Handle new note creation for subboard
   const handleCreateNewNote = subboardId => {
-    console.log('Creating new note for subboard:', subboardId)
     setSelectedNote(null) // No existing note = creating new
     setShowNoteDialog(true)
     setEditingSubboardId(subboardId)
-    console.log('Dialog state after create new:', {
-      showNoteDialog: true,
-      selectedNote: null,
-      editingSubboardId: subboardId
-    })
   }
 
   // Generate random colors for boards and subboards

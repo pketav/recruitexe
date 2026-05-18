@@ -493,11 +493,6 @@ const CustomMail = () => {
         throw new Error('Template content cannot be empty')
       }
 
-      console.log('Saving template with Jodit PRO features:', {
-        templateName,
-        contentLength: content.length,
-        hasProFeatures: content.includes('jodit-pro') || content.includes('todo-list') || content.includes('page-break')
-      })
 
       const response = await callApi({
         endpoint: `/v1/api/mail/content/update`,
@@ -536,26 +531,12 @@ const CustomMail = () => {
   }
 
   const handleContentChange = content => {
-    console.log('Content updated with Jodit PRO features:', {
-      length: content.length,
-      hasImages: content.includes('<img'),
-      hasTables: content.includes('<table'),
-      hasTodoLists: content.includes('todo-list'),
-      hasPageBreaks: content.includes('page-break'),
-      hasEmojis: content.includes('emoji'),
-      hasSignatures: content.includes('signature-highlight')
-    })
   }
 
   const handleVariableCopy = variableName => {
-    console.log('Variable copied:', variableName)
   }
 
   const handleTemplateLoad = htmlContent => {
-    console.log('Template loaded:', {
-      size: htmlContent.length,
-      hasProFeatures: htmlContent.includes('jodit-pro')
-    })
   }
 
   const getAllPdfList = async () => {

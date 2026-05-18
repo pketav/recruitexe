@@ -67,7 +67,6 @@
 
 //     try {
 //       const res = await postInitFormApi(payload)
-//       console.log('Submitted successfully:', res)
 //       const data = await getInitFormApi()
 //       setFields(Array.isArray(data?.items) ? data.items.map(item => ({
 //         ...item,
@@ -240,11 +239,9 @@ const InitForm = () => {
         isRequired: field.isRequired
       }))
     }
-    console.log('Submitting fields:', payload)
 
     try {
       const res = await postInitFormApi(payload)
-      console.log('Submitted successfully:', res)
       const data = await getInitFormApi()
       setFields(
         Array.isArray(data?.items)

@@ -5,7 +5,6 @@ import axios from "axios";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 // const token = localStorage.getItem("accessToken");
-// console.log('Serivcetoken',token);
 // Function to get the token dynamically
 const getAuthToken = async () => {
     if (typeof window !== "undefined") {
@@ -19,8 +18,6 @@ const getAuthToken = async () => {
     //  {* COMPANY API *}
 export async function getCompanyApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/company/all`;
 
@@ -220,13 +217,6 @@ export async function uploadMultiImageApi(formData) {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: token
-      },
-      // Add progress tracking
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        console.log(`Upload Progress: ${percentCompleted}%`);
       }
     });
     
@@ -1132,7 +1122,6 @@ export async function updateGradeApi(data){
 
 export async function getAllEmployeeApi(){
     const token =await getAuthToken();
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/api/Auth/getAllEmployee`
 
@@ -3195,8 +3184,6 @@ export async function postRaiseExcelApi(data){
 
 export async function getPromoterApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/promoter/all`;
 
@@ -3323,8 +3310,6 @@ export async function getAllServicesApi(){
 
 export async function getManagementApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/managment/all`;
 
@@ -3554,8 +3539,6 @@ export async function postUserProductEditApi(data){
 
 export async function getServicesApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/api/user-service/all`;
 
@@ -3653,8 +3636,6 @@ export async function updateServicesApi(data) {
 
   export async function getAddCasesApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/init/all`;
 
@@ -3714,8 +3695,6 @@ export async function updateServicesApi(data) {
   export async function getDashboardReportCasesApi(serviceId, partnerId, dateRange , startDate, endDate) {
     const token =await getAuthToken();
 
-    console.log('token',token);
-
     const fullUrl = `${baseUrl}/v1/api/dashboard/report?serviceId=${serviceId}&partnerId=${partnerId}&dateFilter=${dateRange}&startDate=${startDate}&endDate=${endDate}`;
 
     try {
@@ -3736,8 +3715,6 @@ export async function updateServicesApi(data) {
   export async function getInvoiceDataApi( status,partnerId, dateRange , startDate, endDate) {
     const token =await getAuthToken();
 
-    console.log('token',token);
-
     const fullUrl = `${baseUrl}/v1/api/init/invoice-data?paymentStatus=${status}&partnerId=${partnerId}&dateRange=${dateRange}&startDate=${startDate}&endDate=${endDate}`;
 
     try {
@@ -3757,8 +3734,6 @@ export async function updateServicesApi(data) {
 
   export async function getAllBackOfficeReqCasesApi(partnerId, dateRange , startDate, endDate) {
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/job/getMyPendingJob?stageId=2&partnerId=${partnerId}&dateRange=${dateRange}&startDate=${startDate}&endDate=${endDate}`;
 
@@ -3780,8 +3755,6 @@ export async function updateServicesApi(data) {
   export async function getAllBackOfficeAcceptedCasesApi(stage,partnerId, dateRange , startDate, endDate) {
     const token =await getAuthToken();
 
-    console.log('token',token);
-
     const fullUrl = `${baseUrl}/v1/job/getMyAcceptedJob?stageId=${stage}&partnerId=${partnerId}&dateRange=${dateRange}&startDate=${startDate}&endDate=${endDate}`;
 
     try {
@@ -3801,8 +3774,6 @@ export async function updateServicesApi(data) {
 
   export async function getAllBackOfficeAllocatedCasesApi(partnerId, dateRange , startDate, endDate) {
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/job/allocatedjob?&partnerId=${partnerId}&dateRange=${dateRange}&startDate=${startDate}&endDate=${endDate}`;
 
@@ -3903,8 +3874,6 @@ export async function updateAddCasesApi(data) {
 
   export async function getAllAddCasesApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/init/allbyemp`;
 
@@ -3925,8 +3894,6 @@ export async function updateAddCasesApi(data) {
 
 export const getpartnerproduct = async (requestId, referId, initId) => {
         const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/api/job/getpartnerproduct?requestId=${requestId}&referId=${referId}&initId=${initId}`;
 
@@ -4099,8 +4066,6 @@ export async function getInvoiceDashBoardCount() {
 
 export async function getInitFormApi(){
     const token =await getAuthToken();
-
-    console.log('token',token);
      
     const fullUrl = `${baseUrl}/v1/api/initFields/all`;
 

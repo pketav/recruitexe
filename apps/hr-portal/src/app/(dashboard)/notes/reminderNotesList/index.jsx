@@ -179,7 +179,7 @@ const isReminderOutdated = (note) => {
     const now = dayjs()
 
     const isOutdated = reminderDateTime.isBefore(now)
-    console.log(`Note "${note.title}": reminderAt=${note.reminderAt}, isOutdated=${isOutdated}`) // Debug log
+// Debug log
 
     return isOutdated
   } catch (error) {
@@ -197,7 +197,7 @@ const isReminderUpcoming = (note) => {
     const now = dayjs()
 
     const isUpcoming = reminderDateTime.isAfter(now)
-    console.log(`Note "${note.title}": reminderAt=${note.reminderAt}, isUpcoming=${isUpcoming}`) // Debug log
+// Debug log
 
     return isUpcoming
   } catch (error) {
@@ -277,8 +277,8 @@ const ReminderNotesList = ({}) => {
     setIsLoading(true)
     try {
       const notesData = await api.getNotes()
-      console.log('Fetched notes:', notesData) // Debug log
-      console.log('Notes with reminderAt:', notesData.filter(note => note.reminderAt)) // Debug log
+// Debug log
+// Debug log
       setNotes(notesData)
     } catch (error) {
       console.error('Error fetching notes:', error)
@@ -508,13 +508,6 @@ const ReminderNotesList = ({}) => {
   const upcomingRemindersCount = notes.filter(note => isReminderUpcoming(note)).length
 
   // Debug logging
-  console.log('Tab counts:', {
-    all: allRemindersCount,
-    outdated: outdatedRemindersCount,
-    upcoming: upcomingRemindersCount,
-    total: notes.length,
-    activeTab
-  })
 
   // Handle new note added
   const handleNoteAdded = async () => {

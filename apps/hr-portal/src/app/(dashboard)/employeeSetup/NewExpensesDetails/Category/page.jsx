@@ -187,7 +187,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Subcategory added:", res.data)
 //       handleCloseSub()
 //       getAllSubCategory()
 //     } catch (error) {
@@ -303,7 +302,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Expense Types:", res.data);
       
 //       const expenses = res.data?.items?.expenseTypes || []
 //       const formatted = expenses.map((item, index) => ({
@@ -1455,7 +1453,6 @@ export default function SubCategoryUI() {
           authorization: token,
         },
       })
-      console.log("Subcategory added:", res.data)
       handleCloseSub()
       getAllSubCategory()
     } catch (error) {
@@ -1572,7 +1569,6 @@ export default function SubCategoryUI() {
           authorization: token,
         },
       })
-      console.log("Expense Types:", res.data)
 
       const expenses = res.data?.items?.expenseTypes || []
       const formatted = expenses.map((item, index) => ({

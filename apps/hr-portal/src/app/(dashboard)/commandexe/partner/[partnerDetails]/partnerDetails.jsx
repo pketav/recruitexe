@@ -123,7 +123,6 @@ const PartnerDetails = (activeStep, setActiveStep) => {
       try {
         setIsLoading(true)
         const response = await getPartnerDetailsAPI(partnerDetails)
-        console.log('Response from getPartnerDetailsAPI:', response);
 
         if (response.items) {
           const { employee, partner } = response.items
@@ -191,7 +190,6 @@ const PartnerDetails = (activeStep, setActiveStep) => {
     if (file) {
       try {
         const response = await uploadImageApi(file)
-        console.log('image res--', response)
 
         setFormData(prev => ({
           ...prev,
@@ -251,7 +249,6 @@ const PartnerDetails = (activeStep, setActiveStep) => {
 
         // Upload the image to the server
         const uploadResult = await uploadImageApi(file)
-        console.log('Upload result:', uploadResult)
 
         // Update state with the uploaded file URL
         setNewLogo(uploadResult.items.fileUrl)
@@ -310,11 +307,9 @@ const PartnerDetails = (activeStep, setActiveStep) => {
         invoiceRaise: companyData.invoiceRaise || ''
       }
 
-      console.log('updated data', updateData)
 
       // Send the update to the API
       const response = await updatePartnerDetailsAPI(updateData)
-      console.log('Update response:', response)
       if (response.status) {
         setSuccessMessage('Partner details updated successfully')
         setOpenSnackbar(true)

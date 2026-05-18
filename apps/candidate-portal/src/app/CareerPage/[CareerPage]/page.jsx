@@ -1706,7 +1706,7 @@ const showSuccessIndicator = (
       >
         <Container maxWidth="lg" sx={{ textAlign: 'center', py: 2 }}>
           <Typography sx={{fontSize:portalData?.footerFont?.fontSize, color:"white"}}>
-            © {new Date().getFullYear()} <a href="https://www.recruitexe.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', opacity: 0.8 }}>
+            © {new Date().getFullYear()} <a href={process.env.NEXT_PUBLIC_SITE_URL || "/"} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', opacity: 0.8 }}>
               Recruitexe
             </a>. All rights reserved.
           </Typography>

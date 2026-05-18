@@ -313,7 +313,6 @@ const dashboard = () => {
     setErrorType(null)
 
     try {
-      console.log("Fetching dashboard data...")
 
       const result = await callApi({
         endpoint: `/v1/api/post/AllPost?postStatus=${statusFilter}`,
@@ -321,7 +320,6 @@ const dashboard = () => {
         disableSnackbar: true,
       })
 
-      console.log("API Response:", result.data)
 
       if (result.data?.status && result.data?.items) {
         setDashboardData(result.data)
@@ -374,7 +372,6 @@ const dashboard = () => {
         data: Payload,
       })
 
-      console.log("Delete response:", result.data)
 
       if (result.data?.status) {
         // Update local state by removing the deleted post
@@ -462,7 +459,6 @@ const dashboard = () => {
   }
 
   const handleEdit = (post) => {
-    console.log("Edit post:", post._id)
     // Add edit functionality here
   }
 
@@ -473,7 +469,6 @@ const dashboard = () => {
 
   const confirmDelete = async () => {
     if (!postToDelete) return
-    console.log("postToDelete==>", postToDelete)
     await deletePost(postToDelete)
   }
 

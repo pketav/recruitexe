@@ -300,7 +300,6 @@ const ApproverScreen = () => {
   }, [allColumns, router, showSnackbar])
 
   useEffect(() => {
-    console.log('Fetching approvers...')
     getAllApprovers()
   }, [getAllApprovers])
 

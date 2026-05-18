@@ -262,12 +262,10 @@ const Reporting = () => {
   }
 
   const fetchTemplates = async productId => {
-    console.log('Fetching templates for productId:', productId)
 
     try {
       const response = await getAllPDFtemplateById(productId)
 
-      console.log('Templates:', response)
 
       if (response.status) {
         setTemplates(response.items)
@@ -317,7 +315,6 @@ const Reporting = () => {
 
       if (data.status) {
         setPartners(data.items)
-        console.log('partners', data.items)
       } else {
         console.error('Failed to fetch partners:', data)
       }
@@ -331,7 +328,6 @@ const Reporting = () => {
       setIsLoading(true)
 
       const res = await getInitDashBoardCount()
-      console.log('Dashboard counts response:', res)
 
       if (res && res.status) {
         setCounts({
@@ -368,13 +364,6 @@ const Reporting = () => {
       const statusParam = status === 'all' ? 'all' : status
       const partnerParam = selectedEmployee === 'all' ? '' : selectedEmployee
 
-      console.log('Fetching cases with filters:', {
-        status: statusParam,
-        partner: partnerParam,
-        range: dateRange,
-        startDate: startDateFilter,
-        endDate: endDateFilter
-      })
 
       const data = await getDashboardReportCasesApi(
         selectedService,
@@ -384,7 +373,6 @@ const Reporting = () => {
         endDateFilter
       )
 
-      console.log('All INIT cases data:', data)
 
       if (data?.items) {
         setRows(
@@ -444,14 +432,12 @@ const Reporting = () => {
   // Fixed employee selection handler
   const handleEmployeeSelectChange = event => {
     const selectedValue = event.target.value
-    console.log('Employee selection changed:', selectedValue)
     setSelectedEmployee(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
 
   const handleServiceSelectChange = event => {
     const selectedValue = event.target.value
-    console.log('Service selection changed:', selectedValue)
     setSelectedService(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
@@ -459,14 +445,12 @@ const Reporting = () => {
   // Fixed status change handler
   const handleStatusChange = event => {
     const selectedValue = event.target.value
-    console.log('Status change event:', selectedValue)
     setStatus(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
 
   const handleDateRangeChange = event => {
     const selectedValue = event.target.value
-    console.log('Date range change event:', selectedValue)
     setDateRange(selectedValue)
     setPage(1) // Reset to first page when filter changes
   }
@@ -888,7 +872,6 @@ const Reporting = () => {
   ]
 
   const handleDownloadPDF = urls => {
-    console.log('Downloading PDF with URLs:', urls)
 
     if (!urls || !Array.isArray(urls) || urls.length === 0) {
       setSnackbar({ open: true, message: 'No PDF available for this case', severity: 'warning' })
@@ -969,7 +952,6 @@ const Reporting = () => {
     try {
       setLoading(true)
       const response = await getConfigs()
-      console.log('config', response)
 
       if (response?.status) {
         setConfigs(response.items)
@@ -986,7 +968,6 @@ const Reporting = () => {
     try {
       setLoading(true)
       const response = await getAllServicesApi()
-      console.log('services', response)
 
       if (response?.items) {
         setServices(response.items)
@@ -1216,11 +1197,9 @@ const Reporting = () => {
       charge: selectedProduct?.charge || 0 // Add charge field
     }
 
-    console.log('Properly structured payload:', payload)
 
     try {
       const data = await updateAddCasesApi(payload)
-      console.log('submit response', data)
 
       if (data.status) {
         setSnackbar({ open: true, message: 'Case successfully submitted', severity: 'success' })

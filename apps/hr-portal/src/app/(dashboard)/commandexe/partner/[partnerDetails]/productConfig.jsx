@@ -88,7 +88,6 @@ const ProductConfig = () => {
   })
 
   const handleOpenEditDialog = product => {
-    console.log('product',product);
     
     setSelectedProduct(product)
     setEditFormData({
@@ -136,7 +135,6 @@ const ProductConfig = () => {
     }
   ]
 
-  console.log('partnerDetails', partnerDetails)
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -158,9 +156,7 @@ const ProductConfig = () => {
   const fetchProduct = async id => {
     try {
       const res = await getPartnerProductsAPI(id)
-      console.log('products', res)
       const response =  await getAllFormProductsAPI(id)
-      console.log('form products',response);
       
       if (res.status) {
         setData(res.items)
@@ -172,10 +168,8 @@ const ProductConfig = () => {
           }))
         )
       } else {
-        console.log('res', res.message)
       }
     } catch (error) {
-      console.log(error)
     }
   }
 
@@ -193,7 +187,6 @@ const ProductConfig = () => {
     try {
       setLoading(true)
       const response = await postAddProductApi(dataToSend)
-      console.log('Product added successfully:', response)
 
       if (response.status) {
         setSnackbar({
@@ -245,7 +238,6 @@ const ProductConfig = () => {
     try {
       setLoading(true)
       const response = await updateProductApi(dataToSend)
-      console.log('Product updated successfully:', response)
 
       if (response.status) {
         setSnackbar({
@@ -282,7 +274,6 @@ const ProductConfig = () => {
     try {
       setLoading(true)
       const response = await deleteProductApi({ productId: selectedProduct._id })
-      console.log('Product deleted successfully:', response)
 
       if (response.status) {
         setSnackbar({

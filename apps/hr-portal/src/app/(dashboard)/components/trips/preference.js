@@ -49,7 +49,6 @@ export default function Preference() {
     formValues.enableChatlets = enableChatlets
     formValues.chatletPermission = chatletPermission
 
-    console.log("Form submitted:", formValues)
     alert("Preferences saved successfully!")
   }
 

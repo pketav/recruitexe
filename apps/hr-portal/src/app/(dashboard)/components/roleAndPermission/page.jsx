@@ -52,7 +52,6 @@ const RoleAndPermission = () => {
 
   // Transform the API response to match our component structure
   const transformRoleAssignmentsData = (data) => {
-    console.log("check  transform function", data)
     if (!data || !data.items || !Array.isArray(data.items)) {
       console.error("Invalid role assignments data:", data)
       return []
@@ -221,7 +220,6 @@ const RoleAndPermission = () => {
       return assignments
     })
 
-    console.log("✅ Transformed role assignments:", transformedData)
     return transformedData
   }
 
@@ -402,7 +400,6 @@ const RoleAndPermission = () => {
         <Button
           variant="contained"
           size="small"
-          onClick={() => console.log("Edit assignment:", params.row)}
           sx={{
             fontSize: "12px",
             backgroundColor: "#7c4dff",

@@ -1594,7 +1594,6 @@ function UsersManagement() {
         setSuccessMessage(result.message)
         await fetchOrganizations()
         resetForm()
-        console.log(isEditMode ? "Admin updated successfully:" : "Admin created successfully:", result.data)
       } else {
         setError(result.message)
       }

@@ -82,7 +82,6 @@ const AddConfigForm = ({ onSubmit, onCancel }) => {
           fetchRemitters(),
         ]);
 
-        console.log("departments data with designations---", departmentsData);
         
         setDepartments(departmentsData);
         setExpenseTypes(expenseTypesData);
@@ -138,7 +137,6 @@ const AddConfigForm = ({ onSubmit, onCancel }) => {
     if (formData.department) {
       const selectedDept = departments.find(dept => dept._id === formData.department);
       if (selectedDept && selectedDept.designations) {
-        console.log("Selected department designations:", selectedDept.designations);
         setDesignations(selectedDept.designations);
       } else {
         setDesignations([]);
@@ -174,7 +172,6 @@ const AddConfigForm = ({ onSubmit, onCancel }) => {
     setSubmitStatus({ type: '', message: '' });
     
     try {
-      console.log("Form submission data:", formData);
       
       // Validate required fields
       if (!formData.source) {

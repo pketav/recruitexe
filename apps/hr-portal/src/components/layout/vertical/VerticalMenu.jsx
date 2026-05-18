@@ -71,7 +71,13 @@ import useVerticalNav from "@menu/hooks/useVerticalNav"
 const useApi = () => ({
   callApi: async ({ endpoint, method, disableSnackbar }) => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hrms-api.fincooperstech.com"
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+      if (!baseUrl) {
+        return {
+          success: false,
+          message: "API base URL is not configured",
+        }
+      }
       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null
       const response = await fetch(`${baseUrl}${endpoint}`, {
         method,

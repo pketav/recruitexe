@@ -259,12 +259,10 @@
 //   }
 
 //   const fetchTemplates = async productId => {
-//     console.log('Fetching templates for productId:', productId)
 
 //     try {
 //       const response = await getAllPDFtemplateById(productId)
 
-//       console.log('Templates:', response)
 
 //       if (response.status) {
 //         setTemplates(response.items)
@@ -284,7 +282,6 @@
 //       }
 
 //       const response = await generatePDFApi(payload)
-//       console.log('PDF generation response:', response)
 //       if (response.status) {
 //         setSnackbar({
 //           open: true,
@@ -354,7 +351,6 @@
 
 //       if (data.status) {
 //         setPartners(data.items)
-//         console.log('partners', data.items)
 //       } else {
 //         console.error('Failed to fetch partners:', data)
 //       }
@@ -368,7 +364,6 @@
 //       setIsLoading(true)
 
 //       const res = await getInitDashBoardCount()
-//       console.log('Dashboard counts response:', res)
 
 //       if (res && res.status) {
 //         setCounts({
@@ -406,7 +401,6 @@
 //       const statusParam = status === 'all' ? 'all' : status
 //       const partnerParam = selectedEmployee === 'all' ? '' : selectedEmployee
 
-//       console.log('Fetching cases with filters:', {
 //         status: statusParam,
 //         partner: partnerParam,
 //         range: dateRange,
@@ -422,7 +416,6 @@
 //         endDateFilter
 //       )
 
-//       console.log('All INIT cases data:', data)
 
 //       if (data?.items) {
 //         setRows(
@@ -482,14 +475,12 @@
 //   // Fixed employee selection handler
 //   const handleEmployeeSelectChange = event => {
 //     const selectedValue = event.target.value
-//     console.log('Employee selection changed:', selectedValue)
 //     setSelectedEmployee(selectedValue)
 //     setPage(1) // Reset to first page when filter changes
 //   }
 
 //   const handleServiceSelectChange = event => {
 //     const selectedValue = event.target.value
-//     console.log('Service selection changed:', selectedValue)
 //     setSelectedService(selectedValue)
 //     setPage(1) // Reset to first page when filter changes
 //   }
@@ -497,14 +488,12 @@
 //   // Fixed status change handler
 //   const handleStatusChange = event => {
 //     const selectedValue = event.target.value
-//     console.log('Status change event:', selectedValue)
 //     setStatus(selectedValue)
 //     setPage(1) // Reset to first page when filter changes
 //   }
 
 //   const handleDateRangeChange = event => {
 //     const selectedValue = event.target.value
-//     console.log('Date range change event:', selectedValue)
 //     setDateRange(selectedValue)
 //     setPage(1) // Reset to first page when filter changes
 //   }
@@ -1041,7 +1030,6 @@
 //   ]
 
 //   const handleDownloadPDF = urls => {
-//     console.log('Downloading PDF with URLs:', urls)
 
 //     if (!urls || !Array.isArray(urls) || urls.length === 0) {
 //       setSnackbar({ open: true, message: 'No PDF available for this case', severity: 'warning' })
@@ -1081,7 +1069,6 @@
 //   }
 
 //   const handleOpenAddModal = async row => {
-//     console.log('Opening add modal for row:', row)
 //     setOpenAddModal(true)
 //     const requestId = row.requestData._id
 //     const initId = row._id
@@ -1094,7 +1081,6 @@
 //     if (row.serviceId) {
 //       try {
 //         const response = await getpartnerproduct(requestId, row.serviceId, initId)
-//         console.log('Fetched partner products:', response)
 
 //         if (response && response.items) {
 //           setPartnerProducts(response.items)
@@ -1153,7 +1139,6 @@
 //     try {
 //       setLoading(true)
 //       const response = await getAllServicesApi()
-//       console.log('services', response)
 
 //       if (response?.items) {
 //         setServices(response.items)
@@ -1427,10 +1412,8 @@
 //         userProductId: currentProduct.userProductId,
 //         initFields: initFields
 //       }
-//       console.log('AI Extraction Payload:', payload)
 
 //       const response = await getAiDataAPI(payload)
-//       console.log('ai data', response)
 
 //       if (response.status && response.items) {
 //         // Update the form fields with the extracted data
@@ -1648,11 +1631,9 @@
 //     charge: selectedProduct?.charge || 0 // Add charge field
 //   }
 
-//   console.log('Properly structured payload:', payload)
 
 //   try {
 //     const data = await updateAddCasesApi(payload)
-//     console.log('submit response', data)
 
 //     if (data.status) {
 //       setSnackbar({ open: true, message: 'Case successfully submitted', severity: 'success' })
@@ -4154,10 +4135,8 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
   }
 
   const fetchTemplates = async (productId) => {
-    console.log("Fetching templates for productId:", productId)
     try {
       const response = await getAllPDFtemplateById(productId)
-      console.log("Templates:", response)
       if (response.status) {
         setTemplates(response.items)
       }
@@ -4175,7 +4154,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
         initId: selectedReport,
       }
       const response = await generatePDFApi(payload)
-      console.log("PDF generation response:", response)
       if (response.status) {
         setSnackbar({
           open: true,
@@ -4238,7 +4216,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
       const data = await getMyPartnersAPI()
       if (data.status) {
         setPartners(data.items)
-        console.log("partners", data.items)
       } else {
         console.error("Failed to fetch partners:", data)
       }
@@ -4251,7 +4228,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
     try {
       setIsLoading(true)
       const res = await getInitDashBoardCount()
-      console.log("Dashboard counts response:", res)
       if (res && res.status) {
         setCounts({
           totalCases: res.items.all || 0,
@@ -4279,13 +4255,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
       setIsLoading(true)
       const statusParam = status === "all" ? "all" : status
       const partnerParam = selectedEmployee === "all" ? "" : selectedEmployee
-      console.log("Fetching cases with filters:", {
-        status: statusParam,
-        partner: partnerParam,
-        range: dateRange,
-        startDate: startDateFilter,
-        endDate: endDateFilter,
-      })
       const data = await getAllUnfilteredInitCasesApi(
         selectedService,
         partnerParam,
@@ -4293,7 +4262,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
         startDateFilter,
         endDateFilter,
       )
-      console.log("All INIT cases data:", data)
       if (data?.items) {
         setRows(
           data.items.map((item) => ({
@@ -4350,28 +4318,24 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
 
   const handleEmployeeSelectChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Employee selection changed:", selectedValue)
     setSelectedEmployee(selectedValue)
     setPage(1)
   }
 
   const handleServiceSelectChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Service selection changed:", selectedValue)
     setSelectedService(selectedValue)
     setPage(1)
   }
 
   const handleStatusChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Status change event:", selectedValue)
     setStatus(selectedValue)
     setPage(1)
   }
 
   const handleDateRangeChange = (event) => {
     const selectedValue = event.target.value
-    console.log("Date range change event:", selectedValue)
     setDateRange(selectedValue)
     setPage(1)
   }
@@ -4875,7 +4839,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
   ]
 
   const handleDownloadPDF = (urls) => {
-    console.log("Downloading PDF with URLs:", urls)
     if (!urls || !Array.isArray(urls) || urls.length === 0) {
       setSnackbar({ open: true, message: "No PDF available for this case", severity: "warning" })
       return
@@ -4904,7 +4867,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
   }
 
   const handleOpenAddModal = async (row) => {
-    console.log("Opening add modal for row:", row)
     setOpenAddModal(true)
     const requestId = row.requestData._id
     const initId = row._id
@@ -4922,7 +4884,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
     if (row.serviceId) {
       try {
         const response = await getpartnerproduct(requestId, row.serviceId, initId)
-        console.log("Fetched partner products:", response)
         if (response && response.items) {
           setPartnerProducts(response.items)
           // Set partner data to access each field
@@ -4977,7 +4938,6 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
     try {
       setLoading(true)
       const response = await getAllServicesApi()
-      console.log("services", response)
       if (response?.items) {
         setServices(response.items)
       }
@@ -5215,9 +5175,7 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
         userProductId: currentProduct.userProductId,
         initFields: initFields,
       }
-      console.log("AI Extraction Payload:", payload)
       const response = await getAiDataAPI(payload)
-      console.log("ai data", response)
       if (response.status && response.items) {
         const extractedData = response.items
         const updatedFields = {
@@ -5394,10 +5352,8 @@ const InitDashboard = ({ title = "BACKOFFICE DASHBOARD" }) => {
       payload.sign = existingSignUrl
     }
 
-    console.log("Properly structured payload:", payload)
     try {
       const data = await updateAddCasesApi(payload)
-      console.log("submit response", data)
       if (data.status) {
         setSnackbar({ open: true, message: "Case successfully submitted", severity: "success" })
         handleCloseAddModal()

@@ -194,7 +194,6 @@ export default function JobDescription() {
           },
         },
       )
-      // console.log("jobdescription", res)
       if (res.data.status) {
         const jobData = res.data.items.jobDescription
         const jobSummary = jobData.JobSummary || ""

@@ -474,7 +474,6 @@ export default function EmployeeUpdate() {
         ];
         const missingDocs = requiredDocs.filter((doc) => !formData[doc]);
       
-        console.log("missingDocs",missingDocs)
 
         const isNomineeInvalid = formData.nominee.some((nom) =>
           !nom.nomineeName || !nom.relationWithEmployee || !nom.nominationType ||
@@ -523,7 +522,6 @@ export default function EmployeeUpdate() {
           });
       
           if (res.data.status) {
-            console.log('Submission successful!');
             // You can add a success toast or redirect here
           }
         } catch (err) {
@@ -532,7 +530,6 @@ export default function EmployeeUpdate() {
       };
       
       
-console.log("formdata",formData)
 
 
   return (

@@ -202,7 +202,6 @@ export default function PlanUsageDashboard() {
       if (!mountedRef.current) return
       // Prevent duplicate calls unless forced
       if (dataLoadInProgress.current && !force) {
-        console.log("Data load already in progress, skipping...")
         return
       }
       try {
@@ -375,9 +374,7 @@ export default function PlanUsageDashboard() {
   // Enhanced payment verification with better duplicate prevention
   const verifyPayment = useCallback(
     async (paymentResponse) => {
-      console.log("Payment verification started")
       if (verificationInProgress.current || hasProcessedPayment.current || !mountedRef.current) {
-        console.log("Payment verification already in progress or completed")
         return
       }
       try {
@@ -496,7 +493,6 @@ export default function PlanUsageDashboard() {
         Amount: Number.parseFloat(amount),
         returnURL: returnUrl,
       }
-      console.log("payloadPayment==>", payload)
       const result = await callApi({
         endpoint: "/v1/api/service/icici/paymentInitiate",
         method: "POST",
@@ -601,7 +597,6 @@ export default function PlanUsageDashboard() {
 
       // Prevent processing if already processed these same params
       if (lastProcessedParams.current === searchString && hasProcessedPayment.current) {
-        console.log("Same params already processed, skipping...")
         return
       }
       // Prevent re-processing if component is unmounted

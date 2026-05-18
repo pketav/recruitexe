@@ -22,7 +22,6 @@ export const useChatData = (userId, employeeIdFromToken) => {
     const now = Date.now()
     const timeSinceLastRefresh = now - lastRefreshRef.current
     if (timeSinceLastRefresh < 1000 && silent) {
-      console.log('⏸️ Skipping chat list refresh - too frequent')
       return
     }
 
@@ -45,7 +44,6 @@ export const useChatData = (userId, employeeIdFromToken) => {
 
         setChatList(sortedChats)
         lastRefreshRef.current = now // Update last refresh time
-        console.log('📋 Chat list refreshed:', sortedChats.length, 'conversations')
       } else {
         setChatList([])
       }
@@ -64,7 +62,6 @@ export const useChatData = (userId, employeeIdFromToken) => {
     }
 
     refreshTimeoutRef.current = setTimeout(() => {
-      console.log('🔄 Debounced chat list refresh triggered')
       fetchChatList(true) // Silent refresh
     }, delay)
   }, [fetchChatList])
@@ -76,31 +73,26 @@ export const useChatData = (userId, employeeIdFromToken) => {
 
     if (timeSinceLastRefresh < 500) {
       // If last refresh was less than 500ms ago, use debounced refresh instead
-      console.log('⚡ Force refresh throttled, using debounced refresh')
       debouncedRefreshChatList(500)
     } else {
-      console.log('⚡ Force refreshing chat list')
       fetchChatList(true) // Silent refresh
     }
   }, [fetchChatList, debouncedRefreshChatList])
 
   // Notification-triggered refresh (only for actual notifications)
   const refreshOnNotification = useCallback(() => {
-    console.log('🔔 Notification received - refreshing chat list')
     debouncedRefreshChatList(800) // Use debounced refresh with slightly longer delay
   }, [debouncedRefreshChatList])
 
   // Fetch chat messages for a conversation
   const fetchChatHistory = useCallback(async (conversationId) => {
     if (!conversationId || !userId) {
-      console.log('⚠️ No conversationId or userId - clearing messages')
       setChatMessages([])
       return
     }
 
     try {
       // setLoading(true)
-      console.log('🔍 Fetching chat history for conversation:', conversationId)
 
       const response = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_SOCKET_URL}/api/chat/getChatMessages`, {
         params: {
@@ -140,12 +132,10 @@ export const useChatData = (userId, employeeIdFromToken) => {
 
         setGroupInfo(response.data.items.conversationDetails)
 
-        console.log('📝 Loaded', formattedMessages.length, 'messages from API')
 
         // Clear existing messages first to prevent duplicates on refresh
         setChatMessages(formattedMessages)
       } else {
-        console.log('⚠️ No messages found in response')
         setChatMessages([])
       }
     } catch (error) {
@@ -209,7 +199,6 @@ export const useChatData = (userId, employeeIdFromToken) => {
     if (!conversationId || !userId) return null
 
     try {
-      console.log('🔍 Fetching specific conversation:', conversationId)
 
       // This would be a new API endpoint to get conversation details by ID
       // For now, we'll refresh the chat list and find it

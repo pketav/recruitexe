@@ -1,5 +1,4 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-// const LOCAL_URL = 'http://localhost:4000';
 
 // Helper function to get headers with auth token
 const getHeaders = () => {
@@ -12,7 +11,6 @@ const getHeaders = () => {
 
 class ConfigurationService {
   async toggleConfiguration(configData) {
-    console.log("configData",configData)
     try {
       const response = await fetch(`${baseUrl}/v1/api/expenseRole/fromWhere`, {
         method: "POST",

@@ -548,7 +548,6 @@ function FileManagementDashboard() {
                                   if (canOpen) {
                                     window.open(fileUrl, '_blank')
                                   } else if (isFolder) {
-                                    console.log('Navigate to folder:', file.key)
                                   } else {
                                     handleOpenError('This file cannot be opened. No preview or URL available.')
                                   }

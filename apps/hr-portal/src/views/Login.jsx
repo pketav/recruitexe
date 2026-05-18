@@ -856,7 +856,7 @@ const LoginV2 = ({ mode }) => {
                       color: '#67e8f9'
                     }
                   }}
-                  onClick={() => window.open('https://www.recruitexe.com/contact', '_blank')}
+                  onClick={() => window.open(`${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/contact`, '_blank')}
                 >
                   Contact Sales
                 </Typography>

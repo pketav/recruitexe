@@ -77,7 +77,6 @@ const Sidebar = ({ onItemClick, onTrackEmployee, onViewEmployeeHistory, employee
   }
 
   // Filter data based on search term
-  console.log("employeesData==>", employeesData)
   const filteredEmployees =
     employeesData && Array.isArray(employeesData)
       ? employeesData.filter(
@@ -517,7 +516,7 @@ const Sidebar = ({ onItemClick, onTrackEmployee, onViewEmployeeHistory, employee
         {/* Employees List */}
         {activeTab === 0 && (
           <List sx={{ p: 0 }}>
-            {console.log("filteredEmployees==>", filteredEmployees)}
+
             {filteredEmployees.length === 0 ? (
               <ListItem>
                 <Box sx={{ textAlign: "center", width: "100%", py: 8 }}>
@@ -1182,7 +1181,7 @@ const Sidebar = ({ onItemClick, onTrackEmployee, onViewEmployeeHistory, employee
 // Function to get color based on customer type (enhanced with more vibrant colors)
 const getCustomerTypeColor = (type) => {
   if (!type) return "#6b7280" // Default gray for undefined type
-  
+
   switch (type.toLowerCase()) {
     case "corporate":
       return "#0ea5e9" // Sky blue

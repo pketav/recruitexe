@@ -65,7 +65,6 @@ const AddCategoryForm = ({ open, onClose, onSave, editCategory = null }) => {
 
   // Function to show a notification
   const showSnackbar = (message, severity = "info") => {
-    console.log("Showing snackbar:", message, severity)
     setSnackbarMessage(message)
     setSnackbarSeverity(severity)
     setSnackbarOpen(true)
@@ -118,9 +117,7 @@ const AddCategoryForm = ({ open, onClose, onSave, editCategory = null }) => {
     setLoading(true)
     setError(null)
     try {
-      console.log("Fetching parent categories...")
       const data = await fetchCategoryDropdown()
-      console.log("Parent categories fetched:", data)
       setCategories(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error("Error fetching parent categories:", err)
@@ -135,9 +132,7 @@ const AddCategoryForm = ({ open, onClose, onSave, editCategory = null }) => {
   const fetchExpenseTypeOptions = async () => {
     setLoadingExpenseTypes(true)
     try {
-      console.log("Fetching expense types...")
       const data = await fetchExpenseTypes()
-      console.log("Expense types fetched:", data)
       setExpenseTypes(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error("Error fetching expense types:", err)
@@ -179,7 +174,6 @@ const AddCategoryForm = ({ open, onClose, onSave, editCategory = null }) => {
     setError(null)
 
     try {
-      console.log("Preparing to save category...")
       // Create category object from form data
       const categoryData = {
         id: editCategory ? editCategory._id : undefined, // Keep ID if editing
@@ -193,10 +187,8 @@ const AddCategoryForm = ({ open, onClose, onSave, editCategory = null }) => {
         // image: imagePreview,
       }
 
-      console.log("Saving category with data:", categoryData)
       // Call the API to add/update the category
       const result = await addCategory(categoryData)
-      console.log("Category saved successfully:", result)
 
       // Show success notification
       showSnackbar("Category saved successfully!", "success")

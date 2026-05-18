@@ -28,7 +28,6 @@ const getLocalStorage = () => {
 
     async fetchAllCategories() {
       try {
-        console.log("Fetching all categories...")
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/expenseCategory/all`, {
@@ -44,7 +43,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("All categories data:", data)
         return data.items || []
       } catch (error) {
         console.error("Error fetching all categories:", error)
@@ -54,7 +52,6 @@ const getLocalStorage = () => {
   
     async fetchCategoryDropdown() {
       try {
-        console.log("Fetching category dropdown...")
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/expenseCategory/categoryDropdown`, {
@@ -70,7 +67,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Category dropdown data:", data)
         return data.items || []
       } catch (error) {
         console.error("Error fetching category dropdown:", error)
@@ -80,7 +76,6 @@ const getLocalStorage = () => {
   
     async fetchExpenseTypes() {
       try {
-        console.log("Fetching expense types...")
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/expenseType/all`, {
@@ -96,7 +91,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Expense types data:", data)
         return data.items || []
       } catch (error) {
         console.error("Error fetching expense types:", error)
@@ -112,7 +106,6 @@ const getLocalStorage = () => {
           isSubCategory: categoryData.isSubCategory ? "true" : "false",
         }
   
-        console.log("Adding category with data:", formattedData)
         const token = this.getToken()
   
         const response = await fetch(`${this.baseUrl}/v1/api/expenseCategory/add`, {
@@ -129,7 +122,6 @@ const getLocalStorage = () => {
         }
   
         const data = await response.json()
-        console.log("Add category response:", data)
         return data
       } catch (error) {
         console.error("Error adding category:", error)

@@ -32,12 +32,10 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     if (isPublicRoute) {
       setIsLoading(false)
-      console.log("here",pathname)
       return
     }
 
     if (!token) {
-      console.log("here1",pathname)
       router.replace('/CareerPage')
       return
     }
@@ -54,11 +52,9 @@ const ProtectedRoute = ({ children }) => {
           setVerification(res.data.items)
           setIsLoading(false)
         } else {
-          console.log("here2",pathname)
           router.replace('/CareerPage')
         }
       } catch (error) {
-        console.log("here3",pathname)
         router.replace('/CareerPage')
       }
     }

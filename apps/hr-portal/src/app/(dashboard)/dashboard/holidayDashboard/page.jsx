@@ -165,7 +165,6 @@ export default function HolidayDashboard() {
   };
 
   const handleDateChange = (newDate) => {
-    console.log("date",newDate)
     if (isSunday(newDate)) {
       const formatted = format(newDate, 'yyyy-MM-dd');
       setFormData((prev) => ({ ...prev, date: formatted }));

@@ -62,7 +62,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Expense added:", res.data)
 //       router.push("/categories") // Navigate back to categories page
 //     } catch (error) {
 //       console.error("Error adding expense:", error)
@@ -485,7 +484,6 @@
 //           authorization: token,
 //         },
 //       })
-//       console.log("Expense added:", res.data)
 //       showSnackbar("Expense type created successfully!")
 //       router.push("/categories")
 //     } catch (error) {
@@ -787,7 +785,6 @@
 //             authorization: token,
 //           },
 //         })
-//         console.log("Form updated:", response)
 //         showSnackbar("Custom form updated successfully!")
 //       } else {
 //         // Create new form
@@ -797,7 +794,6 @@
 //             authorization: token,
 //           },
 //         })
-//         console.log("Form created:", response)
 
 //         if (response.data) {
 //           const formId = response.data.items?.formId || response.data._id || response.data.id
@@ -878,7 +874,6 @@
 //         setFormData(formDataToSet)
 //         setCreatedFormName(existingForm.name || "")
 
-//         console.log("Loaded existing form:", formDataToSet)
 //       }
 //     } catch (error) {
 //       console.error("Error loading existing form:", error)
@@ -2162,7 +2157,6 @@ export default function ExpenseTypeForm() {
           authorization: token,
         },
       })
-      console.log("Expense added:", res.data)
       showSnackbar("Expense type created successfully!")
       router.push("/employeeSetup/NewExpensesDetails/Category")
     } catch (error) {
@@ -2463,7 +2457,6 @@ export default function ExpenseTypeForm() {
             authorization: token,
           },
         })
-        console.log("Form updated:", response)
         showSnackbar("Custom form updated successfully!")
       } else {
         response = await axios.post(`${baseUrl}/v1/api/dynamicForm`, formData, {
@@ -2472,7 +2465,6 @@ export default function ExpenseTypeForm() {
             authorization: token,
           },
         })
-        console.log("Form created:", response)
         if (response.data) {
           const formId = response.data.items?.formId || response.data._id || response.data.id
           setExpenseForm((prev) => ({ ...prev, formId: formId }))
@@ -2546,7 +2538,6 @@ export default function ExpenseTypeForm() {
         }
         setFormData(formDataToSet)
         setCreatedFormName(existingForm.name || "")
-        console.log("Loaded existing form:", formDataToSet)
       }
     } catch (error) {
       console.error("Error loading existing form:", error)

@@ -49,13 +49,11 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     // Handle socket notifications
     const unsubscribeNotification = onNotification((notificationData) => {
-      console.log('🔔 New notification received:', notificationData)
       handleNewNotification(notificationData)
     })
 
     // Handle user status changes
     const unsubscribeUserStatus = onUserStatus((statusData) => {
-      console.log('👤 User status changed:', statusData)
       handleUserStatusChange(statusData)
     })
 
@@ -92,7 +90,6 @@ export const NotificationProvider = ({ children }) => {
 
     // Show enhanced browser notification if permission granted and enabled
     if (notificationSettings.browserNotifications && browserPermission) {
-      console.log('🔔 Showing enhanced browser notification')
       showChatNotification(
         notification.senderName,
         notification.messageContent,
@@ -153,9 +150,8 @@ export const NotificationProvider = ({ children }) => {
     try {
       const audio = new Audio('/notification-sound.mp3') // Add your sound file to public folder
       audio.volume = 0.3
-      audio.play().catch(e => console.log('Could not play notification sound:', e))
+      audio.play().catch(() => {})
     } catch (error) {
-      console.log('Notification sound not available')
     }
   }, [])
 

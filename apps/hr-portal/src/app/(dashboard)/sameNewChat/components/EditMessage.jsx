@@ -24,13 +24,11 @@ function EditMessage({ anchorEl, open, onClose, onEditMessage, selectedMessage }
         ...selectedMessage.content,
         text: editText
       };
-      console.log('updateeddd content==>',updatedContent)
 
       onEditMessage( updatedContent.text);
       onClose();
     }
   };
-  console.log('kwshvsdh==>',selectedMessage,editText)
 
   const isText = selectedMessage?.type === 'text';
 

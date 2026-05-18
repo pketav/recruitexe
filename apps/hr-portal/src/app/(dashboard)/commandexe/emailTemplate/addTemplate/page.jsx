@@ -54,7 +54,6 @@ const emailTemplate = () => {
       const res = await getAllVariablesAPI()
       if (res && res.items) {
         setVariables(res.items)
-        console.log('Variables loaded:', res.items.length)
       }
     } catch (error) {
       console.error('Error fetching variables:', error)
@@ -85,11 +84,6 @@ const emailTemplate = () => {
         throw new Error('Template content cannot be empty')
       }
 
-      console.log('Saving template with Jodit PRO features:', {
-        templateName,
-        contentLength: content.length,
-        hasProFeatures: content.includes('jodit-pro') || content.includes('todo-list') || content.includes('page-break')
-      })
 
       const response = await addEmailTemplate(content, templateName)
 
@@ -118,29 +112,15 @@ const emailTemplate = () => {
   // Handle content changes for any additional processing
   const handleContentChange = content => {
     // Optional: Add any real-time content processing here
-    console.log('Content updated with Jodit PRO features:', {
-      length: content.length,
-      hasImages: content.includes('<img'),
-      hasTables: content.includes('<table'),
-      hasTodoLists: content.includes('todo-list'),
-      hasPageBreaks: content.includes('page-break'),
-      hasEmojis: content.includes('emoji'),
-      hasSignatures: content.includes('signature-highlight')
-    })
   }
 
   // Handle variable copy for additional functionality
   const handleVariableCopy = variableName => {
-    console.log('Variable copied:', variableName)
     // Optional: Add analytics or tracking here
   }
 
   // Handle template load for additional processing
   const handleTemplateLoad = htmlContent => {
-    console.log('Template loaded:', {
-      size: htmlContent.length,
-      hasProFeatures: htmlContent.includes('jodit-pro')
-    })
   }
 
   if (loading) {

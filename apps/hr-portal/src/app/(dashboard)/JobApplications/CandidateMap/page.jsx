@@ -271,7 +271,6 @@ export default function CandidateMap() {
     // Build the query string with filters
     const queryString = buildQueryParams(jobId, currentFilters)
 
-    console.log("Fetching candidates with filters:", queryString)
 
     const result = await callApi({
       endpoint: `/v1/api/jobPost/getApplicantsLocationByJobPost?${queryString}`,

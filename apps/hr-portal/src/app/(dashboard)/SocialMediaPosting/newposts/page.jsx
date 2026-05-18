@@ -999,7 +999,7 @@ export function NewPostForm({ onSubmit, initialData, onSavePost, getAllDraft }) 
                     LinkedIn Accounts
                   </Typography>
 
-                  {console.log("accounts =>", accounts)}
+
 
                   {/* Filter accounts that have accessToken */}
                   {accounts.filter((acc) => acc.accessToken).length > 0 && (

@@ -32,7 +32,6 @@ const ApproverScreen = {
       }
 
       const data = await response.json();
-      console.log("data approver => ", data);
       return data.items.submissions || []; // Updated to access items.submissions
     } catch (error) {
       console.error("Error fetching approver screen:", error);
@@ -51,7 +50,6 @@ const ApproverScreen = {
         throw new Error("Missing required field: submissionId");
       }
 
-      console.log("Sending payload to API:", payload);
 
       const response = await fetch(`${this.baseUrl}/v1/api/expenseSubmission/status/${submissionId}`, {
         method: "POST",

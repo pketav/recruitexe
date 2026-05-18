@@ -180,8 +180,8 @@ const RecruiterDashboard = ({
 
           if (customStart && customEnd) {
             endpoint = `/v1/api/jobPost/getALLRecruiterData?startDate=${customStart}&endDate=${customEnd}`
-            console.log("API Endpoint:", endpoint) // Debug log
-            console.log("Date range:", { customStart, customEnd }) // Debug log
+// Debug log
+// Debug log
           }
         }
       }
@@ -295,11 +295,6 @@ const RecruiterDashboard = ({
         const endDate = range.endDate
 
         // Debug logs
-        console.log("Selected date range:", { startDate, endDate })
-        console.log("Formatted dates:", {
-          start: formatDate(startDate),
-          end: formatDate(endDate),
-        })
 
         // Update applied custom dates state
         setAppliedCustomDates({ startDate, endDate })

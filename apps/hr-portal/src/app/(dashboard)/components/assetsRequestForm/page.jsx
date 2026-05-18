@@ -81,7 +81,6 @@ const AssetsRequestForm = () => {
     // Simulate API call
     setTimeout(() => {
       // In a real app, you would send the data to your API
-      console.log("Submitting asset request:", formData)
 
       // Show success message
       setSnackbar({

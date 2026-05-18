@@ -337,7 +337,6 @@ export default function EmployeeUpdate() {
           });
       
           if (res.data.status) {
-            console.log('Submission successful!');
             setSnackbar({
                 open: true,
                 message: res.data.message,
@@ -349,7 +348,6 @@ export default function EmployeeUpdate() {
         }
       };
 
-      console.log("data",empData)
   return (
     <Container maxWidth='xl'>
         <Box sx={{display:'flex', justifyContent:"space-between"}}>

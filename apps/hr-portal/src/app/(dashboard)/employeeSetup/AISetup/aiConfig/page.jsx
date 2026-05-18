@@ -274,7 +274,6 @@ export default function AIConfigPage() {
     getCategories()
   }, [])
 
-  console.log('rulesDara', rules)
 
   const handleAddRules = async () => {
     try {

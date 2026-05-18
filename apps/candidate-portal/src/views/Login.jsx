@@ -127,7 +127,6 @@ const LoginV2 = ({ mode }) => {
           'Content-Type': 'application/json',
         }
       })
-      console.log("Erroe",res)
      if(res.data.status){
       setSnackbar({
         open: true,

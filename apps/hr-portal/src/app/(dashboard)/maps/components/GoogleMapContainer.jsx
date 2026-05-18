@@ -279,7 +279,6 @@ const GoogleMapContainer = () => {
 
   // Connect to socket.io for real-time updates
   useEffect(() => {
-    console.log("Connecting to location tracking socket...")
 
     // Connect to the socket
     if (!socket.connected) {
@@ -297,7 +296,6 @@ const GoogleMapContainer = () => {
         // Extract userId from the data
         const userId = data.userId.split("_")[0]
 
-        console.log("Received live location update for user:", userId)
 
         // Update live location data
         setLiveUserLocations((prev) => ({
@@ -358,37 +356,27 @@ const GoogleMapContainer = () => {
       const data = await getEmployeeData(filter)
 
       // Debug employee location data
-      console.log("Employee data received:", data)
 
       if (data && Array.isArray(data) && data.length > 0) {
         // Log the first employee's location structure
         const firstEmployee = data[0]
-        console.log("First employee:", firstEmployee)
-        console.log("First employee location:", firstEmployee.location)
 
         // Check for GeoJSON format
         if (firstEmployee.location && firstEmployee.location.type === "Point") {
-          console.log("Employee has GeoJSON Point location format")
-          console.log("Coordinates:", firstEmployee.location.coordinates)
         }
 
         // Check for standard format
         if (firstEmployee.currentLocation) {
-          console.log("Employee has standard location format")
-          console.log("Current location:", firstEmployee.currentLocation)
         }
       }
 
-      console.log("Fetched employee data:", data.length, "employees")
       setEmployeesData(data)
 
       // Convert to GeoJSON format for map display
       const geoJson = convertEmployeesToGeoJson(data)
-      console.log("Employee GeoJSON features:", geoJson.features.length)
 
       // Debug the first GeoJSON feature if available
       if (geoJson.features.length > 0) {
-        console.log("First GeoJSON feature:", geoJson.features[0])
       }
 
       setEmployeesGeoJson(geoJson)
@@ -416,22 +404,16 @@ const GoogleMapContainer = () => {
       }
 
       // Log the branch data for debugging
-      console.log("Fetched branch data:", data)
-      console.log("Branch data type:", typeof data)
-      console.log("Is array:", Array.isArray(data))
 
       if (Array.isArray(data)) {
-        console.log("Branch data length:", data.length)
 
         // Check if any branches have valid location data
         const validBranches = data.filter(isValidBranchForMap)
-        console.log("Valid branches for map:", validBranches.length)
 
         setBranchesData(data)
 
         // Convert to GeoJSON format for map display
         const geoJson = convertBranchesToGeoJson(data)
-        console.log("Branch GeoJSON features:", geoJson?.features?.length || 0)
         setBranchesGeoJson(geoJson)
 
         if (geoJson.features.length === 0 && data.length > 0) {
