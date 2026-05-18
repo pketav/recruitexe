@@ -6,8 +6,22 @@ export const appRoutes = {
   candidateDashboard: "/candidate/dashboard",
 } as const
 
+function normalizeOrigin(origin?: string) {
+  if (!origin) {
+    return ""
+  }
+
+  const withProtocol = origin.startsWith("http") ? origin : `https://${origin}`
+  return withProtocol.replace(/\/$/, "")
+}
+
 export function getSiteOrigin() {
-  return process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:4030"
+  return normalizeOrigin(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.NEXT_PUBLIC_WEB_URL ||
+      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+      process.env.VERCEL_URL,
+  ) || "http://localhost:4030"
 }
 
 export function getApiBaseUrl() {
@@ -15,7 +29,7 @@ export function getApiBaseUrl() {
 }
 
 export function getAbsoluteUrl(path = "/") {
-  const origin = getSiteOrigin().replace(/\/$/, "")
+  const origin = getSiteOrigin()
   const normalizedPath = path.startsWith("/") ? path : `/${path}`
 
   return `${origin}${normalizedPath}`
