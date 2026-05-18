@@ -6,7 +6,11 @@ import { ComparisonSection } from "@/components/comparison-section"
 import { UseCasesSection } from "@/components/use-cases-section"
 import { CTASection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
+import { getAbsoluteUrl } from "@/lib/routes"
 // import { InterviewSection } from "@/components/interview-section"
+
+const siteUrl = getAbsoluteUrl("/")
+const logoUrl = getAbsoluteUrl("/vector.svg")
 
 // Define metadata for the page
 export const metadata = {
@@ -26,16 +30,16 @@ export const metadata = {
   openGraph: {
     title: "AI Recruitment Software & Resume Screening Tool | RecruitExe",
     description: "RecruitExe is an AI-powered recruitment software that features smart resume screening, automated applicant tracking & more. Book a free consultation today.",
-    url: "https://www.recruitexe.com/",
+    url: siteUrl,
     type: "website",
-    images: ["https://www.recruitexe.com/vector.svg"],
+    images: [logoUrl],
     siteName: "RecruitExe",
   },
   twitter: {
     card: "summary_large_image",
     title: "AI Recruitment Software & Resume Screening Tool | RecruitExe",
     description: "RecruitExe is an AI-powered recruitment software that features smart resume screening, automated applicant tracking & more. Book a free consultation today.",
-    images: ["https://www.recruitexe.com/vector.svg"],
+    images: [logoUrl],
   },
   robots: {
     index: true,
@@ -56,9 +60,9 @@ const schemaMarkup = [
     "@type": ["Organization", "LocalBusiness"],
     name: "RecruitExe",
     alternateName: "RecruitExe",
-    url: "https://www.recruitexe.com/",
-    logo: "https://www.recruitexe.com/vector.svg",
-    image: "https://www.recruitexe.com/vector.svg",
+    url: siteUrl,
+    logo: logoUrl,
+    image: logoUrl,
     telephone: "+91 9302075637",
     address: {
       "@type": "PostalAddress",
@@ -78,10 +82,10 @@ const schemaMarkup = [
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "RecruitExe",
-    url: "https://www.recruitexe.com",
+    url: siteUrl,
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://www.recruitexe.com/search?q={search_term_string}",
+      target: `${getAbsoluteUrl("/search")}?q={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   },
@@ -93,8 +97,8 @@ const schemaMarkup = [
     applicationSubCategory: "HumanResourcesApplication",
     operatingSystem: "Web-based",
     description: "AI-powered recruitment software that features smart resume screening, automated applicant tracking, and intelligent candidate evaluation",
-    url: "https://www.recruitexe.com/",
-    screenshot: "https://www.recruitexe.com/vector.svg",
+    url: siteUrl,
+    screenshot: logoUrl,
     offers: {
       "@type": "Offer",
       price: "0",
@@ -104,7 +108,7 @@ const schemaMarkup = [
     creator: {
       "@type": "Organization",
       name: "RecruitExe",
-      url: "https://www.recruitexe.com/",
+      url: siteUrl,
     },
   },
 ];

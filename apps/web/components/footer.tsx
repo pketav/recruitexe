@@ -1,5 +1,26 @@
 import Link from "next/link"
-import { Facebook, Twitter, Linkedin, Instagram, XIcon } from "lucide-react"
+import { Facebook, Linkedin, Instagram, XIcon } from "lucide-react"
+
+const socialLinks = [
+  { label: "Facebook", href: "/", icon: Facebook },
+  { label: "X", href: "/", icon: XIcon },
+  { label: "LinkedIn", href: "/", icon: Linkedin },
+  { label: "Instagram", href: "/", icon: Instagram },
+]
+
+const platformLinks = [
+  { label: "ATS Features", href: "/features" },
+  { label: "AI Screening", href: "/features" },
+  { label: "Analytics", href: "/hr/dashboard" },
+  { label: "Integrations", href: "/features" },
+]
+
+const resourceLinks = [
+  { label: "Hiring Guides", href: "/blog" },
+  { label: "Best Practices", href: "/blog/content/howAi" },
+  { label: "Case Studies", href: "/blog" },
+  { label: "Support", href: "/contact" },
+]
 
 export function Footer() {
   return (
@@ -15,70 +36,37 @@ export function Footer() {
               platform.
             </p>
             <div className="flex space-x-4">
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="w-6 h-6" />
-              </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <XIcon className="w-6 h-6" />
-              </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin className="w-6 h-6" />
-              </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram className="w-6 h-6" />
-              </Link>
+              {socialLinks.map(({ label, href, icon: Icon }) => (
+                <Link key={label} href={href} aria-label={label} className="text-gray-400 hover:text-white transition-colors">
+                  <Icon className="w-6 h-6" />
+                </Link>
+              ))}
             </div>
           </div>
 
           <div>
             <h3 className="text-white font-semibold mb-4">Platform</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  ATS Features
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  AI Screening
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Analytics
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Integrations
-                </Link>
-              </li>
+              {platformLinks.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="text-gray-300 hover:text-white transition-colors">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
             <h3 className="text-white font-semibold mb-4">Resources</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Hiring Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Best Practices
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Case Studies
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Support
-                </Link>
-              </li>
+              {resourceLinks.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="text-gray-300 hover:text-white transition-colors">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -86,10 +74,10 @@ export function Footer() {
         <div className="border-t border-white/10 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">© 2024 RecruitExe. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+            <Link href="/contact" className="text-gray-400 hover:text-white text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+            <Link href="/contact" className="text-gray-400 hover:text-white text-sm transition-colors">
               Terms of Service
             </Link>
            

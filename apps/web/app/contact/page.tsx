@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { toast, Toaster } from "sonner"
 import Link from "next/link"
 import Head from "next/head"
+import { getAbsoluteUrl, getApiBaseUrl } from "@/lib/routes"
 
 // Define types for the enterprise form data
 interface EnterpriseFormData {
@@ -41,8 +42,15 @@ interface AlertState {
   message: string | null
 }
 
+interface ApiErrorResponse {
+  message?: string
+}
+
 // Business types for dropdown
 const businessTypes = ["Healthcare", "Legal", "Finance", "Education", "Government", "Logistics", "E-commerce", "Other"]
+const contactUrl = getAbsoluteUrl("/contact")
+const homeUrl = getAbsoluteUrl("/")
+const logoUrl = getAbsoluteUrl("/vector.svg")
 
 export default function ContactPage() {
   const [isClient, setIsClient] = useState(false)
@@ -59,7 +67,8 @@ export default function ContactPage() {
   const [loading, setLoading] = useState<boolean>(false)
   const [alert, setAlert] = useState<AlertState>({ type: null, message: null })
   const router = useRouter()
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.fincoopers.in"
+  const baseUrl = getApiBaseUrl()
+  const contactEndpoint = process.env.NEXT_PUBLIC_CONTACT_API_URL || (baseUrl ? `${baseUrl}/api/contact/consultation` : "")
 
   // Refs for focusing on error fields
   const fieldRefs = {
@@ -148,7 +157,11 @@ export default function ContactPage() {
         address: enterpriseFormData.address,
       }
 
-      const response = await axios.post(`https://parser.fincooper.in/api/contact/consultation`, payload, {
+      if (!contactEndpoint) {
+        throw new Error("Contact API is not configured.")
+      }
+
+      const response = await axios.post(contactEndpoint, payload, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -194,8 +207,11 @@ export default function ContactPage() {
   const axiosError = error as AxiosError;
   let errorMessage = "An error occurred while submitting the consultation request.";
   const data = axiosError.response?.data;
-  if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
-    errorMessage = (data as any).message;
+  if (data && typeof data === "object" && "message" in data) {
+    const apiError = data as ApiErrorResponse
+    if (typeof apiError.message === "string") {
+      errorMessage = apiError.message
+    }
   }
   setAlert({
     type: "error",
@@ -234,16 +250,16 @@ export default function ContactPage() {
       <Head>
         <title>Contact RecruitExe | Get Now the AI-Powered Recruitment Solutions</title>
         <meta name="description" content="Need help with recruitment automation or AI-driven hiring tools? RecruitExe helps to streamline your hiring process with intelligent recruitment software." />
-        <link rel="canonical" href="https://www.recruitexe.com/contact" />
+        <link rel="canonical" href={contactUrl} />
         <meta property="og:title" content="Contact RecruitExe | Get Now the AI-Powered Recruitment Solutions" />
         <meta property="og:description" content="Need help with recruitment automation or AI-driven hiring tools? RecruitExe helps to streamline your hiring process with intelligent recruitment software." />
-        <meta property="og:url" content="https://www.recruitexe.com/contact" />
+        <meta property="og:url" content={contactUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.recruitexe.com/vector.svg" />
+        <meta property="og:image" content={logoUrl} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Contact RecruitExe | Get Now the AI-Powered Recruitment Solutions" />
         <meta name="twitter:description" content="Need help with recruitment automation or AI-driven hiring tools? RecruitExe helps to streamline your hiring process with intelligent recruitment software." />
-        <meta name="twitter:image" content="https://www.recruitexe.com/vector.svg" />
+        <meta name="twitter:image" content={logoUrl} />
         <meta name="robots" content="index, follow" />
       </Head>
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-violet-800 to-purple-900 text-white relative overflow-hidden">
@@ -259,9 +275,9 @@ export default function ContactPage() {
                   "@type": ["Organization", "LocalBusiness"],
                   "name": "RecruitExe",
                   "alternateName": "RecruitExe",
-                  "url": "https://www.recruitexe.com/",
-                  "logo": "https://www.recruitexe.com/vector.svg",
-                  "image": "https://www.recruitexe.com/vector.svg",
+                  "url": homeUrl,
+                  "logo": logoUrl,
+                  "image": logoUrl,
                   "telephone": "+91 9302075637",
                   "address": {
                     "@type": "PostalAddress",
@@ -288,10 +304,10 @@ export default function ContactPage() {
                 {
                   "@type": "WebSite",
                   "name": "RecruitExe",
-                  "url": "https://www.recruitexe.com",
+                  "url": homeUrl,
                   "potentialAction": {
                     "@type": "SearchAction",
-                    "target": "https://www.recruitexe.com/search?q={search_term_string}",
+                    "target": `${getAbsoluteUrl("/search")}?q={search_term_string}`,
                     "query-input": "required name=search_term_string"
                   }
                 },
@@ -302,13 +318,13 @@ export default function ContactPage() {
                       "@type": "ListItem",
                       "position": 1,
                       "name": "Home",
-                      "item": "https://www.recruitexe.com/"
+                      "item": homeUrl
                     },
                     {
                       "@type": "ListItem",
                       "position": 2,
                       "name": "Contact",
-                      "item": "https://www.recruitexe.com/contact"
+                      "item": contactUrl
                     }
                   ]
                 }

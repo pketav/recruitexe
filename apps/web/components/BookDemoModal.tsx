@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2, X, CheckCircle } from "lucide-react"
+import { getApiBaseUrl } from "@/lib/routes"
 
 interface BookDemoForm {
   fullName: string
@@ -47,6 +48,7 @@ const EMPLOYEE_RANGES = [
   { value: "500+", label: "500+" }
 ]
 const HOW_HEARD_OPTIONS = ["LinkedIn", "Email", "HR Conclave", "Google/Search", "Referred", "Other"]
+const BOOK_DEMO_ENDPOINT = "/v1/api/demo/createBookDemo"
 
 export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
   const { register, handleSubmit, control, formState: { errors }, reset, watch } = useForm<BookDemoForm>({
@@ -197,13 +199,18 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
         ...(data.industryType === "Other" && { OtherIndustry: data.OtherIndustry?.trim() })
       }
 
+      const apiBaseUrl = getApiBaseUrl()
+
+      if (!apiBaseUrl) {
+        throw new Error("Book demo API is not configured.")
+      }
+
       const response = await axios.post(
-        "https://api.recruitexe.com/v1/api/demo/createBookDemo", 
+        `${apiBaseUrl}${BOOK_DEMO_ENDPOINT}`,
         payload,
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjY2ODUwZjdkMzc0NDI1ZTkzNzExNDE4MCIsInJvbGVOYW1lIjpbImFkbWluIl0sInJvbGVJZCI6IjY4MmQ3MjA1MjBmZTVmMzg4Y2I0MDFhNCIsIm9yZ2FuaXphdGlvbklkIjoiNjgzMDc4YWFmZjZhNmJlNTg1ZWI4YWVmIiwiaWF0IjoxNzUwOTM5OTczfQ.D7tq_G5h1VNQF0VtkZ_x1fVozLvDDHt6FDV5ZZ3GCgg'
           },
           timeout: 30000 // 30 second timeout
         }
@@ -222,8 +229,6 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
       }
       
     } catch (error) {
-      console.error("API Error:", error)
-      
       if (axios.isAxiosError(error)) {
         if (error.code === 'ECONNABORTED') {
           toast.error("Request timeout. Please try again.", {

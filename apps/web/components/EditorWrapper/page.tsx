@@ -9,7 +9,9 @@ const JoditEditor = dynamic(() => import("jodit-react"), {
   ssr: false,
 });
 
-const EditorWrapper = forwardRef((props: any, ref: any) => {
+type EditorWrapperProps = Record<string, unknown>
+
+const EditorWrapper = forwardRef<unknown, EditorWrapperProps>((props, ref) => {
   return <JoditEditor {...props} ref={ref} />;
 });
 

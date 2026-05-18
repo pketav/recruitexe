@@ -18,7 +18,7 @@ import {
   Sparkles,
   LucideIcon,
 } from "lucide-react";
-import { appRoutes } from "@/lib/routes";
+import { appRoutes, getAbsoluteUrl } from "@/lib/routes";
 
 interface InterviewFeature {
   icon: LucideIcon;
@@ -42,6 +42,10 @@ interface ProcessStep {
   title: string;
   description: string;
 }
+
+const interviewUrl = getAbsoluteUrl("/interview");
+const homeUrl = getAbsoluteUrl("/");
+const logoUrl = getAbsoluteUrl("/vector.svg");
 
 export default function InterviewPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -158,22 +162,22 @@ export default function InterviewPage() {
       <Head>
         <title>Smart Interview Scheduling & Evaluation Tool | RecruitExe</title>
         <meta name="description" content="Automate interview scheduling and candidate evaluation with RecruitExe. Reduce delays, boost hiring efficiency, and simplify your recruitment process." />
-        <link rel="canonical" href="https://www.recruitexe.com/interview" />
+        <link rel="canonical" href={interviewUrl} />
         <meta name="robots" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         
         {/* Open Graph Tags */}
         <meta property="og:title" content="Smart Interview Scheduling & Evaluation Tool | RecruitExe" />
         <meta property="og:description" content="Automate interview scheduling and candidate evaluation with RecruitExe. Reduce delays, boost hiring efficiency, and simplify your recruitment process." />
-        <meta property="og:url" content="https://www.recruitexe.com/interview" />
+        <meta property="og:url" content={interviewUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.recruitexe.com/vector.svg" />
+        <meta property="og:image" content={logoUrl} />
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Smart Interview Scheduling & Evaluation Tool | RecruitExe" />
         <meta name="twitter:description" content="Automate interview scheduling and candidate evaluation with RecruitExe. Reduce delays, boost hiring efficiency, and simplify your recruitment process." />
-        <meta name="twitter:image" content="https://www.recruitexe.com/vector.svg" />
+        <meta name="twitter:image" content={logoUrl} />
         
         {/* Schema Markup */}
         <script
@@ -186,9 +190,9 @@ export default function InterviewPage() {
                   "@type": ["Organization", "LocalBusiness"],
                   "name": "RecruitExe",
                   "alternateName": "RecruitExe",
-                  "url": "https://www.recruitexe.com/",
-                  "logo": "https://www.recruitexe.com/vector.svg",
-                  "image": "https://www.recruitexe.com/vector.svg",
+                  "url": homeUrl,
+                  "logo": logoUrl,
+                  "image": logoUrl,
                   "telephone": "+91 9302075637",
                   "address": {
                     "@type": "PostalAddress",
@@ -215,10 +219,10 @@ export default function InterviewPage() {
                 {
                   "@type": "WebSite",
                   "name": "RecruitExe",
-                  "url": "https://www.recruitexe.com",
+                  "url": homeUrl,
                   "potentialAction": {
                     "@type": "SearchAction",
-                    "target": "https://www.recruitexe.com/search?q={search_term_string}",
+                    "target": `${getAbsoluteUrl("/search")}?q={search_term_string}`,
                     "query-input": "required name=search_term_string"
                   }
                 },
@@ -229,13 +233,13 @@ export default function InterviewPage() {
                       "@type": "ListItem",
                       "position": 1,
                       "name": "Home",
-                      "item": "https://www.recruitexe.com/"
+                      "item": homeUrl
                     },
                     {
                       "@type": "ListItem",
                       "position": 2,
                       "name": "Interview Module",
-                      "item": "https://www.recruitexe.com/interview"
+                      "item": interviewUrl
                     }
                   ]
                 }
