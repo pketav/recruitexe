@@ -1,0 +1,119 @@
+'use client'
+
+import React, { useState } from 'react'
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  Alert,
+  CircularProgress,
+  InputAdornment,IconButton
+} from '@mui/material'
+import axios from 'axios'
+import { useApi } from '../(dashboard)/api/useApi'
+import { Visibility, VisibilityOff, MailOutline, LockOutlined } from '@mui/icons-material'
+import MailOutlineIcon from '@mui/icons-material/MailOutline'
+
+export default function ForgotPassword() {
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const {callApi} = useApi()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+
+      const res = await callApi({
+        endpoint: `/v1/api/auth/employee/forgotPassword`,
+        method:"POST",
+        data: { email },
+        disableSnackbar:false
+    }) 
+
+      if(res.data.status){
+        setSuccess('Password reset link sent. Please check your email.')
+      }
+    } catch (err) {
+      console.error("Forgot password error:", err.response?.data || err.message)
+      setError(
+        err.response?.data?.message || 'Something went wrong. Please try again.'
+      )
+    } finally {
+      setIsLoading(false)
+      setEmail("")
+    }
+  }
+
+  return (
+  <Box
+      sx={{
+        width: '496px',
+        height: '440px',
+        p: 4,
+        bgcolor: 'white',
+        borderRadius: 3,
+        boxShadow: 3,
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)' 
+      }}
+    >
+      <Typography align='center' fontSize={'30px'} color='#4E36FF' fontWeight={700} my={2.5}>
+      <img src='/logo.png' width={28} height={28} style={{marginRight:"10px"}}/>
+        Recruit.exe
+      </Typography>
+ 
+      <Typography fontSize={'24px'} align='center' fontWeight={600} color='#344054' my={1.5}>
+      Forgot Password
+      </Typography>
+
+
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ my: 5 }}>
+        <Typography fontSize={'14px'} color='#344054' sx={{ mb: 1, fontWeight: 500 }}>
+          Email
+        </Typography>
+ 
+        <TextField
+          fullWidth
+          placeholder='example@gmail.com'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start' sx={{ color: '#667085' }}>
+                <IconButton>
+                  <MailOutlineIcon />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+      </Box>
+
+      <Button onClick={handleSubmit}  disabled={isLoading} startIcon={isLoading && <CircularProgress size={20} />} fullWidth variant='contained' size='large' sx={{ bgcolor: '#4E36FF', fontSize: '16px', mb: 8 }}>
+      {isLoading ? 'Sending...' : 'Send Reset Link'}
+      </Button>
+        </form>
+      </Box>
+  )
+}
+

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Runtime/generated files from old backend
+server/api/uploads/
+server/api/pdf/
+server/api/sheet/
+server/api/logs/
+server/api/liveSheet.json
+
+# Local Supabase
+supabase/.branches/
+supabase/.temp/

@@ -1,0 +1,367 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
+
+import { Box, Button, Grid, Paper, Typography, IconButton, Snackbar, Alert } from '@mui/material'
+
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+
+import VisibilityIcon from '@mui/icons-material/Visibility'
+
+import Modal from '../components/modal'
+import CustomTextField from '@/@core/components/mui/TextField'
+
+// import DataTable from '@/app/common/dataTable'
+
+import {
+  addautovariable,
+  addVariablesAPI,
+  deleteVariablesAPI,
+  getAllVariablesAPI,
+  updateVariablesAPI
+} from '@/services/apiService'
+import DataTable from '@/components/DataTable'
+
+const VariablesPage = () => {
+  const [open, setOpen] = useState(false)
+  const [updateOpen, setUpdateOpen] = useState(false)
+  const [variableName, setVariableName] = useState('')
+  const [editVariableData, setEditVariableData] = useState({ _id: '', variableName: '' })
+  const [rows, setRows] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  })
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false })
+  }
+
+  const columns = [
+    {
+      field: 'variableName',
+      headerName: 'Variable Name',
+      flex: 1,
+      minWidth: 150,
+      headerClassName: 'super-app-theme--header',
+      headerAlign: 'start',
+      align: 'start'
+    },
+    {
+      field: 'action',
+      headerName: 'Actions',
+      flex: 1,
+      minWidth: 150,
+      headerClassName: 'super-app-theme--header',
+      headerAlign: 'end',
+      align: 'end',
+      renderCell: params => {
+        return (
+          <>
+            <IconButton color='primary' onClick={() => handleUpdate(params.row)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color='error' onClick={() => handleDelete(params.row)}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton color='inherit' onClick={() => handleView(params.row)}>
+              <VisibilityIcon />
+            </IconButton>
+          </>
+        )
+      }
+    }
+  ]
+
+  useEffect(() => {
+    fetchVariables()
+  }, [])
+
+  const fetchVariables = async () => {
+    setLoading(true)
+
+    try {
+      const res = await getAllVariablesAPI()
+
+      console.log('res', res)
+
+      if (res && res.items) {
+        setRows(
+          res.items.map(item => ({
+            _id: item?._id,
+            variableName: item?.variableName,
+            delete: true
+          }))
+        )
+      }
+    } catch (error) {
+      console.error('Error fetching variables:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOpen = () => {
+    setOpen(!open)
+  }
+
+  const handleUpdateOpen = () => {
+    setUpdateOpen(!updateOpen)
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    if (!variableName.trim()) {
+      return // Don't submit empty variable names
+    }
+
+    const payload = {
+      variableName: variableName
+    }
+
+    try {
+      const res = await addVariablesAPI(payload)
+
+      console.log('Variable added:', res)
+
+      if (res.status) {
+        // You could add a success notification here
+        setSnackbar({ open: true, message: 'Variable added successfully', severity: 'success' })
+        setTimeout(() => {
+          setSnackbar({ ...snackbar, open: false })
+        }, 3000)
+      }
+    } catch (error) {
+      console.error('Error adding variable:', error)
+      setSnackbar({ open: true, message: 'Error adding variable', severity: 'error' })
+      setTimeout(() => {
+        setSnackbar({ ...snackbar, open: false })
+      }, 3000)
+
+      // You could add an error notification here
+    } finally {
+      setOpen(false)
+      setVariableName('')
+      fetchVariables()
+    }
+  }
+
+  const handleAutoAddVariables = async () => {
+    try {
+      const res = await addautovariable() // Assume this API exists
+
+      console.log('Auto-added variables:', res)
+
+      if (res.status) {
+        // You could add a success notification here
+        console.log('Auto-added variables successfully')
+        setSnackbar({ open: true, message: 'Auto-added variables successfully', severity: 'success' })
+        setTimeout(() => {
+          setSnackbar({ ...snackbar, open: false })
+        }, 3000)
+      }
+    } catch (error) {
+      console.error('Error auto-adding variables:', error)
+      setSnackbar({ open: true, message: 'Error auto-adding variables', severity: 'error' })
+      setTimeout(() => {
+        setSnackbar({ ...snackbar, open: false })
+      }, 3000)
+
+      // You could add an error notification here
+    } finally {
+      fetchVariables()
+    }
+  }
+
+  const handleUpdateVariable = async e => {
+    e.preventDefault()
+
+    if (!editVariableData.variableName.trim()) {
+      return // Don't submit empty variable names
+    }
+
+    const payload = {
+      varId: editVariableData._id,
+      variableName: editVariableData.variableName
+    }
+
+    try {
+      const res = await updateVariablesAPI(payload) // Assume this API exists
+
+      console.log('Variable updated:', res)
+
+      if (res.status) {
+        setSnackbar({ open: true, message: 'Variable updated successfully', severity: 'success' })
+        setTimeout(() => {
+          setSnackbar({ ...snackbar, open: false })
+        }, 3000)
+
+        // You could add a success notification here
+      }
+    } catch (error) {
+      console.error('Error updating variable:', error)
+      setSnackbar({ open: true, message: 'Error updating variable', severity: 'error' })
+      setTimeout(() => {
+        setSnackbar({ ...snackbar, open: false })
+      }, 3000)
+
+      // You could add an error notification here
+    } finally {
+      setUpdateOpen(false)
+      setEditVariableData({ _id: '', variableName: '' })
+      fetchVariables()
+    }
+  }
+
+  const handleUpdate = row => {
+    setEditVariableData(row)
+    setUpdateOpen(true)
+  }
+
+  const handleDelete = async row => {
+    console.log('Deleting variable:', row)
+
+    // const paylaod = {
+    //     varId: row._id,
+    // }
+
+    try {
+      const res = await deleteVariablesAPI(row._id) // Assume this API exists
+
+      console.log('delete variables', res)
+
+      if (res.status) {
+        setSnackbar({ open: true, message: 'Variable deleted successfully', severity: 'success' })
+        setTimeout(() => {
+          setSnackbar({ ...snackbar, open: false })
+        }, 3000)
+        fetchVariables()
+      } else {
+        setSnackbar({ open: true, message: 'Error deleting variable', severity: 'error' })
+        setTimeout(() => {
+          setSnackbar({ ...snackbar, open: false })
+        }, 3000)
+      }
+
+      // You could add a success notification here
+    } catch (error) {
+      console.error('Error deleting variable:', error)
+
+      // You could add an error notification here
+    }
+  }
+
+  //   const handleView = (row) => {
+  //     // Implement view functionality
+  //     console.log('Viewing variable:', row)
+  //   }
+
+  return (
+    <>
+      <Paper sx={{ p: 5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', my: 4 }}>
+          <Typography variant='h5' sx={{ fontWeight: 600 }}>
+            Variables
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button variant='contained' color='primary' sx={{ height: 40 }} onClick={handleAutoAddVariables}>
+              Auto-add Variables
+            </Button>
+            <Button variant='contained' color='primary' sx={{ height: 40 }} onClick={handleOpen}>
+              Add Variable
+            </Button>
+          </Box>
+        </Box>
+
+        <DataTable
+          columns={columns}
+          rows={rows}
+          pageSize={5}
+          page={0}
+          rowsPerPage={10}
+          totalItems={rows.length}
+          loading={loading}
+          handleDelete={handleDelete}
+          extraActions={row => (
+            <Button variant='contained' color='success' onClick={() => handleUpdate(row)}>
+              Update Variable
+            </Button>
+          )}
+        />
+      </Paper>
+
+      <Modal
+        open={updateOpen}
+        handleClose={handleUpdateOpen}
+        title='Update Variable'
+        maxWidth='xs'
+        fullWidth={true}
+        handleSubmit={handleUpdateVariable}
+      >
+        <Grid container spacing={2} padding='12px'>
+          <Grid item xs={12} md={12}>
+            <CustomTextField
+              fullWidth
+              label='Variable Name'
+              placeholder='Enter Variable Name'
+              variant='outlined'
+              value={editVariableData.variableName}
+              onChange={e => setEditVariableData({ ...editVariableData, variableName: e.target.value })}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Modal>
+
+      <Modal
+        open={open}
+        handleClose={handleOpen}
+        title='Add Variable'
+        maxWidth='xs'
+        fullWidth={true}
+        handleSubmit={handleSubmit}
+      >
+        <Grid container spacing={2} padding='12px'>
+          <Grid item xs={12} md={12}>
+            <CustomTextField
+              fullWidth
+              label='Variable Name'
+              placeholder='Enter Variable Name'
+              variant='outlined'
+              value={variableName}
+              onChange={e => setVariableName(e.target.value)}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Modal>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          variant='filled'
+          severity={snackbar.severity}
+          sx={{ width: '100%', zIndex: '9999' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
+  )
+}
+
+export default VariablesPage

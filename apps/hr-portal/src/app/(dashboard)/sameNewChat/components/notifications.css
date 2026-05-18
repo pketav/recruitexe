@@ -1,0 +1,226 @@
+/* Chat notification styles */
+
+/* Connection Status Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Bell shake animation for notifications */
+@keyframes bell-shake {
+  0%, 50%, 100% { 
+    transform: rotate(0deg); 
+  }
+  10%, 30% { 
+    transform: rotate(-10deg); 
+  }
+  20%, 40% { 
+    transform: rotate(10deg); 
+  }
+}
+
+/* Online indicator pulse */
+@keyframes online-pulse {
+  0% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.5; 
+  }
+  100% { 
+    opacity: 1; 
+  }
+}
+
+/* Unread badge animation */
+.unread-badge {
+  animation: unread-pulse 2s infinite;
+}
+
+@keyframes unread-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Chat list item hover effects */
+.chat-list-item {
+  transition: all 0.2s ease;
+}
+
+.chat-list-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Notification toast styles */
+.notification-toast {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  margin: 8px 0;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #666;
+  border-radius: 50%;
+  animation: typing-bounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Status indicators */
+.status-online {
+  color: #4caf50;
+}
+
+.status-offline {
+  color: #f44336;
+}
+
+.status-typing {
+  color: #ff9800;
+}
+
+/* Message status indicators */
+.message-status {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.message-status.delivered {
+  color: #2196f3;
+}
+
+.message-status.read {
+  color: #4caf50;
+}
+
+/* Notification panel */
+.notification-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.notification-item {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+  background-color: #e3f2fd;
+  border-left: 3px solid #2196f3;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .notification-panel {
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+  
+  .chat-list-item {
+    padding: 8px 12px;
+  }
+  
+  .notification-toast {
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .notification-panel {
+    background: #1e1e1e;
+    color: white;
+  }
+  
+  .notification-item {
+    border-bottom-color: #333;
+  }
+  
+  .notification-item:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .typing-indicator {
+    background-color: #2a2a2a;
+  }
+  
+  .typing-dot {
+    background-color: #ccc;
+  }
+}
