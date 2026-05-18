@@ -35,3 +35,4 @@ server/api/liveSheet.json
 # Local Supabase
 supabase/.branches/
 supabase/.temp/
+.vercel
