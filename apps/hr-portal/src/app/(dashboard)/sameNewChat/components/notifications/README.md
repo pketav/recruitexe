@@ -237,7 +237,7 @@ The system automatically requests notification permission and shows native brows
 // Permission is automatically requested, but you can also manually request
 if (Notification.permission === 'default') {
   Notification.requestPermission().then(permission => {
-    console.log('Permission:', permission)
+    // Handle the permission result if custom UI needs it
   })
 }
 ```
@@ -282,7 +282,7 @@ The system dispatches custom events that you can listen to:
 // Listen for new notifications
 window.addEventListener('newNotification', (event) => {
   const notification = event.detail
-  console.log('New notification:', notification)
+  // Handle the notification payload
 })
 
 // Listen for conversation open requests
