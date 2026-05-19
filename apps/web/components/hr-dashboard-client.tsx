@@ -6,15 +6,15 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   CheckCircle2,
-  FileText,
-  FolderOpen,
   MapPin,
-  Settings,
   UserRoundCheck,
   Users,
   XCircle,
 } from "lucide-react"
 import { useState } from "react"
+
+import { WorkspaceSidebar } from "@/components/workspace-sidebar"
+import { hrNavigation } from "@/lib/workspace-navigation"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -50,21 +50,9 @@ export function HrDashboardClient({ data }: { data: HrDashboardData }) {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <aside className="fixed inset-y-0 left-0 hidden w-16 border-r border-slate-200 bg-white py-5 md:flex md:flex-col md:items-center md:justify-between">
-        <div className="space-y-5">
-          <Link href="/" className="grid h-10 w-10 place-items-center rounded-xl bg-violet-600 text-white">
-            9
-          </Link>
-          {[Users, BriefcaseBusiness, FolderOpen, FileText, MapPin].map((Icon, index) => (
-            <button key={index} className="grid h-10 w-10 place-items-center rounded-xl text-slate-500 hover:bg-slate-100">
-              <Icon className="h-5 w-5" />
-            </button>
-          ))}
-        </div>
-        <Settings className="h-5 w-5 text-slate-500" />
-      </aside>
+      <WorkspaceSidebar brand="RecruitExe HR" groups={hrNavigation} homeHref="/hr/dashboard" />
 
-      <section className="md:pl-16">
+      <section className="lg:pl-72">
         <div className="mx-auto max-w-7xl px-5 py-6">
           <header className="mb-5 flex flex-wrap items-center justify-between gap-4">
             <div>
