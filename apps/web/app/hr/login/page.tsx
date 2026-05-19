@@ -4,9 +4,36 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowRight, Clock, Lock, User } from "lucide-react"
+import { useState } from "react"
 
 export default function HrLoginPage() {
   const router = useRouter()
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  const [error, setError] = useState("")
+
+  async function handleSignIn() {
+    setIsSigningIn(true)
+    setError("")
+
+    try {
+      const response = await fetch("/api/demo/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "hr" }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Unable to start HR session")
+      }
+
+      const data = await response.json()
+      router.push(data.redirectTo || "/hr/dashboard")
+    } catch (signInError) {
+      setError(signInError instanceof Error ? signInError.message : "Unable to start HR session")
+    } finally {
+      setIsSigningIn(false)
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.24),transparent_28%),linear-gradient(135deg,#7c3aed,#3b2b8f_55%,#172554)] text-white">
@@ -78,15 +105,22 @@ export default function HrLoginPage() {
             </label>
 
             <button
-              onClick={() => router.push("/hr/dashboard")}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-400 to-pink-500 font-semibold shadow-lg shadow-pink-950/30 transition hover:translate-y-[-1px]"
+              onClick={handleSignIn}
+              disabled={isSigningIn}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-400 to-pink-500 font-semibold shadow-lg shadow-pink-950/30 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Sign In <ArrowRight className="h-4 w-4" />
+              {isSigningIn ? "Connecting Supabase..." : "Sign In"} <ArrowRight className="h-4 w-4" />
             </button>
           </div>
 
+          {error ? (
+            <p className="mt-4 rounded-xl border border-red-300/40 bg-red-500/15 px-4 py-3 text-sm text-red-100">
+              {error}
+            </p>
+          ) : null}
+
           <p className="mt-6 text-center text-xs text-violet-100">
-            Preview mode. Real login will move to Supabase Auth.
+            Demo session is backed by Supabase data.
           </p>
           <div className="mt-5 text-center">
             <Link href="/" className="text-sm font-medium text-cyan-200 hover:text-white">

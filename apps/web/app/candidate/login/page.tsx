@@ -3,9 +3,36 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Briefcase, FileUp, Lock, Mail, Phone, User } from "lucide-react"
+import { useState } from "react"
 
 export default function CandidateLoginPage() {
   const router = useRouter()
+  const [isSigningUp, setIsSigningUp] = useState(false)
+  const [error, setError] = useState("")
+
+  async function handleCandidateAccess() {
+    setIsSigningUp(true)
+    setError("")
+
+    try {
+      const response = await fetch("/api/demo/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "candidate" }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Unable to start candidate session")
+      }
+
+      const data = await response.json()
+      router.push(data.redirectTo || "/candidate/dashboard")
+    } catch (accessError) {
+      setError(accessError instanceof Error ? accessError.message : "Unable to start candidate session")
+    } finally {
+      setIsSigningUp(false)
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
@@ -64,11 +91,18 @@ export default function CandidateLoginPage() {
             </label>
 
             <button
-              onClick={() => router.push("/candidate/dashboard")}
-              className="h-12 w-full rounded-lg bg-indigo-950 font-semibold text-white"
+              onClick={handleCandidateAccess}
+              disabled={isSigningUp}
+              className="h-12 w-full rounded-lg bg-indigo-950 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Sign Up
+              {isSigningUp ? "Connecting Supabase..." : "Sign Up"}
             </button>
+
+            {error ? (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
+              </p>
+            ) : null}
           </div>
         </div>
 
