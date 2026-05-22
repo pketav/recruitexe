@@ -26,6 +26,7 @@ type JobRow = {
   location: string
   action: "Apply" | "Applied"
   applicants: number
+  status?: string
 }
 
 const departments = [
@@ -594,9 +595,11 @@ export async function getCandidateDashboardData() {
 
   const applications = applicationsResult.data ?? []
   const appliedPostIds = new Set(applications.map((application) => application.job_post_id))
+  const applicationByPostId = new Map(applications.map((application) => [application.job_post_id, application]))
   const jobs: JobRow[] = (jobsResult.data ?? []).map((job) => {
     const department = Array.isArray(job.departments) ? job.departments[0] : job.departments
     const location = Array.isArray(job.work_locations) ? job.work_locations[0] : job.work_locations
+    const application = applicationByPostId.get(job.id)
 
     return {
       title: job.title,
@@ -604,6 +607,7 @@ export async function getCandidateDashboardData() {
       location: location?.name ?? "Remote",
       action: appliedPostIds.has(job.id) ? "Applied" : "Apply",
       applicants: Number((job.metadata as { applicants?: number } | null)?.applicants ?? 0),
+      status: application?.status,
     }
   })
 
@@ -615,5 +619,78 @@ export async function getCandidateDashboardData() {
     documents: documentsResult.data?.length ?? 0,
     checks: "Passed",
     jobs,
+  }
+}
+
+export async function applyToJobPostForDemoCandidate(jobTitle: string) {
+  const supabase = getSupabaseAdminClient()
+  const { organization } = await ensureRecruitExeDemoData()
+
+  const [candidateResult, jobResult] = await Promise.all([
+    supabase
+      .from("candidates")
+      .select("id,full_name")
+      .eq("organization_id", organization.id)
+      .eq("candidate_code", "CAND002")
+      .single(),
+    supabase
+      .from("job_posts")
+      .select("id,title,metadata")
+      .eq("organization_id", organization.id)
+      .eq("title", jobTitle)
+      .eq("status", "published")
+      .single(),
+  ])
+
+  if (candidateResult.error) {
+    throw new Error(candidateResult.error.message)
+  }
+
+  if (jobResult.error) {
+    throw new Error(jobResult.error.message)
+  }
+
+  const existingApplication = await supabase
+    .from("job_applications")
+    .select("id")
+    .eq("organization_id", organization.id)
+    .eq("job_post_id", jobResult.data.id)
+    .eq("candidate_id", candidateResult.data.id)
+    .maybeSingle()
+
+  if (existingApplication.error) {
+    throw new Error(existingApplication.error.message)
+  }
+
+  const aiScore = Math.max(70, Math.min(94, 72 + Math.round(jobTitle.length * 1.8)))
+  const application = await ensureApplication(
+    supabase,
+    organization.id,
+    jobResult.data.id,
+    candidateResult.data.id,
+    "applied",
+    aiScore,
+  )
+
+  if (!existingApplication.data) {
+    const existingApplicants = Number((jobResult.data.metadata as { applicants?: number } | null)?.applicants ?? 0)
+    await supabase
+      .from("job_posts")
+      .update({
+        metadata: {
+          ...(jobResult.data.metadata as Record<string, unknown> | null),
+          applicants: existingApplicants + 1,
+        },
+      })
+      .eq("id", jobResult.data.id)
+      .throwOnError()
+  }
+
+  return {
+    applicationId: application.id,
+    candidateName: candidateResult.data.full_name,
+    jobTitle: jobResult.data.title,
+    status: application.status,
+    aiScore: application.ai_score ? `${application.ai_score}%` : "Pending",
   }
 }

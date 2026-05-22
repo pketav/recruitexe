@@ -20,19 +20,52 @@ type CandidateDashboardData = {
     location: string
     action: "Apply" | "Applied"
     applicants: number
+    status?: string
   }>
 }
 
 export function CandidateDashboardClient({ data }: { data: CandidateDashboardData }) {
   const [jobs, setJobs] = useState(data.jobs)
   const [notice, setNotice] = useState("")
+  const [error, setError] = useState("")
+  const [submittingJob, setSubmittingJob] = useState("")
   const appliedCount = jobs.filter((job) => job.action === "Applied").length
 
-  function handleApply(title: string) {
-    setJobs((currentJobs) =>
-      currentJobs.map((job) => (job.title === title ? { ...job, action: "Applied" } : job)),
-    )
-    setNotice(`${title} application marked as applied for this demo session.`)
+  async function handleApply(title: string) {
+    setSubmittingJob(title)
+    setNotice("")
+    setError("")
+
+    try {
+      const response = await fetch("/api/candidate/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobTitle: title }),
+      })
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Application submit failed.")
+      }
+
+      setJobs((currentJobs) =>
+        currentJobs.map((job) =>
+          job.title === title
+            ? {
+                ...job,
+                action: "Applied",
+                status: result.application?.status ?? "applied",
+                applicants: job.action === "Applied" ? job.applicants : job.applicants + 1,
+              }
+            : job,
+        ),
+      )
+      setNotice(`${title} application submitted to Supabase. AI match: ${result.application?.aiScore ?? "Pending"}.`)
+    } catch (applyError) {
+      setError(applyError instanceof Error ? applyError.message : "Application submit failed.")
+    } finally {
+      setSubmittingJob("")
+    }
   }
 
   return (
@@ -72,24 +105,31 @@ export function CandidateDashboardClient({ data }: { data: CandidateDashboardDat
               {notice}
             </p>
           ) : null}
+          {error ? (
+            <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+              {error}
+            </p>
+          ) : null}
 
           <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.72fr]">
             <div className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
               <h2 className="mb-4 text-xl font-bold" style={{ color: legacyTheme.text }}>Open Roles</h2>
               <div className="space-y-3">
-                {jobs.map(({ title, department, location, action, applicants }) => (
+                {jobs.map(({ title, department, location, action, applicants, status }) => (
                   <div key={title} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4" style={{ borderColor: legacyTheme.divider }}>
                     <div>
                       <p className="font-semibold" style={{ color: legacyTheme.text }}>{title}</p>
-                      <p className="text-sm" style={{ color: legacyTheme.textSoft }}>{department} · {location} · {applicants} applicants</p>
+                      <p className="text-sm" style={{ color: legacyTheme.textSoft }}>
+                        {department} · {location} · {applicants} applicants{status ? ` · ${status}` : ""}
+                      </p>
                     </div>
                     <button
                       onClick={() => action === "Apply" && handleApply(title)}
-                      disabled={action === "Applied"}
+                      disabled={action === "Applied" || submittingJob === title}
                       className="rounded-md px-4 py-2 text-sm font-semibold text-white disabled:text-[#7367F0]"
                       style={{ background: action === "Applied" ? "rgba(115, 103, 240, 0.12)" : legacyTheme.primary }}
                     >
-                      {action}
+                      {submittingJob === title ? "Submitting..." : action}
                     </button>
                   </div>
                 ))}
