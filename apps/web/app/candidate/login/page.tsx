@@ -40,7 +40,7 @@ export default function CandidateLoginPage() {
     <main className="min-h-screen" style={{ background: legacyTheme.body, color: legacyTheme.text }}>
       <nav className="flex h-20 items-center justify-between px-6 text-white" style={{ background: `linear-gradient(45deg, ${legacyTheme.primary} 30%, ${legacyTheme.info} 90%)` }}>
         <Link href="/" className="flex items-center gap-2">
-          <img src="/Vector.svg" alt="RecruitExe" className="h-8 w-8" />
+          <img src="/vector.svg" alt="RecruitExe" className="h-8 w-8" />
           <img src="/VectorName.svg" alt="" className="h-6 w-auto brightness-0 invert" />
         </Link>
         <div className="flex items-center gap-8 text-sm font-semibold">

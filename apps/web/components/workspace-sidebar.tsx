@@ -23,7 +23,7 @@ export function WorkspaceSidebar({ brand, groups, homeHref }: WorkspaceSidebarPr
       <div className="flex h-full flex-col">
         <div className="flex h-16 items-center gap-3 border-b px-5" style={{ borderColor: legacyTheme.divider }}>
           <Link href={homeHref} className="flex items-center gap-2">
-            <img src="/Vector.svg" alt="RecruitExe" className="h-8 w-8" />
+            <img src="/vector.svg" alt="RecruitExe" className="h-8 w-8" />
             <img src="/VectorName.svg" alt="" className="h-6 w-auto" />
           </Link>
           <span className="sr-only">{brand}</span>
