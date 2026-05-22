@@ -46,7 +46,7 @@ export function WorkspaceSidebar({ brand, groups, homeHref }: WorkspaceSidebarPr
                     return (
                       <Link
                         key={module.href}
-                        href={module.legacyHref ?? module.href}
+                        href={module.href}
                         className={`block rounded-md px-3 py-2.5 text-[13px] font-medium transition ${
                           active
                             ? "bg-[#F8F7FA] text-[#262E3D] shadow-[inset_3px_0_0_#7367F0]"

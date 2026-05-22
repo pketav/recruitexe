@@ -43,6 +43,7 @@ const legacyPathMap = new Map<string, string>([
   ["/applications", "/candidate/modules/applications"],
   ["/myAppliedJobs", "/candidate/modules/applications"],
   ["/interviews", "/candidate/modules/interviews"],
+  ["/candidate/documents", "/candidate/modules/documents"],
 ])
 
 export function proxy(request: NextRequest) {
@@ -83,6 +84,7 @@ export const config = {
     "/home",
     "/jobpost/:path*",
     "/RecruiterPerformance",
+    "/LinkedinPosting",
     "/LinkedinPosting/:path*",
     "/JobApplications/:path*",
     "/InterviewMonitor/:path*",
@@ -90,12 +92,14 @@ export const config = {
     "/expenseTypeSettings",
     "/AgencySetup",
     "/automationRules",
+    "/employeeSetup",
     "/employeeSetup/:path*",
     "/adminManagement",
     "/planUsage",
     "/commandexe/:path*",
     "/notes",
     "/sameNewChat",
+    "/FileManagerNew",
     "/FileManagerNew/:path*",
     "/completeProfile",
     "/viewProfile",
@@ -106,5 +110,6 @@ export const config = {
     "/applications",
     "/myAppliedJobs",
     "/interviews",
+    "/candidate/documents",
   ],
 }
