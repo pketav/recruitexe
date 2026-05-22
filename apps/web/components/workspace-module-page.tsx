@@ -10,13 +10,14 @@ import { HrAiScreeningWorkspace } from "@/components/hr-ai-screening-workspace"
 import { CustomerLinksWorkspace } from "@/components/customer-links-workspace"
 import { AutomationRulesWorkspace } from "@/components/automation-rules-workspace"
 import { JobPostCreateWorkspace } from "@/components/job-post-create-workspace"
+import { ApplicationWorkspace } from "@/components/application-workspace"
 import { organizationSlug, type AutomationRule, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
   organization: { name: string }
   metrics: Array<{ label: string; value: string; note: string }>
   departmentBreakdown: Array<{ name: string; value: number }>
-  pipeline: Array<{ applicationId: string; code: string; name: string; position: string; status: string; aiScore: string; aiSummary?: string }>
+  pipeline: Array<{ applicationId: string; code: string; name: string; position: string; status: string; aiScore: string; aiSummary?: string; location?: string }>
   hotPositions: Array<{ title: string; applicants: number }>
   automationRules?: AutomationRule[]
   linkedinIntegration?: LinkedInIntegrationSettings
@@ -120,8 +121,20 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
     )
   }
 
-  if (module.href === "/hr/modules/applications/ai-screening" || module.dataKey === "applications" || module.dataKey === "candidates") {
+  if (module.href === "/hr/modules/applications/ai-screening") {
     return <HrAiScreeningWorkspace pipeline={data.pipeline} />
+  }
+
+  if (module.href === "/hr/modules/applications/dashboard") {
+    return <ApplicationWorkspace pipeline={data.pipeline} variant="dashboard" />
+  }
+
+  if (module.href === "/hr/modules/applications/candidates") {
+    return <ApplicationWorkspace pipeline={data.pipeline} variant="candidates" />
+  }
+
+  if (module.href === "/hr/modules/applications/map") {
+    return <ApplicationWorkspace pipeline={data.pipeline} variant="map" />
   }
 
   if (module.href === "/hr/modules/setup/customer-links") {

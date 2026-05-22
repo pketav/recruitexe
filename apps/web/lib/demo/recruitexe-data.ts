@@ -20,6 +20,7 @@ type CandidateRow = {
   status: string
   aiScore: string
   aiSummary?: string
+  location?: string
 }
 
 type JobRow = {
@@ -639,7 +640,7 @@ export async function getHrDashboardData() {
   ] = await Promise.all([
     supabase
       .from("job_applications")
-      .select("id,status,ai_score,ai_summary,job_posts(title),candidates(candidate_code,full_name)")
+      .select("id,status,ai_score,ai_summary,job_posts(title),candidates(candidate_code,full_name,current_location)")
       .eq("organization_id", organization.id),
     supabase
       .from("candidates")
@@ -695,6 +696,7 @@ export async function getHrDashboardData() {
       status: application.status,
       aiScore: application.ai_score ? `${application.ai_score}%` : "Pending",
       aiSummary: application.ai_summary ?? undefined,
+      location: candidate?.current_location ?? "Remote",
     }
   })
 
