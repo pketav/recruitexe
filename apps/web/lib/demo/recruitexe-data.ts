@@ -51,6 +51,21 @@ export type AutomationRule = {
   action: string
 }
 
+export type LinkedInIntegrationSettings = {
+  organizationMode: "company" | "agency"
+  workspaceName: string
+  defaultClientName: string
+  defaultTone: string
+  approvalRequired: boolean
+  autoSchedule: boolean
+  linkedinConnected: boolean
+  linkedinAccountName: string
+  linkedinTokenLastFour: string
+  linkedinTokenUpdatedAt: string | null
+  geminiConfigured: boolean
+  geminiProvider: "gemini" | "rules-fallback"
+}
+
 const defaultAutomationRules: AutomationRule[] = [
   {
     id: "auto-approve-high-match",
@@ -89,6 +104,19 @@ const defaultAutomationRules: AutomationRule[] = [
     action: "Keep status applied and mark follow-up task ready",
   },
 ]
+
+const defaultLinkedInSettings: Omit<LinkedInIntegrationSettings, "geminiConfigured" | "geminiProvider"> = {
+  organizationMode: "company",
+  workspaceName: "Fincoopers RecruitExe Demo",
+  defaultClientName: "Client BFSI Brand",
+  defaultTone: "Professional",
+  approvalRequired: true,
+  autoSchedule: false,
+  linkedinConnected: false,
+  linkedinAccountName: "",
+  linkedinTokenLastFour: "",
+  linkedinTokenUpdatedAt: null,
+}
 
 const departments = [
   { name: "Legal", value: 46 },
@@ -224,7 +252,12 @@ async function ensureOrganization(supabase: SupabaseAdmin) {
         organization_type: "enterprise",
         industry: "Financial Services",
         website: "https://fincoopers.in",
-        settings: { demo: true, product: "recruitexe", automationRules: defaultAutomationRules },
+        settings: {
+          demo: true,
+          product: "recruitexe",
+          automationRules: defaultAutomationRules,
+          linkedinIntegration: defaultLinkedInSettings,
+        },
       })
       .select("id,name")
       .single(),
@@ -659,6 +692,7 @@ export async function getHrDashboardData() {
     applicants: Number((job.metadata as { applicants?: number } | null)?.applicants ?? 0),
   }))
   const automationRules = await getAutomationRulesForOrganization(supabase, organization.id)
+  const linkedinIntegration = await getLinkedInSettingsForOrganization(supabase, organization.id)
 
   return {
     organization,
@@ -668,6 +702,7 @@ export async function getHrDashboardData() {
     hotPositions,
     candidateCount: candidates.length,
     automationRules,
+    linkedinIntegration,
   }
 }
 
@@ -944,6 +979,31 @@ function normalizeAutomationRules(value: unknown): AutomationRule[] {
   })
 }
 
+function isGeminiConfigured() {
+  return Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY)
+}
+
+function normalizeLinkedInSettings(value: unknown): LinkedInIntegrationSettings {
+  const saved = typeof value === "object" && value !== null ? (value as Record<string, unknown>) : {}
+  const organizationMode = saved.organizationMode === "agency" ? "agency" : "company"
+  const geminiConfigured = isGeminiConfigured()
+
+  return {
+    organizationMode,
+    workspaceName: typeof saved.workspaceName === "string" && saved.workspaceName.trim() ? saved.workspaceName : defaultLinkedInSettings.workspaceName,
+    defaultClientName: typeof saved.defaultClientName === "string" && saved.defaultClientName.trim() ? saved.defaultClientName : defaultLinkedInSettings.defaultClientName,
+    defaultTone: typeof saved.defaultTone === "string" && saved.defaultTone.trim() ? saved.defaultTone : defaultLinkedInSettings.defaultTone,
+    approvalRequired: typeof saved.approvalRequired === "boolean" ? saved.approvalRequired : defaultLinkedInSettings.approvalRequired,
+    autoSchedule: typeof saved.autoSchedule === "boolean" ? saved.autoSchedule : defaultLinkedInSettings.autoSchedule,
+    linkedinConnected: Boolean(saved.linkedinConnected),
+    linkedinAccountName: typeof saved.linkedinAccountName === "string" ? saved.linkedinAccountName : "",
+    linkedinTokenLastFour: typeof saved.linkedinTokenLastFour === "string" ? saved.linkedinTokenLastFour : "",
+    linkedinTokenUpdatedAt: typeof saved.linkedinTokenUpdatedAt === "string" ? saved.linkedinTokenUpdatedAt : null,
+    geminiConfigured,
+    geminiProvider: geminiConfigured ? "gemini" : "rules-fallback",
+  }
+}
+
 async function getAutomationRulesForOrganization(supabase: SupabaseAdmin, organizationId: string) {
   const organizationResult = await supabase
     .from("organizations")
@@ -958,6 +1018,22 @@ async function getAutomationRulesForOrganization(supabase: SupabaseAdmin, organi
   const settings = organizationResult.data.settings as { automationRules?: unknown } | null
 
   return normalizeAutomationRules(settings?.automationRules)
+}
+
+async function getLinkedInSettingsForOrganization(supabase: SupabaseAdmin, organizationId: string) {
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("settings")
+    .eq("id", organizationId)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const settings = organizationResult.data.settings as { linkedinIntegration?: unknown } | null
+
+  return normalizeLinkedInSettings(settings?.linkedinIntegration)
 }
 
 export async function getAutomationRulesData() {
@@ -982,6 +1058,92 @@ export async function getAutomationRulesData() {
       name: organizationResult.data.name,
     },
     rules,
+  }
+}
+
+export async function getLinkedInIntegrationData() {
+  const supabase = getSupabaseAdminClient()
+  const { organization } = await ensureRecruitExeDemoData()
+
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("id,name,settings")
+    .eq("id", organization.id)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const settings = organizationResult.data.settings as { linkedinIntegration?: unknown } | null
+
+  return {
+    organization: {
+      id: organizationResult.data.id,
+      name: organizationResult.data.name,
+    },
+    settings: normalizeLinkedInSettings(settings?.linkedinIntegration),
+  }
+}
+
+export async function saveLinkedInIntegrationSettings(payload: {
+  organizationMode?: "company" | "agency"
+  workspaceName?: string
+  defaultClientName?: string
+  defaultTone?: string
+  approvalRequired?: boolean
+  autoSchedule?: boolean
+  linkedinAccountName?: string
+  linkedinAccessToken?: string
+  clearLinkedinToken?: boolean
+}) {
+  const supabase = getSupabaseAdminClient()
+  const { organization, settings: currentSettings } = await getLinkedInIntegrationData()
+
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("settings")
+    .eq("id", organization.id)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const existingSettings = (organizationResult.data.settings as Record<string, unknown> | null) ?? {}
+  const existingLinkedIn = (existingSettings.linkedinIntegration as Record<string, unknown> | undefined) ?? {}
+  const token = payload.linkedinAccessToken?.trim()
+  const shouldClearToken = Boolean(payload.clearLinkedinToken)
+
+  const nextSettings = {
+    ...existingLinkedIn,
+    organizationMode: payload.organizationMode === "agency" ? "agency" : "company",
+    workspaceName: payload.workspaceName?.trim() || currentSettings.workspaceName,
+    defaultClientName: payload.defaultClientName?.trim() || currentSettings.defaultClientName,
+    defaultTone: payload.defaultTone?.trim() || currentSettings.defaultTone,
+    approvalRequired: Boolean(payload.approvalRequired),
+    autoSchedule: Boolean(payload.autoSchedule),
+    linkedinAccountName: payload.linkedinAccountName?.trim() || currentSettings.linkedinAccountName,
+    linkedinConnected: shouldClearToken ? false : token ? true : currentSettings.linkedinConnected,
+    linkedinTokenLastFour: shouldClearToken ? "" : token ? token.slice(-4) : currentSettings.linkedinTokenLastFour,
+    linkedinTokenUpdatedAt: shouldClearToken ? null : token ? new Date().toISOString() : currentSettings.linkedinTokenUpdatedAt,
+    serverAccessToken: shouldClearToken ? undefined : token || existingLinkedIn.serverAccessToken,
+  }
+
+  await supabase
+    .from("organizations")
+    .update({
+      settings: {
+        ...existingSettings,
+        linkedinIntegration: nextSettings,
+      },
+    })
+    .eq("id", organization.id)
+    .throwOnError()
+
+  return {
+    organization,
+    settings: normalizeLinkedInSettings(nextSettings),
   }
 }
 

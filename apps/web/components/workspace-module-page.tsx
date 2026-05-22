@@ -9,7 +9,7 @@ import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
 import { HrAiScreeningWorkspace } from "@/components/hr-ai-screening-workspace"
 import { CustomerLinksWorkspace } from "@/components/customer-links-workspace"
 import { AutomationRulesWorkspace } from "@/components/automation-rules-workspace"
-import { organizationSlug, type AutomationRule } from "@/lib/demo/recruitexe-data"
+import { organizationSlug, type AutomationRule, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -18,6 +18,7 @@ type HrDashboardData = {
   pipeline: Array<{ applicationId: string; code: string; name: string; position: string; status: string; aiScore: string; aiSummary?: string }>
   hotPositions: Array<{ title: string; applicants: number }>
   automationRules?: AutomationRule[]
+  linkedinIntegration?: LinkedInIntegrationSettings
 }
 
 type CandidateDashboardData = {
@@ -88,7 +89,7 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
   }
 
   if (module.href === "/hr/modules/integrations/linkedin-create-post") {
-    return <LinkedInAiWorkspace jobs={data.hotPositions} />
+    return <LinkedInAiWorkspace jobs={data.hotPositions} initialSettings={data.linkedinIntegration} />
   }
 
   if (module.href === "/hr/modules/integrations/linkedin-dashboard") {
@@ -108,7 +109,7 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
             </div>
           ))}
         </div>
-        <LinkedInAiWorkspace jobs={data.hotPositions} />
+        <LinkedInAiWorkspace jobs={data.hotPositions} initialSettings={data.linkedinIntegration} />
       </section>
     )
   }

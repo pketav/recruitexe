@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import { Bot, Building2, CalendarClock, CheckCircle2, Linkedin, Send, ShieldCheck, Sparkles, Users } from "lucide-react"
 
 import { legacyTheme } from "@/lib/legacy-theme"
+import type { LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type JobOption = {
   title: string
@@ -19,27 +20,103 @@ type Draft = {
 
 type LinkedInAiWorkspaceProps = {
   jobs: JobOption[]
+  initialSettings?: LinkedInIntegrationSettings
 }
 
 const tones = ["Professional", "Energetic", "Premium", "Urgent hiring"]
 
-export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
-  const [organizationMode, setOrganizationMode] = useState<"company" | "agency">("company")
-  const [companyName, setCompanyName] = useState("Fincoopers RecruitExe Demo")
-  const [clientName, setClientName] = useState("Client BFSI Brand")
+export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspaceProps) {
+  const [organizationMode, setOrganizationMode] = useState<"company" | "agency">(initialSettings?.organizationMode ?? "company")
+  const [companyName, setCompanyName] = useState(initialSettings?.workspaceName ?? "Fincoopers RecruitExe Demo")
+  const [clientName, setClientName] = useState(initialSettings?.defaultClientName ?? "Client BFSI Brand")
   const [selectedJob, setSelectedJob] = useState(jobs[0]?.title ?? "Credit Officer")
-  const [tone, setTone] = useState(tones[0])
+  const [tone, setTone] = useState(initialSettings?.defaultTone ?? tones[0])
   const [notes, setNotes] = useState("Highlight fast screening, clear career growth, and quick HR response.")
+  const [approvalRequired, setApprovalRequired] = useState(initialSettings?.approvalRequired ?? true)
+  const [autoSchedule, setAutoSchedule] = useState(initialSettings?.autoSchedule ?? false)
+  const [linkedinAccountName, setLinkedinAccountName] = useState(initialSettings?.linkedinAccountName ?? "")
+  const [linkedinAccessToken, setLinkedinAccessToken] = useState("")
+  const [settings, setSettings] = useState<LinkedInIntegrationSettings | undefined>(initialSettings)
   const [drafts, setDrafts] = useState<Draft[]>([])
   const [selectedDraftIndex, setSelectedDraftIndex] = useState(0)
   const [status, setStatus] = useState("")
   const [loading, setLoading] = useState(false)
+  const [savingSettings, setSavingSettings] = useState(false)
 
   const selectedJobData = useMemo(
     () => jobs.find((job) => job.title === selectedJob) ?? jobs[0],
     [jobs, selectedJob],
   )
   const selectedDraft = drafts[selectedDraftIndex]
+
+  async function saveSettings() {
+    setSavingSettings(true)
+    setStatus("")
+
+    try {
+      const response = await fetch("/api/hr/linkedin-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          organizationMode,
+          workspaceName: companyName,
+          defaultClientName: clientName,
+          defaultTone: tone,
+          approvalRequired,
+          autoSchedule,
+          linkedinAccountName,
+          linkedinAccessToken,
+        }),
+      })
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Settings save failed")
+      }
+
+      setSettings(result.settings)
+      setLinkedinAccessToken("")
+      setStatus("LinkedIn/Gemini setup Supabase organization settings me saved.")
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "LinkedIn setup save failed.")
+    } finally {
+      setSavingSettings(false)
+    }
+  }
+
+  async function disconnectLinkedIn() {
+    setSavingSettings(true)
+    setStatus("")
+
+    try {
+      const response = await fetch("/api/hr/linkedin-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          organizationMode,
+          workspaceName: companyName,
+          defaultClientName: clientName,
+          defaultTone: tone,
+          approvalRequired,
+          autoSchedule,
+          linkedinAccountName,
+          clearLinkedinToken: true,
+        }),
+      })
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Disconnect failed")
+      }
+
+      setSettings(result.settings)
+      setStatus("LinkedIn token removed from Supabase settings.")
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "LinkedIn disconnect failed.")
+    } finally {
+      setSavingSettings(false)
+    }
+  }
 
   async function generateDrafts() {
     setLoading(true)
@@ -73,7 +150,7 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
 
   function markScheduled() {
     setStatus(
-      organizationMode === "agency"
+      organizationMode === "agency" || approvalRequired
         ? "Draft moved to client approval queue. LinkedIn posting will run after approval and OAuth connection."
         : "Draft queued for LinkedIn scheduling. OAuth token stays backend-side.",
     )
@@ -190,6 +267,15 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
               <CalendarClock className="h-4 w-4" />
               {organizationMode === "agency" ? "Send for approval" : "Queue schedule"}
             </button>
+            <button
+              onClick={saveSettings}
+              disabled={savingSettings}
+              className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-bold disabled:text-slate-300"
+              style={{ borderColor: legacyTheme.divider, color: savingSettings ? undefined : legacyTheme.primary }}
+            >
+              <ShieldCheck className="h-4 w-4" />
+              {savingSettings ? "Saving..." : "Save setup"}
+            </button>
           </div>
         </div>
 
@@ -197,8 +283,14 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
           <h2 className="mb-4 text-xl font-bold" style={{ color: legacyTheme.text }}>System Setup</h2>
           <div className="space-y-3">
             {[
-              ["Gemini key", "Backend env only", Bot],
-              ["LinkedIn token", "OAuth token stored server-side, not pasted in browser", ShieldCheck],
+              ["Gemini key", settings?.geminiConfigured ? "Configured in backend env" : "Missing backend env, fallback draft active", Bot],
+              [
+                "LinkedIn token",
+                settings?.linkedinConnected
+                  ? `Connected${settings.linkedinTokenLastFour ? ` · token ends ${settings.linkedinTokenLastFour}` : ""}`
+                  : "Not connected yet. Paste token once; UI will not show it again.",
+                ShieldCheck,
+              ],
               ["Mode", organizationMode === "agency" ? "Agency with client approval" : "Company direct posting", CheckCircle2],
               ["Selected job", `${selectedJobData?.title ?? selectedJob} · ${selectedJobData?.applicants ?? 0} applicants`, Send],
             ].map(([label, value, Icon]) => (
@@ -213,6 +305,51 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
           </div>
           <div className="mt-5 rounded-lg border p-4 text-sm" style={{ borderColor: "rgba(0, 186, 209, 0.24)", background: "rgba(0, 186, 209, 0.08)", color: "#006B78" }}>
             Connect LinkedIn button will open OAuth. Client secret aur access token backend mein rahenge; frontend sirf connected status dekhega.
+          </div>
+          <div className="mt-4 space-y-3">
+            <label className="block">
+              <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>LinkedIn account name</span>
+              <input
+                value={linkedinAccountName}
+                onChange={(event) => setLinkedinAccountName(event.target.value)}
+                placeholder="Company page or profile name"
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"
+                style={{ borderColor: legacyTheme.divider }}
+              />
+            </label>
+            <label className="block">
+              <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>LinkedIn access token</span>
+              <input
+                value={linkedinAccessToken}
+                onChange={(event) => setLinkedinAccessToken(event.target.value)}
+                placeholder="Paste token once to store server-side"
+                type="password"
+                autoComplete="off"
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"
+                style={{ borderColor: legacyTheme.divider }}
+              />
+            </label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="flex items-center gap-2 rounded-lg border bg-white p-3 text-sm font-semibold" style={{ borderColor: legacyTheme.divider, color: legacyTheme.text }}>
+                <input type="checkbox" checked={approvalRequired} onChange={(event) => setApprovalRequired(event.target.checked)} />
+                Client approval required
+              </label>
+              <label className="flex items-center gap-2 rounded-lg border bg-white p-3 text-sm font-semibold" style={{ borderColor: legacyTheme.divider, color: legacyTheme.text }}>
+                <input type="checkbox" checked={autoSchedule} onChange={(event) => setAutoSchedule(event.target.checked)} />
+                Auto schedule after approval
+              </label>
+            </div>
+            {settings?.linkedinConnected ? (
+              <button
+                onClick={disconnectLinkedIn}
+                disabled={savingSettings}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-bold disabled:text-slate-300"
+                style={{ borderColor: legacyTheme.divider, color: legacyTheme.error }}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Disconnect LinkedIn token
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
