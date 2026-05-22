@@ -3,6 +3,7 @@ import { ArrowLeft, BadgeCheck, BriefcaseBusiness, ClipboardList, FileText, MapP
 
 import type { WorkspaceGroup, WorkspaceModule } from "@/lib/workspace-navigation"
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
+import { LinkedInAiWorkspace } from "@/components/linkedin-ai-workspace"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -69,6 +70,32 @@ function ModuleContent({ module, mode, data }: { module: WorkspaceModule; mode: 
 }
 
 function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDashboardData }) {
+  if (module.href === "/hr/modules/integrations/linkedin-create-post") {
+    return <LinkedInAiWorkspace jobs={data.hotPositions} />
+  }
+
+  if (module.href === "/hr/modules/integrations/linkedin-dashboard") {
+    return (
+      <section className="space-y-5">
+        <div className="grid gap-4 md:grid-cols-4">
+          {[
+            ["Drafts", "3", "AI generated and editable"],
+            ["Pending Approval", "1", "Agency client review"],
+            ["Scheduled", "2", "Ready for LinkedIn posting"],
+            ["Posted", "0", "Awaiting OAuth connection"],
+          ].map(([label, value, note]) => (
+            <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-semibold text-slate-500">{label}</p>
+              <p className="mt-2 text-3xl font-bold">{value}</p>
+              <p className="mt-1 text-sm text-slate-500">{note}</p>
+            </div>
+          ))}
+        </div>
+        <LinkedInAiWorkspace jobs={data.hotPositions} />
+      </section>
+    )
+  }
+
   if (module.dataKey === "jobs") {
     return (
       <section className="grid gap-4 md:grid-cols-3">
