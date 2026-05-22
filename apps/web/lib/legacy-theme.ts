@@ -1,0 +1,16 @@
+export const legacyTheme = {
+  primary: "#7367F0",
+  primaryLight: "#8F85F3",
+  primaryDark: "#675DD8",
+  info: "#00BAD1",
+  success: "#28C76F",
+  warning: "#FF9F43",
+  error: "#FF4C51",
+  text: "#262E3D",
+  textSoft: "rgba(47, 43, 61, 0.7)",
+  textMuted: "rgba(47, 43, 61, 0.5)",
+  divider: "rgba(47, 43, 61, 0.12)",
+  body: "#F8F7FA",
+  paper: "#FFFFFF",
+  selected: "rgba(47, 43, 61, 0.08)",
+}

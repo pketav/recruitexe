@@ -14,6 +14,7 @@ import {
 import { useState } from "react"
 
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
+import { legacyTheme } from "@/lib/legacy-theme"
 import { hrNavigation } from "@/lib/workspace-navigation"
 
 type HrDashboardData = {
@@ -49,31 +50,31 @@ export function HrDashboardClient({ data }: { data: HrDashboardData }) {
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Dashboard")
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen" style={{ background: legacyTheme.body, color: legacyTheme.text }}>
       <WorkspaceSidebar brand="RecruitExe HR" groups={hrNavigation} homeHref="/hr/dashboard" />
 
       <section className="lg:pl-72">
         <div className="mx-auto max-w-7xl px-5 py-6">
           <header className="mb-5 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-violet-600">Fincoopers HRMS</p>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">Job Application Analytics</h1>
-              <p className="mt-1 text-sm text-slate-500">{data.organization.name} · Supabase live data</p>
+              <p className="text-sm font-medium" style={{ color: legacyTheme.primary }}>Fincoopers HRMS</p>
+              <h1 className="text-3xl font-bold tracking-tight" style={{ color: legacyTheme.text }}>Job Application Analytics</h1>
+              <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{data.organization.name} · Supabase live data</p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">Live</span>
-              <Link href="/hr/login" className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium hover:bg-white">
+              <span className="rounded-full border px-3 py-1 text-sm font-medium" style={{ borderColor: "rgba(40, 199, 111, 0.24)", background: "rgba(40, 199, 111, 0.08)", color: legacyTheme.success }}>Live</span>
+              <Link href="/hr/login" className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-white" style={{ borderColor: legacyTheme.divider, color: legacyTheme.textSoft }}>
                 Demo Admin
               </Link>
             </div>
           </header>
 
-          <div className="mb-6 grid grid-cols-3 overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-fuchsia-600 p-1 text-white">
+          <div className="mb-6 grid grid-cols-3 overflow-hidden rounded-lg p-1 text-white" style={{ background: `linear-gradient(45deg, ${legacyTheme.primary} 30%, ${legacyTheme.info} 90%)` }}>
             {tabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`rounded-md px-4 py-3 font-semibold ${activeTab === tab ? "bg-white text-sky-700" : "text-white"}`}
+                className={`rounded-md px-4 py-3 font-semibold ${activeTab === tab ? "bg-white text-[#7367F0]" : "text-white"}`}
               >
                 {tab}
               </button>
@@ -113,11 +114,11 @@ function DashboardView({ data }: { data: HrDashboardData }) {
         })}
       </div>
 
-      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="mt-6 rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
         <div className="mb-4 flex items-center gap-3">
-          <BriefcaseBusiness className="h-5 w-5 text-sky-600" />
-          <h2 className="text-xl font-bold">Department Breakdown</h2>
-          <span className="rounded bg-sky-50 px-2 py-1 text-xs font-semibold text-sky-700">Live</span>
+          <BriefcaseBusiness className="h-5 w-5" style={{ color: legacyTheme.primary }} />
+          <h2 className="text-xl font-bold" style={{ color: legacyTheme.text }}>Department Breakdown</h2>
+          <span className="rounded px-2 py-1 text-xs font-semibold" style={{ background: "rgba(115, 103, 240, 0.12)", color: legacyTheme.primary }}>Live</span>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {data.departmentBreakdown.map((dept, index) => (
@@ -130,8 +131,8 @@ function DashboardView({ data }: { data: HrDashboardData }) {
         </div>
       </section>
 
-      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-4 text-xl font-bold">Hot Positions</h2>
+      <section className="mt-6 rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+        <h2 className="mb-4 text-xl font-bold" style={{ color: legacyTheme.text }}>Hot Positions</h2>
         <div className="grid gap-3 md:grid-cols-3">
           {data.hotPositions.map((position) => (
             <div key={position.title} className="flex items-center justify-between rounded-lg border border-orange-100 bg-orange-50 p-4">
@@ -150,11 +151,11 @@ function DashboardView({ data }: { data: HrDashboardData }) {
 
 function CandidatesView({ data }: { data: HrDashboardData }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="mb-4 text-xl font-bold">Candidate Pipeline</h2>
-      <div className="overflow-hidden rounded-lg border border-slate-200">
+    <section className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+      <h2 className="mb-4 text-xl font-bold" style={{ color: legacyTheme.text }}>Candidate Pipeline</h2>
+      <div className="overflow-hidden rounded-lg border" style={{ borderColor: legacyTheme.divider }}>
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-100 text-slate-600">
+          <thead style={{ background: legacyTheme.body, color: legacyTheme.textSoft }}>
             <tr>
               <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">Candidate</th>
@@ -165,7 +166,7 @@ function CandidatesView({ data }: { data: HrDashboardData }) {
           </thead>
           <tbody>
             {data.pipeline.map((candidate) => (
-              <tr key={`${candidate.code}-${candidate.position}`} className="border-t border-slate-100">
+              <tr key={`${candidate.code}-${candidate.position}`} className="border-t" style={{ borderColor: legacyTheme.divider }}>
                 <td className="px-4 py-3">{candidate.code}</td>
                 <td className="px-4 py-3">{candidate.name}</td>
                 <td className="px-4 py-3">{candidate.position}</td>
@@ -182,17 +183,17 @@ function CandidatesView({ data }: { data: HrDashboardData }) {
 
 function MapView({ data }: { data: HrDashboardData }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
       <div className="mb-5 flex items-center gap-3">
-        <MapPin className="h-5 w-5 text-fuchsia-600" />
-        <h2 className="text-xl font-bold">Hiring Map</h2>
+        <MapPin className="h-5 w-5" style={{ color: legacyTheme.info }} />
+        <h2 className="text-xl font-bold" style={{ color: legacyTheme.text }}>Hiring Map</h2>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {data.hotPositions.map((position, index) => (
-          <div key={position.title} className="rounded-lg border border-slate-200 bg-slate-50 p-5">
-            <p className="text-sm font-semibold text-slate-500">Zone {index + 1}</p>
-            <p className="mt-2 text-lg font-bold">{position.title}</p>
-            <p className="text-sm text-slate-600">{position.applicants} active applicants</p>
+          <div key={position.title} className="rounded-lg border p-5" style={{ borderColor: legacyTheme.divider, background: legacyTheme.body }}>
+            <p className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>Zone {index + 1}</p>
+            <p className="mt-2 text-lg font-bold" style={{ color: legacyTheme.text }}>{position.title}</p>
+            <p className="text-sm" style={{ color: legacyTheme.textSoft }}>{position.applicants} active applicants</p>
           </div>
         ))}
       </div>

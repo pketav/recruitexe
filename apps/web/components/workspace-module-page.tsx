@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowLeft, BadgeCheck, BriefcaseBusiness, ClipboardList, FileText, MapPin, Users } from "lucide-react"
 
 import type { WorkspaceGroup, WorkspaceModule } from "@/lib/workspace-navigation"
+import { legacyTheme } from "@/lib/legacy-theme"
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
 import { LinkedInAiWorkspace } from "@/components/linkedin-ai-workspace"
 import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
@@ -35,25 +36,31 @@ type WorkspaceModulePageProps = {
 }
 
 export function WorkspaceModulePage({ brand, homeHref, backHref, navigation, module, mode, data }: WorkspaceModulePageProps) {
+  const isLegacyFullBleed = module.href === "/hr/modules/recruitment/job-posts"
+
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen" style={{ background: legacyTheme.body, color: legacyTheme.text }}>
       <WorkspaceSidebar brand={brand} groups={navigation} homeHref={homeHref} />
       <section className="lg:pl-72">
-        <div className="mx-auto max-w-7xl px-5 py-6">
+        <div className={`mx-auto max-w-7xl px-5 ${isLegacyFullBleed ? "py-5" : "py-6"}`}>
+          {!isLegacyFullBleed ? (
           <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
             <div>
-              <Link href={backHref} className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-950">
+              <Link href={backHref} className="mb-3 inline-flex items-center gap-2 text-sm font-semibold hover:text-[#7367F0]" style={{ color: legacyTheme.textSoft }}>
                 <ArrowLeft className="h-4 w-4" />
                 Dashboard
               </Link>
-              <p className="text-sm font-semibold text-emerald-700">{module.source === "supabase-live" ? "Supabase live" : "Supabase route ready"}</p>
-              <h1 className="mt-1 text-3xl font-bold tracking-tight">{module.title}</h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{module.description}</p>
+              <p className="text-sm font-semibold" style={{ color: module.source === "supabase-live" ? legacyTheme.success : legacyTheme.primary }}>
+                {module.source === "supabase-live" ? "Live workspace" : "Workspace module"}
+              </p>
+              <h1 className="mt-1 text-3xl font-bold tracking-tight" style={{ color: legacyTheme.text }}>{module.title}</h1>
+              <p className="mt-2 max-w-3xl text-sm leading-6" style={{ color: legacyTheme.textSoft }}>{module.description}</p>
             </div>
-            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-700">
+            <span className="rounded-full border bg-white px-3 py-1 text-sm font-semibold" style={{ borderColor: legacyTheme.divider, color: legacyTheme.textSoft }}>
               {mode === "hr" ? "HR module" : "Candidate module"}
             </span>
           </header>
+          ) : null}
 
           <ModuleContent module={module} mode={mode} data={data} />
         </div>
@@ -89,10 +96,10 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
             ["Scheduled", "2", "Ready for LinkedIn posting"],
             ["Posted", "0", "Awaiting OAuth connection"],
           ].map(([label, value, note]) => (
-            <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500">{label}</p>
-              <p className="mt-2 text-3xl font-bold">{value}</p>
-              <p className="mt-1 text-sm text-slate-500">{note}</p>
+            <div key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+              <p className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>{label}</p>
+              <p className="mt-2 text-3xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
+              <p className="mt-1 text-sm" style={{ color: legacyTheme.textMuted }}>{note}</p>
             </div>
           ))}
         </div>
@@ -105,11 +112,11 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
     return (
       <section className="grid gap-4 md:grid-cols-3">
         {data.hotPositions.map((job) => (
-          <div key={job.title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <BriefcaseBusiness className="h-6 w-6 text-sky-700" />
-            <h2 className="mt-4 text-lg font-bold">{job.title}</h2>
-            <p className="mt-1 text-sm text-slate-500">{job.applicants} applicants from Supabase demo records</p>
-            <button className="mt-5 rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white">Open workflow</button>
+          <div key={job.title} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <BriefcaseBusiness className="h-6 w-6" style={{ color: legacyTheme.primary }} />
+            <h2 className="mt-4 text-lg font-bold" style={{ color: legacyTheme.text }}>{job.title}</h2>
+            <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{job.applicants} applicants from Supabase demo records</p>
+            <button className="mt-5 rounded-md px-4 py-2 text-sm font-semibold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)]" style={{ background: legacyTheme.primary }}>Open workflow</button>
           </div>
         ))}
       </section>
@@ -118,12 +125,12 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.dataKey === "applications" || module.dataKey === "candidates") {
     return (
-      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-5 py-4">
-          <h2 className="text-lg font-bold">Candidate Pipeline</h2>
+      <section className="overflow-hidden rounded-lg border bg-white shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+        <div className="border-b px-5 py-4" style={{ borderColor: legacyTheme.divider }}>
+          <h2 className="text-lg font-bold" style={{ color: legacyTheme.text }}>Candidate Pipeline</h2>
         </div>
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-100 text-slate-600">
+          <thead style={{ background: legacyTheme.body, color: legacyTheme.textSoft }}>
             <tr>
               <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">Candidate</th>
@@ -134,7 +141,7 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
           </thead>
           <tbody>
             {data.pipeline.map((candidate) => (
-              <tr key={`${candidate.code}-${candidate.position}`} className="border-t border-slate-100">
+              <tr key={`${candidate.code}-${candidate.position}`} className="border-t" style={{ borderColor: legacyTheme.divider }}>
                 <td className="px-4 py-3">{candidate.code}</td>
                 <td className="px-4 py-3 font-semibold">{candidate.name}</td>
                 <td className="px-4 py-3">{candidate.position}</td>
@@ -152,10 +159,10 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
     return (
       <section className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
         {data.departmentBreakdown.map((department) => (
-          <div key={department.name} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <MapPin className="h-6 w-6 text-fuchsia-700" />
-            <h2 className="mt-4 text-lg font-bold">{department.name}</h2>
-            <p className="mt-1 text-sm text-slate-500">{department.value} linked applications</p>
+          <div key={department.name} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <MapPin className="h-6 w-6" style={{ color: legacyTheme.info }} />
+            <h2 className="mt-4 text-lg font-bold" style={{ color: legacyTheme.text }}>{department.name}</h2>
+            <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{department.value} linked applications</p>
           </div>
         ))}
       </section>
@@ -165,11 +172,11 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
   return (
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       {data.metrics.slice(0, 4).map((metric) => (
-        <div key={metric.label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <ClipboardList className="h-6 w-6 text-emerald-700" />
-          <p className="mt-4 text-sm text-slate-500">{metric.label}</p>
-          <p className="text-3xl font-bold">{metric.value}</p>
-          <p className="mt-1 text-sm text-slate-500">{metric.note}</p>
+        <div key={metric.label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <ClipboardList className="h-6 w-6" style={{ color: legacyTheme.success }} />
+          <p className="mt-4 text-sm" style={{ color: legacyTheme.textSoft }}>{metric.label}</p>
+          <p className="text-3xl font-bold" style={{ color: legacyTheme.text }}>{metric.value}</p>
+          <p className="mt-1 text-sm" style={{ color: legacyTheme.textMuted }}>{metric.note}</p>
         </div>
       ))}
     </section>
@@ -181,12 +188,12 @@ function CandidateModuleContent({ module, data }: { module: WorkspaceModule; dat
     return (
       <section className="space-y-3">
         {data.jobs.map((job) => (
-          <div key={job.title} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div key={job.title} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
             <div>
-              <h2 className="font-bold">{job.title}</h2>
-              <p className="mt-1 text-sm text-slate-500">{job.department} · {job.location} · {job.applicants} applicants</p>
+              <h2 className="font-bold" style={{ color: legacyTheme.text }}>{job.title}</h2>
+              <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{job.department} · {job.location} · {job.applicants} applicants</p>
             </div>
-            <span className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700">{job.action}</span>
+            <span className="rounded-md px-3 py-2 text-sm font-semibold" style={{ background: legacyTheme.selected, color: legacyTheme.primary }}>{job.action}</span>
           </div>
         ))}
       </section>
@@ -203,10 +210,10 @@ function CandidateModuleContent({ module, data }: { module: WorkspaceModule; dat
   return (
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       {summary.map(([label, value, Icon]) => (
-        <div key={label as string} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <Icon className="h-6 w-6 text-indigo-700" />
-          <p className="mt-4 text-sm text-slate-500">{label as string}</p>
-          <p className="text-3xl font-bold">{value as string}</p>
+        <div key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <Icon className="h-6 w-6" style={{ color: legacyTheme.primary }} />
+          <p className="mt-4 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
+          <p className="text-3xl font-bold" style={{ color: legacyTheme.text }}>{value as string}</p>
         </div>
       ))}
     </section>

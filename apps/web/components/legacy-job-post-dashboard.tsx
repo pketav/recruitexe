@@ -42,7 +42,7 @@ type HrDashboardData = {
 }
 
 const GradientBox = styled(Box)(({ theme }) => ({
-  background: "#f8fafc",
+  background: "#F8F7FA",
   minHeight: "100vh",
   padding: theme.spacing(3),
 }))
@@ -65,7 +65,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
     borderRadius: theme.spacing(0.5),
   },
   "&:hover": {
-    color: "#0b0303",
+    color: "#262E3D",
     borderRadius: theme.spacing(1),
   },
 }))

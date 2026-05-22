@@ -4,6 +4,7 @@ import { BadgeCheck, Briefcase, CalendarClock, FileText, UserRound } from "lucid
 import { useState } from "react"
 
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
+import { legacyTheme } from "@/lib/legacy-theme"
 import { candidateNavigation } from "@/lib/workspace-navigation"
 
 type CandidateDashboardData = {
@@ -35,18 +36,18 @@ export function CandidateDashboardClient({ data }: { data: CandidateDashboardDat
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen" style={{ background: legacyTheme.body, color: legacyTheme.text }}>
       <WorkspaceSidebar brand="RecruitExe Candidate" groups={candidateNavigation} homeHref="/candidate/dashboard" />
 
       <section className="lg:pl-72">
         <div className="mx-auto max-w-7xl px-5 py-8">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-indigo-600">Candidate Portal</p>
-              <h1 className="text-3xl font-bold">Welcome, {data.candidateName}</h1>
-              <p className="mt-1 text-sm text-slate-500">Supabase-backed candidate workspace</p>
+              <p className="text-sm font-medium" style={{ color: legacyTheme.primary }}>Candidate Portal</p>
+              <h1 className="text-3xl font-bold" style={{ color: legacyTheme.text }}>Welcome, {data.candidateName}</h1>
+              <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>Supabase-backed candidate workspace</p>
             </div>
-            <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <span className="rounded-full px-4 py-2 text-sm font-semibold" style={{ background: "rgba(40, 199, 111, 0.12)", color: legacyTheme.success }}>
               Profile {data.profileCompletion}% complete
             </span>
           </div>
@@ -58,10 +59,10 @@ export function CandidateDashboardClient({ data }: { data: CandidateDashboardDat
               ["Documents", String(data.documents), FileText],
               ["Profile Checks", data.checks, BadgeCheck],
             ].map(([label, value, Icon]) => (
-              <div key={label as string} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <Icon className="h-6 w-6 text-indigo-600" />
-                <p className="mt-4 text-sm text-slate-500">{label as string}</p>
-                <p className="text-2xl font-bold">{value as string}</p>
+              <div key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+                <Icon className="h-6 w-6" style={{ color: legacyTheme.primary }} />
+                <p className="mt-4 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
+                <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as string}</p>
               </div>
             ))}
           </div>
@@ -73,19 +74,20 @@ export function CandidateDashboardClient({ data }: { data: CandidateDashboardDat
           ) : null}
 
           <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.72fr]">
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="mb-4 text-xl font-bold">Open Roles</h2>
+            <div className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+              <h2 className="mb-4 text-xl font-bold" style={{ color: legacyTheme.text }}>Open Roles</h2>
               <div className="space-y-3">
                 {jobs.map(({ title, department, location, action, applicants }) => (
-                  <div key={title} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 p-4">
+                  <div key={title} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4" style={{ borderColor: legacyTheme.divider }}>
                     <div>
-                      <p className="font-semibold">{title}</p>
-                      <p className="text-sm text-slate-500">{department} · {location} · {applicants} applicants</p>
+                      <p className="font-semibold" style={{ color: legacyTheme.text }}>{title}</p>
+                      <p className="text-sm" style={{ color: legacyTheme.textSoft }}>{department} · {location} · {applicants} applicants</p>
                     </div>
                     <button
                       onClick={() => action === "Apply" && handleApply(title)}
                       disabled={action === "Applied"}
-                      className={`rounded-lg px-4 py-2 text-sm font-semibold ${action === "Applied" ? "bg-slate-100 text-slate-600" : "bg-indigo-950 text-white"}`}
+                      className="rounded-md px-4 py-2 text-sm font-semibold text-white disabled:text-[#7367F0]"
+                      style={{ background: action === "Applied" ? "rgba(115, 103, 240, 0.12)" : legacyTheme.primary }}
                     >
                       {action}
                     </button>
@@ -94,10 +96,10 @@ export function CandidateDashboardClient({ data }: { data: CandidateDashboardDat
               </div>
             </div>
 
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <UserRound className="h-7 w-7 text-indigo-600" />
-              <h2 className="mt-4 text-xl font-bold">Next Steps</h2>
-              <div className="mt-4 space-y-3 text-sm text-slate-600">
+            <div className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+              <UserRound className="h-7 w-7" style={{ color: legacyTheme.primary }} />
+              <h2 className="mt-4 text-xl font-bold" style={{ color: legacyTheme.text }}>Next Steps</h2>
+              <div className="mt-4 space-y-3 text-sm" style={{ color: legacyTheme.textSoft }}>
                 <p>Complete address and education details.</p>
                 <p>Upload updated resume and ID proof.</p>
                 <p>Wait for HR interview schedule confirmation.</p>

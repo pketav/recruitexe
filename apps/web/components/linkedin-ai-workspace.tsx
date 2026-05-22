@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react"
 import { Bot, Building2, CalendarClock, CheckCircle2, Linkedin, Send, ShieldCheck, Sparkles, Users } from "lucide-react"
 
+import { legacyTheme } from "@/lib/legacy-theme"
+
 type JobOption = {
   title: string
   applicants: number
@@ -80,18 +82,18 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
   return (
     <section className="space-y-5">
       <div className="grid gap-4 lg:grid-cols-[1fr_0.82fr]">
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
           <div className="mb-5 flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-blue-700">
+            <div className="grid h-11 w-11 place-items-center rounded-lg" style={{ background: "rgba(115, 103, 240, 0.12)", color: legacyTheme.primary }}>
               <Linkedin className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">LinkedIn AI Post Setup</h2>
-              <p className="text-sm text-slate-500">Company aur agency dono ke liye dynamic workflow.</p>
+              <h2 className="text-xl font-bold" style={{ color: legacyTheme.text }}>LinkedIn AI Post Setup</h2>
+              <p className="text-sm" style={{ color: legacyTheme.textSoft }}>Company aur agency dono ke liye dynamic workflow.</p>
             </div>
           </div>
 
-          <div className="mb-5 grid grid-cols-2 gap-2 rounded-lg bg-slate-100 p-1">
+          <div className="mb-5 grid grid-cols-2 gap-2 rounded-lg p-1" style={{ background: legacyTheme.body }}>
             {[
               ["company", Building2, "Company"],
               ["agency", Users, "Recruitment Agency"],
@@ -100,7 +102,7 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
                 key={value as string}
                 onClick={() => setOrganizationMode(value as "company" | "agency")}
                 className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-bold ${
-                  organizationMode === value ? "bg-white text-slate-950 shadow-sm" : "text-slate-500"
+                  organizationMode === value ? "bg-white text-[#7367F0] shadow-sm" : "text-[#6b6578]"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -111,28 +113,31 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
 
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Workspace name</span>
+              <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>Workspace name</span>
               <input
                 value={companyName}
                 onChange={(event) => setCompanyName(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-500"
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"
+                style={{ borderColor: legacyTheme.divider }}
               />
             </label>
             <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Client name</span>
+              <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>Client name</span>
               <input
                 value={clientName}
                 disabled={organizationMode === "company"}
                 onChange={(event) => setClientName(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none disabled:bg-slate-100 disabled:text-slate-400 focus:border-slate-500"
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none disabled:bg-[#F8F7FA] disabled:text-slate-400 focus:border-[#7367F0]"
+                style={{ borderColor: legacyTheme.divider }}
               />
             </label>
             <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Job</span>
+              <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>Job</span>
               <select
                 value={selectedJob}
                 onChange={(event) => setSelectedJob(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-500"
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"
+                style={{ borderColor: legacyTheme.divider }}
               >
                 {jobs.map((job) => (
                   <option key={job.title} value={job.title}>
@@ -142,11 +147,12 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
               </select>
             </label>
             <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Tone</span>
+              <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>Tone</span>
               <select
                 value={tone}
                 onChange={(event) => setTone(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-500"
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"
+                style={{ borderColor: legacyTheme.divider }}
               >
                 {tones.map((toneOption) => (
                   <option key={toneOption}>{toneOption}</option>
@@ -156,11 +162,12 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
           </div>
 
           <label className="mt-4 block">
-            <span className="text-sm font-semibold text-slate-700">AI instructions</span>
+            <span className="text-sm font-semibold" style={{ color: legacyTheme.textSoft }}>AI instructions</span>
             <textarea
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
-              className="mt-1 min-h-24 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-500"
+              className="mt-1 min-h-24 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"
+              style={{ borderColor: legacyTheme.divider }}
             />
           </label>
 
@@ -168,7 +175,8 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
             <button
               onClick={generateDrafts}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-sm font-bold text-white disabled:bg-slate-400"
+              className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)] disabled:bg-slate-400"
+              style={{ background: loading ? undefined : legacyTheme.primary }}
             >
               <Sparkles className="h-4 w-4" />
               {loading ? "Generating..." : "Generate with backend AI"}
@@ -176,7 +184,8 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
             <button
               onClick={markScheduled}
               disabled={!selectedDraft}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 disabled:text-slate-300"
+              className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-bold disabled:text-slate-300"
+              style={{ borderColor: legacyTheme.divider, color: selectedDraft ? legacyTheme.primary : undefined }}
             >
               <CalendarClock className="h-4 w-4" />
               {organizationMode === "agency" ? "Send for approval" : "Queue schedule"}
@@ -184,8 +193,8 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-4 text-xl font-bold">System Setup</h2>
+        <div className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <h2 className="mb-4 text-xl font-bold" style={{ color: legacyTheme.text }}>System Setup</h2>
           <div className="space-y-3">
             {[
               ["Gemini key", "Backend env only", Bot],
@@ -193,16 +202,16 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
               ["Mode", organizationMode === "agency" ? "Agency with client approval" : "Company direct posting", CheckCircle2],
               ["Selected job", `${selectedJobData?.title ?? selectedJob} · ${selectedJobData?.applicants ?? 0} applicants`, Send],
             ].map(([label, value, Icon]) => (
-              <div key={label as string} className="flex gap-3 rounded-lg border border-slate-100 bg-slate-50 p-3">
-                <Icon className="mt-0.5 h-5 w-5 text-slate-700" />
+              <div key={label as string} className="flex gap-3 rounded-lg border p-3" style={{ borderColor: legacyTheme.divider, background: legacyTheme.body }}>
+                <Icon className="mt-0.5 h-5 w-5" style={{ color: legacyTheme.primary }} />
                 <div>
-                  <p className="font-semibold">{label as string}</p>
-                  <p className="text-sm text-slate-500">{value as string}</p>
+                  <p className="font-semibold" style={{ color: legacyTheme.text }}>{label as string}</p>
+                  <p className="text-sm" style={{ color: legacyTheme.textSoft }}>{value as string}</p>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-5 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+          <div className="mt-5 rounded-lg border p-4 text-sm" style={{ borderColor: "rgba(0, 186, 209, 0.24)", background: "rgba(0, 186, 209, 0.08)", color: "#006B78" }}>
             Connect LinkedIn button will open OAuth. Client secret aur access token backend mein rahenge; frontend sirf connected status dekhega.
           </div>
         </div>
@@ -222,30 +231,31 @@ export function LinkedInAiWorkspace({ jobs }: LinkedInAiWorkspaceProps) {
                 key={`${draft.title}-${index}`}
                 onClick={() => setSelectedDraftIndex(index)}
                 className={`w-full rounded-lg border p-4 text-left ${
-                  selectedDraftIndex === index ? "border-slate-950 bg-white" : "border-slate-200 bg-slate-50"
+                  selectedDraftIndex === index ? "border-[#7367F0] bg-white" : "bg-[#F8F7FA]"
                 }`}
+                style={{ borderColor: selectedDraftIndex === index ? legacyTheme.primary : legacyTheme.divider }}
               >
-                <p className="font-bold">{draft.title}</p>
-                <p className="mt-1 line-clamp-2 text-sm text-slate-500">{draft.content}</p>
+                <p className="font-bold" style={{ color: legacyTheme.text }}>{draft.title}</p>
+                <p className="mt-1 line-clamp-2 text-sm" style={{ color: legacyTheme.textSoft }}>{draft.content}</p>
               </button>
             ))}
           </div>
 
           {selectedDraft ? (
-            <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <article className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="text-xl font-bold">{selectedDraft.title}</h2>
-                <span className="rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-700">LinkedIn Draft</span>
+                <h2 className="text-xl font-bold" style={{ color: legacyTheme.text }}>{selectedDraft.title}</h2>
+                <span className="rounded-full px-3 py-1 text-sm font-bold" style={{ background: "rgba(115, 103, 240, 0.12)", color: legacyTheme.primary }}>LinkedIn Draft</span>
               </div>
-              <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{selectedDraft.content}</p>
+              <p className="whitespace-pre-line text-sm leading-6" style={{ color: legacyTheme.textSoft }}>{selectedDraft.content}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {selectedDraft.hashtags.map((hashtag) => (
-                  <span key={hashtag} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+                  <span key={hashtag} className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: legacyTheme.selected, color: legacyTheme.primary }}>
                     {hashtag}
                   </span>
                 ))}
               </div>
-              <p className="mt-5 text-sm font-bold text-slate-950">CTA: {selectedDraft.cta}</p>
+              <p className="mt-5 text-sm font-bold" style={{ color: legacyTheme.text }}>CTA: {selectedDraft.cta}</p>
             </article>
           ) : null}
         </div>
