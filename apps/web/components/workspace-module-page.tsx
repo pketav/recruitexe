@@ -4,6 +4,7 @@ import { ArrowLeft, BadgeCheck, BriefcaseBusiness, ClipboardList, FileText, MapP
 import type { WorkspaceGroup, WorkspaceModule } from "@/lib/workspace-navigation"
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
 import { LinkedInAiWorkspace } from "@/components/linkedin-ai-workspace"
+import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -70,6 +71,10 @@ function ModuleContent({ module, mode, data }: { module: WorkspaceModule; mode: 
 }
 
 function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDashboardData }) {
+  if (module.href === "/hr/modules/recruitment/job-posts") {
+    return <LegacyJobPostDashboard data={data} />
+  }
+
   if (module.href === "/hr/modules/integrations/linkedin-create-post") {
     return <LinkedInAiWorkspace jobs={data.hotPositions} />
   }
