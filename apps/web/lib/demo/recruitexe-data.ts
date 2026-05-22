@@ -2,7 +2,7 @@ import "server-only"
 
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
 
-const organizationSlug = "recruitexe-demo"
+export const organizationSlug = "recruitexe-demo"
 
 type SupabaseAdmin = ReturnType<typeof getSupabaseAdminClient>
 
@@ -29,6 +29,16 @@ type JobRow = {
   action: "Apply" | "Applied"
   applicants: number
   status?: string
+}
+
+type PublicCareerJob = {
+  title: string
+  department: string
+  location: string
+  openings: number
+  applicants: number
+  summary: string
+  skills: string[]
 }
 
 const departments = [
@@ -665,6 +675,57 @@ export async function getCandidateDashboardData() {
     documents: documentsResult.data?.length ?? 0,
     checks: "Passed",
     jobs,
+  }
+}
+
+export async function getPublicCareersData(slug: string) {
+  const supabase = getSupabaseAdminClient()
+  await ensureRecruitExeDemoData()
+
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("id,name,slug,industry,organization_type")
+    .eq("slug", slug)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const jobsResult = await supabase
+    .from("job_posts")
+    .select("id,title,openings,content,metadata,departments(name),work_locations(name)")
+    .eq("organization_id", organizationResult.data.id)
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+
+  if (jobsResult.error) {
+    throw new Error(jobsResult.error.message)
+  }
+
+  const jobs: PublicCareerJob[] = (jobsResult.data ?? []).map((job) => {
+    const department = Array.isArray(job.departments) ? job.departments[0] : job.departments
+    const location = Array.isArray(job.work_locations) ? job.work_locations[0] : job.work_locations
+    const content = job.content as { summary?: string; skills?: string[] } | null
+
+    return {
+      title: job.title,
+      department: department?.name ?? "Recruitment",
+      location: location?.name ?? "Remote",
+      openings: Number(job.openings ?? 0),
+      applicants: Number((job.metadata as { applicants?: number } | null)?.applicants ?? 0),
+      summary: content?.summary ?? "Role details will be shared by the hiring team.",
+      skills: Array.isArray(content?.skills) ? content.skills : [],
+    }
+  })
+
+  return {
+    organization: organizationResult.data,
+    publicUrl: `/careers/${organizationResult.data.slug}`,
+    legacyUrl: `/CareerPage/${organizationResult.data.slug}`,
+    jobs,
+    departments: [...new Set(jobs.map((job) => job.department))],
+    locations: [...new Set(jobs.map((job) => job.location))],
   }
 }
 

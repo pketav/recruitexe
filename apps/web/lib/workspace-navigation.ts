@@ -149,6 +149,14 @@ export const hrNavigation: WorkspaceGroup[] = [
         dataKey: "settings",
       },
       {
+        title: "Customer Links",
+        href: "/hr/modules/setup/customer-links",
+        legacyHref: "/CareerPage/recruitexe-demo",
+        description: "Public careers links for company and agency client workspaces.",
+        source: "supabase-live",
+        dataKey: "workflow",
+      },
+      {
         title: "Settings",
         href: "/hr/modules/setup/settings",
         legacyHref: "/employeeSetup",

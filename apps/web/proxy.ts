@@ -48,6 +48,14 @@ export function proxy(request: NextRequest) {
   const url = request.nextUrl
   let destination = legacyPathMap.get(url.pathname)
 
+  if (url.pathname === "/CareerPage") {
+    destination = "/careers/recruitexe-demo"
+  }
+
+  if (url.pathname.startsWith("/CareerPage/")) {
+    destination = url.pathname.replace("/CareerPage", "/careers")
+  }
+
   if (url.pathname === "/JobApplications") {
     const stage = url.searchParams.get("stage")
     if (stage === "2") {
@@ -89,7 +97,10 @@ export const config = {
     "/FileManagerNew/:path*",
     "/completeProfile",
     "/viewProfile",
+    "/Careers",
     "/Careers/:path*",
+    "/CareerPage",
+    "/CareerPage/:path*",
     "/applications",
     "/myAppliedJobs",
     "/interviews",

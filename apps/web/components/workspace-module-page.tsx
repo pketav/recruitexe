@@ -7,6 +7,8 @@ import { WorkspaceSidebar } from "@/components/workspace-sidebar"
 import { LinkedInAiWorkspace } from "@/components/linkedin-ai-workspace"
 import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
 import { HrAiScreeningWorkspace } from "@/components/hr-ai-screening-workspace"
+import { CustomerLinksWorkspace } from "@/components/customer-links-workspace"
+import { organizationSlug } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -111,6 +113,10 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.href === "/hr/modules/applications/ai-screening" || module.dataKey === "applications" || module.dataKey === "candidates") {
     return <HrAiScreeningWorkspace pipeline={data.pipeline} />
+  }
+
+  if (module.href === "/hr/modules/setup/customer-links") {
+    return <CustomerLinksWorkspace slug={organizationSlug} organizationName={data.organization.name} jobs={data.hotPositions} />
   }
 
   if (module.dataKey === "jobs") {
