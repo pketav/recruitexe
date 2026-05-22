@@ -8,7 +8,8 @@ import { LinkedInAiWorkspace } from "@/components/linkedin-ai-workspace"
 import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
 import { HrAiScreeningWorkspace } from "@/components/hr-ai-screening-workspace"
 import { CustomerLinksWorkspace } from "@/components/customer-links-workspace"
-import { organizationSlug } from "@/lib/demo/recruitexe-data"
+import { AutomationRulesWorkspace } from "@/components/automation-rules-workspace"
+import { organizationSlug, type AutomationRule } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -16,6 +17,7 @@ type HrDashboardData = {
   departmentBreakdown: Array<{ name: string; value: number }>
   pipeline: Array<{ applicationId: string; code: string; name: string; position: string; status: string; aiScore: string; aiSummary?: string }>
   hotPositions: Array<{ title: string; applicants: number }>
+  automationRules?: AutomationRule[]
 }
 
 type CandidateDashboardData = {
@@ -117,6 +119,10 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.href === "/hr/modules/setup/customer-links") {
     return <CustomerLinksWorkspace slug={organizationSlug} organizationName={data.organization.name} jobs={data.hotPositions} />
+  }
+
+  if (module.href === "/hr/modules/setup/automation-rules") {
+    return <AutomationRulesWorkspace organizationName={data.organization.name} initialRules={data.automationRules ?? []} />
   }
 
   if (module.dataKey === "jobs") {

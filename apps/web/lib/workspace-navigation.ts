@@ -157,6 +157,14 @@ export const hrNavigation: WorkspaceGroup[] = [
         dataKey: "workflow",
       },
       {
+        title: "Automation Rules",
+        href: "/hr/modules/setup/automation-rules",
+        legacyHref: "/automationRules",
+        description: "Auto shortlist, review, reject, and follow-up rules for applications.",
+        source: "supabase-live",
+        dataKey: "workflow",
+      },
+      {
         title: "Settings",
         href: "/hr/modules/setup/settings",
         legacyHref: "/employeeSetup",

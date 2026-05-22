@@ -41,6 +41,55 @@ type PublicCareerJob = {
   skills: string[]
 }
 
+export type AutomationRule = {
+  id: "auto-approve-high-match" | "review-mid-match" | "reject-low-match" | "candidate-followup"
+  title: string
+  description: string
+  enabled: boolean
+  trigger: string
+  condition: string
+  action: string
+}
+
+const defaultAutomationRules: AutomationRule[] = [
+  {
+    id: "auto-approve-high-match",
+    title: "Auto approve high AI match",
+    description: "Candidates with strong AI match move directly to approved shortlist.",
+    enabled: true,
+    trigger: "AI screening completed",
+    condition: "AI score >= 85",
+    action: "Set application status to approved",
+  },
+  {
+    id: "review-mid-match",
+    title: "Send medium match to HR review",
+    description: "Good profiles stay visible for recruiter review instead of final rejection.",
+    enabled: true,
+    trigger: "AI screening completed",
+    condition: "AI score between 74 and 84",
+    action: "Set application status to review",
+  },
+  {
+    id: "reject-low-match",
+    title: "Reject low match safely",
+    description: "Weak profiles can be rejected after AI score is available.",
+    enabled: true,
+    trigger: "AI screening completed",
+    condition: "AI score <= 72",
+    action: "Set application status to rejected",
+  },
+  {
+    id: "candidate-followup",
+    title: "Candidate follow-up queue",
+    description: "Newly applied candidates stay in a follow-up queue until screening completes.",
+    enabled: true,
+    trigger: "New application received",
+    condition: "Status is applied and AI score is pending",
+    action: "Keep status applied and mark follow-up task ready",
+  },
+]
+
 const departments = [
   { name: "Legal", value: 46 },
   { name: "Finance", value: 38 },
@@ -151,21 +200,32 @@ async function ensureProduct(supabase: SupabaseAdmin) {
 }
 
 async function ensureOrganization(supabase: SupabaseAdmin) {
+  const existing = await supabase
+    .from("organizations")
+    .select("id,name")
+    .eq("slug", organizationSlug)
+    .maybeSingle()
+
+  if (existing.error) {
+    throw new Error(`find organization: ${existing.error.message}`)
+  }
+
+  if (existing.data) {
+    return existing.data
+  }
+
   return getSingle<{ id: string; name: string }>(
     supabase
       .from("organizations")
-      .upsert(
-        {
-          slug: organizationSlug,
-          name: "Fincoopers RecruitExe Demo",
-          legal_name: "Fincoopers Consulting Services",
-          organization_type: "enterprise",
-          industry: "Financial Services",
-          website: "https://fincoopers.in",
-          settings: { demo: true, product: "recruitexe" },
-        },
-        { onConflict: "slug" },
-      )
+      .insert({
+        slug: organizationSlug,
+        name: "Fincoopers RecruitExe Demo",
+        legal_name: "Fincoopers Consulting Services",
+        organization_type: "enterprise",
+        industry: "Financial Services",
+        website: "https://fincoopers.in",
+        settings: { demo: true, product: "recruitexe", automationRules: defaultAutomationRules },
+      })
       .select("id,name")
       .single(),
     "ensure organization",
@@ -598,6 +658,7 @@ export async function getHrDashboardData() {
     title: job.title,
     applicants: Number((job.metadata as { applicants?: number } | null)?.applicants ?? 0),
   }))
+  const automationRules = await getAutomationRulesForOrganization(supabase, organization.id)
 
   return {
     organization,
@@ -606,6 +667,7 @@ export async function getHrDashboardData() {
     pipeline,
     hotPositions,
     candidateCount: candidates.length,
+    automationRules,
   }
 }
 
@@ -862,5 +924,184 @@ export async function runAiScreeningForDemoApplications() {
     screenedCount: screened.length,
     totalApplications: rows.length,
     provider: process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY ? "gemini-ready" : "rules-fallback",
+  }
+}
+
+function normalizeAutomationRules(value: unknown): AutomationRule[] {
+  if (!Array.isArray(value)) {
+    return defaultAutomationRules
+  }
+
+  return defaultAutomationRules.map((defaultRule) => {
+    const savedRule = value.find((rule): rule is Partial<AutomationRule> => {
+      return typeof rule === "object" && rule !== null && "id" in rule && rule.id === defaultRule.id
+    })
+
+    return {
+      ...defaultRule,
+      enabled: typeof savedRule?.enabled === "boolean" ? savedRule.enabled : defaultRule.enabled,
+    }
+  })
+}
+
+async function getAutomationRulesForOrganization(supabase: SupabaseAdmin, organizationId: string) {
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("settings")
+    .eq("id", organizationId)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const settings = organizationResult.data.settings as { automationRules?: unknown } | null
+
+  return normalizeAutomationRules(settings?.automationRules)
+}
+
+export async function getAutomationRulesData() {
+  const supabase = getSupabaseAdminClient()
+  const { organization } = await ensureRecruitExeDemoData()
+
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("id,name,settings")
+    .eq("id", organization.id)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const rules = normalizeAutomationRules((organizationResult.data.settings as { automationRules?: unknown } | null)?.automationRules)
+
+  return {
+    organization: {
+      id: organizationResult.data.id,
+      name: organizationResult.data.name,
+    },
+    rules,
+  }
+}
+
+export async function saveAutomationRules(rules: Array<Pick<AutomationRule, "id" | "enabled">>) {
+  const supabase = getSupabaseAdminClient()
+  const { organization, rules: currentRules } = await getAutomationRulesData()
+
+  const incoming = new Map(rules.map((rule) => [rule.id, rule.enabled]))
+  const nextRules = currentRules.map((rule) => ({
+    ...rule,
+    enabled: incoming.has(rule.id) ? Boolean(incoming.get(rule.id)) : rule.enabled,
+  }))
+
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("settings")
+    .eq("id", organization.id)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  await supabase
+    .from("organizations")
+    .update({
+      settings: {
+        ...((organizationResult.data.settings as Record<string, unknown> | null) ?? {}),
+        automationRules: nextRules,
+      },
+    })
+    .eq("id", organization.id)
+    .throwOnError()
+
+  return {
+    organization,
+    rules: nextRules,
+  }
+}
+
+export async function runAutomationRulesForDemoApplications() {
+  const supabase = getSupabaseAdminClient()
+  const { organization, rules } = await getAutomationRulesData()
+  const enabledRules = new Set(rules.filter((rule) => rule.enabled).map((rule) => rule.id))
+
+  const applicationsResult = await supabase
+    .from("job_applications")
+    .select("id,status,ai_score,metadata,candidates(full_name,candidate_code),job_posts(title)")
+    .eq("organization_id", organization.id)
+
+  if (applicationsResult.error) {
+    throw new Error(applicationsResult.error.message)
+  }
+
+  const actions = []
+
+  for (const application of applicationsResult.data ?? []) {
+    const score = Number(application.ai_score ?? 0)
+    let nextStatus = application.status
+    let matchedRule: AutomationRule["id"] | null = null
+
+    if (enabledRules.has("auto-approve-high-match") && score >= 85 && application.status !== "rejected") {
+      nextStatus = "approved"
+      matchedRule = "auto-approve-high-match"
+    } else if (
+      enabledRules.has("review-mid-match") &&
+      score >= 74 &&
+      score <= 84 &&
+      !["approved", "rejected"].includes(application.status)
+    ) {
+      nextStatus = "review"
+      matchedRule = "review-mid-match"
+    } else if (enabledRules.has("reject-low-match") && score > 0 && score <= 72 && application.status !== "approved") {
+      nextStatus = "rejected"
+      matchedRule = "reject-low-match"
+    } else if (enabledRules.has("candidate-followup") && application.status === "applied" && !application.ai_score) {
+      matchedRule = "candidate-followup"
+    }
+
+    if (!matchedRule) {
+      continue
+    }
+
+    const candidate = Array.isArray(application.candidates) ? application.candidates[0] : application.candidates
+    const job = Array.isArray(application.job_posts) ? application.job_posts[0] : application.job_posts
+
+    if (nextStatus !== application.status || matchedRule === "candidate-followup") {
+      await supabase
+        .from("job_applications")
+        .update({
+          status: nextStatus,
+          metadata: {
+            ...((application.metadata as Record<string, unknown> | null) ?? {}),
+            automation: {
+              ruleId: matchedRule,
+              appliedAt: new Date().toISOString(),
+            },
+          },
+        })
+        .eq("id", application.id)
+        .throwOnError()
+    }
+
+    actions.push({
+      applicationId: application.id,
+      candidateName: candidate?.full_name ?? "Candidate",
+      candidateCode: candidate?.candidate_code ?? "CAND",
+      jobTitle: job?.title ?? "Open role",
+      ruleId: matchedRule,
+      previousStatus: application.status,
+      nextStatus,
+      aiScore: application.ai_score ? `${application.ai_score}%` : "Pending",
+    })
+  }
+
+  return {
+    organization,
+    actions,
+    actionCount: actions.length,
+    enabledCount: enabledRules.size,
+    totalApplications: applicationsResult.data?.length ?? 0,
   }
 }
