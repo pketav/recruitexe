@@ -41,6 +41,13 @@ type PublicCareerJob = {
   skills: string[]
 }
 
+export type JobPostSetupData = {
+  organization: { id: string; name: string }
+  departments: Array<{ id: string; name: string }>
+  locations: Array<{ id: string; name: string }>
+  recentJobs: Array<{ id: string; title: string; status: string; openings: number; department: string; location: string; applicants: number }>
+}
+
 export type AutomationRule = {
   id: "auto-approve-high-match" | "review-mid-match" | "reject-low-match" | "candidate-followup"
   title: string
@@ -482,6 +489,15 @@ function scoreCandidateMatch(candidateName: string, jobTitle: string, status: st
   }
 }
 
+function slugifyJobTitle(title: string) {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 72)
+}
+
 async function ensureDocument(
   supabase: SupabaseAdmin,
   organizationId: string,
@@ -693,6 +709,7 @@ export async function getHrDashboardData() {
   }))
   const automationRules = await getAutomationRulesForOrganization(supabase, organization.id)
   const linkedinIntegration = await getLinkedInSettingsForOrganization(supabase, organization.id)
+  const jobPostSetup = await getJobPostSetupData()
 
   return {
     organization,
@@ -703,6 +720,136 @@ export async function getHrDashboardData() {
     candidateCount: candidates.length,
     automationRules,
     linkedinIntegration,
+    jobPostSetup,
+  }
+}
+
+export async function getJobPostSetupData(): Promise<JobPostSetupData> {
+  const supabase = getSupabaseAdminClient()
+  const { organization } = await ensureRecruitExeDemoData()
+
+  const [departmentsResult, locationsResult, jobsResult] = await Promise.all([
+    supabase
+      .from("departments")
+      .select("id,name")
+      .eq("organization_id", organization.id)
+      .order("name", { ascending: true }),
+    supabase
+      .from("work_locations")
+      .select("id,name")
+      .eq("organization_id", organization.id)
+      .order("name", { ascending: true }),
+    supabase
+      .from("job_posts")
+      .select("id,title,status,openings,metadata,departments(name),work_locations(name)")
+      .eq("organization_id", organization.id)
+      .order("created_at", { ascending: false })
+      .limit(8),
+  ])
+
+  for (const result of [departmentsResult, locationsResult, jobsResult]) {
+    if (result.error) {
+      throw new Error(result.error.message)
+    }
+  }
+
+  return {
+    organization,
+    departments: departmentsResult.data ?? [],
+    locations: locationsResult.data ?? [],
+    recentJobs: (jobsResult.data ?? []).map((job) => {
+      const department = Array.isArray(job.departments) ? job.departments[0] : job.departments
+      const location = Array.isArray(job.work_locations) ? job.work_locations[0] : job.work_locations
+
+      return {
+        id: job.id,
+        title: job.title,
+        status: job.status,
+        openings: job.openings,
+        department: department?.name ?? "Recruitment",
+        location: location?.name ?? "Remote",
+        applicants: Number((job.metadata as { applicants?: number } | null)?.applicants ?? 0),
+      }
+    }),
+  }
+}
+
+export async function createRecruitExeJobPost(payload: {
+  title?: string
+  department?: string
+  location?: string
+  openings?: number
+  employmentType?: string
+  summary?: string
+  skills?: string[]
+  status?: "draft" | "published"
+}) {
+  const supabase = getSupabaseAdminClient()
+  const { organization } = await ensureRecruitExeDemoData()
+  const title = payload.title?.trim()
+
+  if (!title) {
+    throw new Error("Job title is required")
+  }
+
+  const openings = Math.max(1, Math.min(250, Number(payload.openings ?? 1) || 1))
+  const departmentName = payload.department?.trim() || "Recruitment"
+  const locationName = payload.location?.trim() || "Remote"
+  const status = payload.status === "draft" ? "draft" : "published"
+  const slugBase = slugifyJobTitle(title) || "job-post"
+  const slug = `${slugBase}-${Date.now().toString(36)}`
+  const department = await ensureNamedRow(supabase, "departments", organization.id, departmentName)
+  const location = await ensureNamedRow(supabase, "work_locations", organization.id, locationName)
+  const skills = (payload.skills ?? [])
+    .map((skill) => skill.trim())
+    .filter(Boolean)
+    .slice(0, 12)
+
+  const jobResult = await supabase
+    .from("job_posts")
+    .insert({
+      organization_id: organization.id,
+      slug,
+      title,
+      department_id: department.id,
+      work_location_id: location.id,
+      employment_type: payload.employmentType?.trim() || "Full-time",
+      openings,
+      status,
+      published_at: status === "published" ? new Date().toISOString() : null,
+      content: {
+        summary: payload.summary?.trim() || "Role created from RecruitExe job post workflow.",
+        skills,
+      },
+      metadata: {
+        product: "recruitexe",
+        source: "job-post-workflow",
+        applicants: 0,
+      },
+    })
+    .select("id,title,slug,status,openings,employment_type,content,departments(name),work_locations(name)")
+    .single()
+
+  if (jobResult.error) {
+    throw new Error(jobResult.error.message)
+  }
+
+  const job = jobResult.data
+  const jobDepartment = Array.isArray(job.departments) ? job.departments[0] : job.departments
+  const jobLocation = Array.isArray(job.work_locations) ? job.work_locations[0] : job.work_locations
+
+  return {
+    organization,
+    job: {
+      id: job.id,
+      title: job.title,
+      slug: job.slug,
+      status: job.status,
+      openings: job.openings,
+      employmentType: job.employment_type,
+      department: jobDepartment?.name ?? departmentName,
+      location: jobLocation?.name ?? locationName,
+    },
   }
 }
 

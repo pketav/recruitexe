@@ -9,7 +9,8 @@ import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
 import { HrAiScreeningWorkspace } from "@/components/hr-ai-screening-workspace"
 import { CustomerLinksWorkspace } from "@/components/customer-links-workspace"
 import { AutomationRulesWorkspace } from "@/components/automation-rules-workspace"
-import { organizationSlug, type AutomationRule, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
+import { JobPostCreateWorkspace } from "@/components/job-post-create-workspace"
+import { organizationSlug, type AutomationRule, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -19,6 +20,7 @@ type HrDashboardData = {
   hotPositions: Array<{ title: string; applicants: number }>
   automationRules?: AutomationRule[]
   linkedinIntegration?: LinkedInIntegrationSettings
+  jobPostSetup?: JobPostSetupData
 }
 
 type CandidateDashboardData = {
@@ -86,6 +88,10 @@ function ModuleContent({ module, mode, data }: { module: WorkspaceModule; mode: 
 function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDashboardData }) {
   if (module.href === "/hr/modules/recruitment/job-posts") {
     return <LegacyJobPostDashboard data={data} />
+  }
+
+  if (module.href === "/hr/modules/recruitment/create-post" && data.jobPostSetup) {
+    return <JobPostCreateWorkspace initialData={data.jobPostSetup} />
   }
 
   if (module.href === "/hr/modules/integrations/linkedin-create-post") {
