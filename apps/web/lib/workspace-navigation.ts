@@ -1,6 +1,7 @@
 export type WorkspaceModule = {
   title: string
   href: string
+  legacyHref?: string
   description: string
   source: "supabase-live" | "supabase-ready"
   dataKey:
@@ -28,6 +29,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Dashboard",
         href: "/hr/dashboard",
+        legacyHref: "/home",
         description: "Hiring analytics, pipeline numbers, hot roles, and department split.",
         source: "supabase-live",
         dataKey: "dashboard",
@@ -40,6 +42,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Job Post Dashboard",
         href: "/hr/modules/recruitment/job-posts",
+        legacyHref: "/jobpost",
         description: "Published jobs, applicant counts, role status, and opening health.",
         source: "supabase-live",
         dataKey: "jobs",
@@ -47,6 +50,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Recruiter Analytics",
         href: "/hr/modules/recruitment/recruiter-analytics",
+        legacyHref: "/RecruiterPerformance",
         description: "Recruiter activity, conversion, pending workload, and sourcing health.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -54,6 +58,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Create Post",
         href: "/hr/modules/recruitment/create-post",
+        legacyHref: "/jobpost/createNewPost",
         description: "Job creation workflow with department, location, openings, and content fields.",
         source: "supabase-ready",
         dataKey: "jobs",
@@ -61,6 +66,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "LinkedIn Dashboard",
         href: "/hr/modules/integrations/linkedin-dashboard",
+        legacyHref: "/LinkedinPosting/dashboard",
         description: "LinkedIn campaign overview, publish status, drafts, and scheduled posts.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -68,6 +74,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "LinkedIn Create Post",
         href: "/hr/modules/integrations/linkedin-create-post",
+        legacyHref: "/LinkedinPosting?tabvalue=new-post",
         description: "Social post composer route mapped from the legacy LinkedIn posting module.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -75,6 +82,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Application Dashboard",
         href: "/hr/modules/applications/dashboard",
+        legacyHref: "/JobApplications",
         description: "Candidate applications, stages, AI scores, and decision status.",
         source: "supabase-live",
         dataKey: "applications",
@@ -82,6 +90,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Candidates",
         href: "/hr/modules/applications/candidates",
+        legacyHref: "/JobApplications?stage=2",
         description: "Candidate list with current role, status, score, and source details.",
         source: "supabase-live",
         dataKey: "candidates",
@@ -89,6 +98,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Candidate Map",
         href: "/hr/modules/applications/map",
+        legacyHref: "/JobApplications?stage=3",
         description: "Location-based hiring overview mapped from the old Job Applications Map tab.",
         source: "supabase-live",
         dataKey: "locations",
@@ -96,6 +106,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Interviews",
         href: "/hr/modules/interviews/monitor",
+        legacyHref: "/InterviewMonitor",
         description: "Scheduled and pending interview workflow.",
         source: "supabase-ready",
         dataKey: "interviews",
@@ -103,6 +114,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Call Logs",
         href: "/hr/modules/interviews/call-logs",
+        legacyHref: "/InterviewMonitor/TelePhonic",
         description: "Telephonic interview and agent call history route.",
         source: "supabase-ready",
         dataKey: "interviews",
@@ -115,6 +127,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Expenses",
         href: "/hr/modules/expenses/dashboard",
+        legacyHref: "/components/dashboard",
         description: "Expense dashboard route from the legacy finance workflow.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -122,6 +135,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Agency",
         href: "/hr/modules/setup/agency",
+        legacyHref: "/AgencySetup",
         description: "Agency setup and partner configuration.",
         source: "supabase-ready",
         dataKey: "settings",
@@ -129,6 +143,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Settings",
         href: "/hr/modules/setup/settings",
+        legacyHref: "/employeeSetup",
         description: "Employee setup, departments, roles, branches, and organization configuration.",
         source: "supabase-live",
         dataKey: "departments",
@@ -136,6 +151,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Admin Dashboard",
         href: "/hr/modules/admin/dashboard",
+        legacyHref: "/adminManagement",
         description: "Admin management route for product owners and internal administrators.",
         source: "supabase-ready",
         dataKey: "settings",
@@ -143,6 +159,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Plan & Usage",
         href: "/hr/modules/admin/plan-usage",
+        legacyHref: "/planUsage",
         description: "Subscription, quota, and usage route.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -155,6 +172,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "CommandExe Dashboard",
         href: "/hr/modules/commandexe/dashboard",
+        legacyHref: "/commandexe/home",
         description: "Verification and case command center.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -162,6 +180,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Add Case",
         href: "/hr/modules/commandexe/add-case",
+        legacyHref: "/commandexe/caseList/addCases",
         description: "Case creation workflow mapped from the old Add Case route.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -169,6 +188,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Backoffice",
         href: "/hr/modules/commandexe/backoffice",
+        legacyHref: "/commandexe/caseList/initiateCases",
         description: "Initiated cases and back-office processing queue.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -176,6 +196,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Invoice",
         href: "/hr/modules/commandexe/invoice",
+        legacyHref: "/commandexe/invoice",
         description: "Invoice route for CommandExe billing records.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -188,6 +209,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Notes",
         href: "/hr/modules/utilities/notes",
+        legacyHref: "/notes",
         description: "Notes workspace route from the old utilities menu.",
         source: "supabase-ready",
         dataKey: "documents",
@@ -195,6 +217,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "Chats",
         href: "/hr/modules/utilities/chats",
+        legacyHref: "/sameNewChat",
         description: "Internal chat route from the old utilities menu.",
         source: "supabase-ready",
         dataKey: "workflow",
@@ -202,6 +225,7 @@ export const hrNavigation: WorkspaceGroup[] = [
       {
         title: "File Manager",
         href: "/hr/modules/utilities/file-manager",
+        legacyHref: "/FileManagerNew",
         description: "Document and file manager route using Supabase document records.",
         source: "supabase-live",
         dataKey: "documents",
@@ -217,6 +241,7 @@ export const candidateNavigation: WorkspaceGroup[] = [
       {
         title: "Dashboard",
         href: "/candidate/dashboard",
+        legacyHref: "/candidate/dashboard",
         description: "Candidate status, applications, documents, interviews, and open roles.",
         source: "supabase-live",
         dataKey: "dashboard",
@@ -224,6 +249,7 @@ export const candidateNavigation: WorkspaceGroup[] = [
       {
         title: "Profile",
         href: "/candidate/modules/profile",
+        legacyHref: "/completeProfile",
         description: "Profile completion, contact details, resume, and personal information.",
         source: "supabase-live",
         dataKey: "settings",
@@ -231,6 +257,7 @@ export const candidateNavigation: WorkspaceGroup[] = [
       {
         title: "Careers",
         href: "/candidate/modules/careers",
+        legacyHref: "/Careers",
         description: "Open roles available to the candidate.",
         source: "supabase-live",
         dataKey: "jobs",
@@ -238,6 +265,7 @@ export const candidateNavigation: WorkspaceGroup[] = [
       {
         title: "Applications",
         href: "/candidate/modules/applications",
+        legacyHref: "/applications",
         description: "Applied jobs and current application status.",
         source: "supabase-live",
         dataKey: "applications",
@@ -245,6 +273,7 @@ export const candidateNavigation: WorkspaceGroup[] = [
       {
         title: "Interviews",
         href: "/candidate/modules/interviews",
+        legacyHref: "/interviews",
         description: "Upcoming interview and pending scheduling status.",
         source: "supabase-ready",
         dataKey: "interviews",
@@ -252,6 +281,7 @@ export const candidateNavigation: WorkspaceGroup[] = [
       {
         title: "Documents",
         href: "/candidate/modules/documents",
+        legacyHref: "/candidate/documents",
         description: "Uploaded resume, identity proof, and education documents.",
         source: "supabase-live",
         dataKey: "documents",
