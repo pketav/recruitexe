@@ -88,6 +88,14 @@ export const hrNavigation: WorkspaceGroup[] = [
         dataKey: "applications",
       },
       {
+        title: "AI Screening",
+        href: "/hr/modules/applications/ai-screening",
+        legacyHref: "/JobApplications/aiScreening",
+        description: "Run AI scoring on pending applications and update HR decisions.",
+        source: "supabase-live",
+        dataKey: "applications",
+      },
+      {
         title: "Candidates",
         href: "/hr/modules/applications/candidates",
         legacyHref: "/JobApplications?stage=2",

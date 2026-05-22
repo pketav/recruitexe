@@ -10,7 +10,7 @@ const legacyPathMap = new Map<string, string>([
   ["/JobApplications", "/hr/modules/applications/dashboard"],
   ["/JobApplications/CandidateManagement", "/hr/modules/applications/candidates"],
   ["/JobApplications/CandidateMap", "/hr/modules/applications/map"],
-  ["/JobApplications/aiScreening", "/hr/modules/applications/dashboard"],
+  ["/JobApplications/aiScreening", "/hr/modules/applications/ai-screening"],
   ["/InterviewMonitor", "/hr/modules/interviews/monitor"],
   ["/InterviewMonitor/TelePhonic", "/hr/modules/interviews/call-logs"],
   ["/components/dashboard", "/hr/modules/expenses/dashboard"],

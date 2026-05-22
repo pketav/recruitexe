@@ -6,12 +6,13 @@ import { legacyTheme } from "@/lib/legacy-theme"
 import { WorkspaceSidebar } from "@/components/workspace-sidebar"
 import { LinkedInAiWorkspace } from "@/components/linkedin-ai-workspace"
 import { LegacyJobPostDashboard } from "@/components/legacy-job-post-dashboard"
+import { HrAiScreeningWorkspace } from "@/components/hr-ai-screening-workspace"
 
 type HrDashboardData = {
   organization: { name: string }
   metrics: Array<{ label: string; value: string; note: string }>
   departmentBreakdown: Array<{ name: string; value: number }>
-  pipeline: Array<{ code: string; name: string; position: string; status: string; aiScore: string }>
+  pipeline: Array<{ applicationId: string; code: string; name: string; position: string; status: string; aiScore: string; aiSummary?: string }>
   hotPositions: Array<{ title: string; applicants: number }>
 }
 
@@ -108,6 +109,10 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
     )
   }
 
+  if (module.href === "/hr/modules/applications/ai-screening" || module.dataKey === "applications" || module.dataKey === "candidates") {
+    return <HrAiScreeningWorkspace pipeline={data.pipeline} />
+  }
+
   if (module.dataKey === "jobs") {
     return (
       <section className="grid gap-4 md:grid-cols-3">
@@ -119,38 +124,6 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
             <button className="mt-5 rounded-md px-4 py-2 text-sm font-semibold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)]" style={{ background: legacyTheme.primary }}>Open workflow</button>
           </div>
         ))}
-      </section>
-    )
-  }
-
-  if (module.dataKey === "applications" || module.dataKey === "candidates") {
-    return (
-      <section className="overflow-hidden rounded-lg border bg-white shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-        <div className="border-b px-5 py-4" style={{ borderColor: legacyTheme.divider }}>
-          <h2 className="text-lg font-bold" style={{ color: legacyTheme.text }}>Candidate Pipeline</h2>
-        </div>
-        <table className="w-full text-left text-sm">
-          <thead style={{ background: legacyTheme.body, color: legacyTheme.textSoft }}>
-            <tr>
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Candidate</th>
-              <th className="px-4 py-3">Position</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">AI Match</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.pipeline.map((candidate) => (
-              <tr key={`${candidate.code}-${candidate.position}`} className="border-t" style={{ borderColor: legacyTheme.divider }}>
-                <td className="px-4 py-3">{candidate.code}</td>
-                <td className="px-4 py-3 font-semibold">{candidate.name}</td>
-                <td className="px-4 py-3">{candidate.position}</td>
-                <td className="px-4 py-3 capitalize">{candidate.status}</td>
-                <td className="px-4 py-3">{candidate.aiScore}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </section>
     )
   }
