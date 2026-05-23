@@ -304,7 +304,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
             ))}
           </div>
           <div className="mt-5 rounded-lg border p-4 text-sm" style={{ borderColor: "rgba(0, 186, 209, 0.24)", background: "rgba(0, 186, 209, 0.08)", color: "#006B78" }}>
-            Connect LinkedIn button will open OAuth. Client secret aur access token backend mein rahenge; frontend sirf connected status dekhega.
+            OAuth vault connect hote hi posting live hogi. Temporary token input raw value ko UI ya Git me expose nahi karta; system sirf connected metadata dikhata hai.
           </div>
           <div className="mt-4 space-y-3">
             <label className="block">
@@ -322,7 +322,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
               <input
                 value={linkedinAccessToken}
                 onChange={(event) => setLinkedinAccessToken(event.target.value)}
-                placeholder="Paste token once to store server-side"
+                placeholder="Paste once to mark connection metadata"
                 type="password"
                 autoComplete="off"
                 className="mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#7367F0]"

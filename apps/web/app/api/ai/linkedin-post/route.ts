@@ -19,6 +19,40 @@ type GeminiCandidate = {
   }
 }
 
+type Draft = {
+  title: string
+  content: string
+  cta: string
+  hashtags: string[]
+}
+
+function cleanText(value: unknown, fallback: string, maxLength: number) {
+  const text = typeof value === "string" ? value.trim() : ""
+
+  return (text || fallback).slice(0, maxLength)
+}
+
+function sanitizeDrafts(value: unknown, fallbackPayload: LinkedInPostPayload): Draft[] {
+  const source = Array.isArray(value) ? value : fallbackDraft(fallbackPayload)
+
+  return source.slice(0, 3).map((draft, index) => {
+    const record = typeof draft === "object" && draft !== null ? draft as Record<string, unknown> : {}
+    const hashtags = Array.isArray(record.hashtags)
+      ? record.hashtags
+        .map((hashtag) => cleanText(hashtag, "", 32))
+        .filter(Boolean)
+        .slice(0, 6)
+      : ["#Hiring", "#Recruitment", "#RecruitExe"]
+
+    return {
+      title: cleanText(record.title, `LinkedIn draft ${index + 1}`, 90),
+      content: cleanText(record.content, fallbackDraft(fallbackPayload)[index]?.content ?? "Hiring post draft ready for review.", 900),
+      cta: cleanText(record.cta, fallbackPayload.organizationMode === "agency" ? "Approve and schedule" : "Apply now", 80),
+      hashtags,
+    }
+  })
+}
+
 function fallbackDraft(payload: LinkedInPostPayload) {
   const owner =
     payload.organizationMode === "agency" && payload.clientName
@@ -52,21 +86,28 @@ function fallbackDraft(payload: LinkedInPostPayload) {
 
 function parseGeminiText(text: string, payload: LinkedInPostPayload) {
   try {
-    const parsed = JSON.parse(text)
+    const parsed = JSON.parse(
+      text
+        .trim()
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/```$/i, "")
+        .trim(),
+    )
     if (Array.isArray(parsed?.drafts)) {
-      return parsed.drafts
+      return sanitizeDrafts(parsed.drafts, payload)
     }
   } catch {
   }
 
-  return [
+  return sanitizeDrafts([
     {
       title: "Gemini generated draft",
       content: text.trim(),
       cta: payload.organizationMode === "agency" ? "Approve and schedule" : "Apply now",
       hashtags: ["#Hiring", "#Recruitment", "#RecruitExe"],
     },
-  ]
+  ], payload)
 }
 
 export async function POST(request: Request) {
@@ -78,7 +119,7 @@ export async function POST(request: Request) {
       ok: true,
       provider: "fallback",
       warning: "Gemini key is not configured on the server. Returned deterministic draft.",
-      drafts: fallbackDraft(payload),
+      drafts: sanitizeDrafts(fallbackDraft(payload), payload),
     })
   }
 
@@ -132,7 +173,7 @@ Rules:
       ok: true,
       provider: "fallback",
       warning: error instanceof Error ? error.message : "Gemini generation failed. Returned fallback draft.",
-      drafts: fallbackDraft(payload),
+      drafts: sanitizeDrafts(fallbackDraft(payload), payload),
     })
   }
 }

@@ -612,6 +612,16 @@ function normalizeEmail(email?: string) {
   return email?.trim().toLowerCase() ?? ""
 }
 
+function cleanSettingText(value: string | undefined, fallback: string, maxLength = 120) {
+  const cleanValue = value?.trim()
+
+  if (!cleanValue) {
+    return fallback
+  }
+
+  return cleanValue.slice(0, maxLength)
+}
+
 function candidateCodeFromEmail(email: string) {
   const seed = email
     .split("")
@@ -1537,22 +1547,24 @@ export async function saveLinkedInIntegrationSettings(payload: {
 
   const existingSettings = (organizationResult.data.settings as Record<string, unknown> | null) ?? {}
   const existingLinkedIn = (existingSettings.linkedinIntegration as Record<string, unknown> | undefined) ?? {}
-  const token = payload.linkedinAccessToken?.trim()
+  const { serverAccessToken: _discardedLegacyToken, ...safeExistingLinkedIn } = existingLinkedIn
+  const token = payload.linkedinAccessToken?.trim().slice(0, 4096)
   const shouldClearToken = Boolean(payload.clearLinkedinToken)
+  const nextLinkedinConnected = shouldClearToken ? false : token ? true : currentSettings.linkedinConnected
 
   const nextSettings = {
-    ...existingLinkedIn,
+    ...safeExistingLinkedIn,
     organizationMode: payload.organizationMode === "agency" ? "agency" : "company",
-    workspaceName: payload.workspaceName?.trim() || currentSettings.workspaceName,
-    defaultClientName: payload.defaultClientName?.trim() || currentSettings.defaultClientName,
-    defaultTone: payload.defaultTone?.trim() || currentSettings.defaultTone,
-    approvalRequired: Boolean(payload.approvalRequired),
-    autoSchedule: Boolean(payload.autoSchedule),
-    linkedinAccountName: payload.linkedinAccountName?.trim() || currentSettings.linkedinAccountName,
-    linkedinConnected: shouldClearToken ? false : token ? true : currentSettings.linkedinConnected,
+    workspaceName: cleanSettingText(payload.workspaceName, currentSettings.workspaceName),
+    defaultClientName: cleanSettingText(payload.defaultClientName, currentSettings.defaultClientName),
+    defaultTone: cleanSettingText(payload.defaultTone, currentSettings.defaultTone, 48),
+    approvalRequired: typeof payload.approvalRequired === "boolean" ? payload.approvalRequired : currentSettings.approvalRequired,
+    autoSchedule: typeof payload.autoSchedule === "boolean" ? payload.autoSchedule : currentSettings.autoSchedule,
+    linkedinAccountName: cleanSettingText(payload.linkedinAccountName, currentSettings.linkedinAccountName),
+    linkedinConnected: nextLinkedinConnected,
     linkedinTokenLastFour: shouldClearToken ? "" : token ? token.slice(-4) : currentSettings.linkedinTokenLastFour,
     linkedinTokenUpdatedAt: shouldClearToken ? null : token ? new Date().toISOString() : currentSettings.linkedinTokenUpdatedAt,
-    serverAccessToken: shouldClearToken ? undefined : token || existingLinkedIn.serverAccessToken,
+    linkedinTokenStorage: nextLinkedinConnected ? "metadata-only" : "not-connected",
   }
 
   await supabase
