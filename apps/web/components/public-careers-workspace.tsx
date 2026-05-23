@@ -65,6 +65,13 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
     [department, jobs, location, query],
   )
 
+  function clearFilters() {
+    setQuery("")
+    setDepartment("all")
+    setLocation("all")
+    setSelectedJob("")
+  }
+
   async function applyToJob(jobTitle: string) {
     setApplyingJob(jobTitle)
     setNotice("")
@@ -169,6 +176,23 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
         ) : null}
 
         <section className="mt-6 grid gap-4">
+          {!filteredJobs.length ? (
+            <div className="rounded-lg border bg-white p-6 text-center shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+              <Search className="mx-auto h-8 w-8" style={{ color: legacyTheme.primary }} />
+              <h2 className="mt-3 text-lg font-bold" style={{ color: legacyTheme.text }}>No matching roles</h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm" style={{ color: legacyTheme.textSoft }}>
+                This careers board is live, but current filters do not match any published role.
+              </p>
+              <button
+                onClick={clearFilters}
+                className="mt-4 rounded-md px-4 py-2 text-sm font-bold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)]"
+                style={{ background: legacyTheme.primary }}
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : null}
+
           {filteredJobs.map((job) => {
             const applied = appliedJobs.has(job.title)
 
