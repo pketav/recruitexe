@@ -15,6 +15,7 @@ import { InterviewWorkspace } from "@/components/interview-workspace"
 import { FileManagerWorkspace } from "@/components/file-manager-workspace"
 import { UtilitiesWorkspace } from "@/components/utilities-workspace"
 import { OperationsWorkspace } from "@/components/operations-workspace"
+import { CandidateCareersWorkspace } from "@/components/candidate-careers-workspace"
 import { organizationSlug, type AutomationRule, type DocumentLibraryRow, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
@@ -239,19 +240,7 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
 function CandidateModuleContent({ module, data }: { module: WorkspaceModule; data: CandidateDashboardData }) {
   if (module.href === "/candidate/modules/careers") {
-    return (
-      <section className="space-y-3">
-        {data.jobs.map((job) => (
-          <div key={job.title} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-            <div>
-              <h2 className="font-bold" style={{ color: legacyTheme.text }}>{job.title}</h2>
-              <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{job.department} · {job.location} · {job.applicants} applicants</p>
-            </div>
-            <span className="rounded-md px-3 py-2 text-sm font-semibold" style={{ background: legacyTheme.selected, color: legacyTheme.primary }}>{job.action}</span>
-          </div>
-        ))}
-      </section>
-    )
+    return <CandidateCareersWorkspace jobs={data.jobs} />
   }
 
   if (module.href === "/candidate/modules/applications") {
