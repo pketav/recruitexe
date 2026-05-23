@@ -28,6 +28,29 @@ Preview routes:
 - Candidate login: `http://localhost:4030/candidate/login`
 - Candidate dashboard: `http://localhost:4030/candidate/dashboard`
 
+## Verify And Release
+
+Before pushing a production release:
+
+```bash
+npm run verify:predeploy
+```
+
+After Vercel deploys production:
+
+```bash
+npm run verify:live
+```
+
+Verification commands:
+
+- `npm run verify:security` scans the active app for hardcoded JWTs, Postgres URLs, Supabase project URLs, password literals, and service-role/token literals.
+- `npm run verify:audit` fails on high/critical production dependency advisories and reports non-blocking lower advisories.
+- `npm run verify:smoke` checks core HR, candidate, careers, API, legacy redirect, and invalid-payload API contract routes. Use `SMOKE_BASE_URL=https://fincoopers-hrms-clean.vercel.app npm run verify:smoke` for production.
+- `npm run verify:live` runs security plus production smoke against `https://fincoopers-hrms-clean.vercel.app`.
+
+Currently verified live flows include Job Post dashboard/create handoff, customer career links, public candidate apply, AI screening, automation rules, LinkedIn/Gemini draft setup, candidate portal modules, legacy redirects, and API bad-payload handling.
+
 ## Structure
 
 ```text
@@ -55,9 +78,8 @@ docs/
 
 ## First Migration Priority
 
-1. Keep shaping the unified UI inside `apps/web`.
-2. Connect Supabase project and environment variables.
-3. Add Supabase Auth plus organization roles.
-4. Add company, branch, department, designation setup.
-5. Add jobs, candidates, applications, and interview scheduling.
-6. Add document upload through Supabase Storage.
+1. Keep production work inside `apps/web` unless explicitly migrating a legacy reference.
+2. Keep Supabase as the backend source of truth and keep `.env` secrets out of Git.
+3. Continue moving secondary legacy modules into `apps/web` one by one.
+4. Add Supabase Auth plus organization roles when auth hardening begins.
+5. Add document upload through Supabase Storage.

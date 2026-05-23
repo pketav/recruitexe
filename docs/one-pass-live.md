@@ -21,11 +21,31 @@ Before any live push:
 1. Work only inside `apps/web` for product behavior unless migrating a legacy module for reference.
 2. Keep public URLs behind `getSiteOrigin()` and API URLs behind `getApiBaseUrl()`.
 3. Do not hardcode production domains, localhost API hosts, JWTs, or service keys in UI code.
-4. Run `npm run build`.
+4. Run `npm run verify:predeploy`.
 5. Confirm `vercel.json` still points at `apps/web`.
 6. Push to GitHub.
 7. Deploy with `vercel deploy --prod` until GitHub auto-deploy is connected.
-8. Smoke check `/`, `/hr/login`, `/contact`, `/robots.txt`, and `/sitemap.xml`.
+8. Run `npm run verify:live` against the production alias.
+
+## Verification Commands
+
+- `npm run verify:security`: active app hardcoded-secret scan.
+- `npm run verify:audit`: production dependency audit that fails on high/critical and reports moderate/low advisories.
+- `npm run verify:smoke`: core route, API, legacy redirect, and bad-payload API contract smoke check. Defaults to `http://localhost:4030`.
+- `npm run verify:live`: security plus production smoke for `https://fincoopers-hrms-clean.vercel.app`.
+- `npm run verify:predeploy`: security plus audit plus production build.
+
+Current audit status: `0 critical`, `0 high`, `2 moderate`, `0 low`. The moderate advisories are from Next/PostCSS and currently suggest an unsafe major downgrade, so they are tracked but not release-blocking.
+
+## Live-Verified Product Areas
+
+- HR sidebar and legacy route compatibility for recruitment, applications, setup, utilities, and candidate routes.
+- Job Post dashboard tabs, create-post handoff, public share links, and public careers board.
+- Public candidate apply pipeline writes into Supabase and rejects invalid public application payloads.
+- AI screening run flow and automation rules save/run flow.
+- Automation rules API rejects unknown rule IDs and non-boolean toggles.
+- LinkedIn/Gemini settings save, draft generation fallback/Gemini flow, approval/schedule action, and invalid integration payload rejection.
+- Candidate dashboard, careers, applications, profile, documents, interviews, plus empty-state handling.
 
 ## Required Vercel Production Env
 
