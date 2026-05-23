@@ -12,7 +12,8 @@ import { AutomationRulesWorkspace } from "@/components/automation-rules-workspac
 import { JobPostCreateWorkspace } from "@/components/job-post-create-workspace"
 import { ApplicationWorkspace } from "@/components/application-workspace"
 import { InterviewWorkspace } from "@/components/interview-workspace"
-import { organizationSlug, type AutomationRule, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
+import { FileManagerWorkspace } from "@/components/file-manager-workspace"
+import { organizationSlug, type AutomationRule, type DocumentLibraryRow, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
   organization: { name: string }
@@ -20,6 +21,7 @@ type HrDashboardData = {
   departmentBreakdown: Array<{ name: string; value: number }>
   pipeline: Array<{ applicationId: string; code: string; name: string; position: string; status: string; aiScore: string; aiSummary?: string; location?: string }>
   hotPositions: Array<{ title: string; applicants: number }>
+  documentLibrary?: DocumentLibraryRow[]
   automationRules?: AutomationRule[]
   linkedinIntegration?: LinkedInIntegrationSettings
   jobPostSetup?: JobPostSetupData
@@ -144,6 +146,10 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.href === "/hr/modules/interviews/call-logs") {
     return <InterviewWorkspace pipeline={data.pipeline} variant="call-logs" />
+  }
+
+  if (module.href === "/hr/modules/utilities/file-manager") {
+    return <FileManagerWorkspace documents={data.documentLibrary ?? []} />
   }
 
   if (module.href === "/hr/modules/setup/customer-links") {

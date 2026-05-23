@@ -23,6 +23,14 @@ type CandidateRow = {
   location?: string
 }
 
+export type DocumentLibraryRow = {
+  id: string
+  title: string
+  documentType: string
+  status: string
+  owner: string
+}
+
 type JobRow = {
   title: string
   department: string
@@ -637,6 +645,7 @@ export async function getHrDashboardData() {
     candidatesResult,
     jobsResult,
     departmentsResult,
+    documentsResult,
   ] = await Promise.all([
     supabase
       .from("job_applications")
@@ -655,9 +664,13 @@ export async function getHrDashboardData() {
       .from("departments")
       .select("name,metadata")
       .eq("organization_id", organization.id),
+    supabase
+      .from("documents")
+      .select("id,title,document_type,status,owner_candidate_id")
+      .eq("organization_id", organization.id),
   ])
 
-  for (const result of [applicationsResult, candidatesResult, jobsResult, departmentsResult]) {
+  for (const result of [applicationsResult, candidatesResult, jobsResult, departmentsResult, documentsResult]) {
     if (result.error) {
       throw new Error(result.error.message)
     }
@@ -709,6 +722,14 @@ export async function getHrDashboardData() {
     title: job.title,
     applicants: Number((job.metadata as { applicants?: number } | null)?.applicants ?? 0),
   }))
+  const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate.full_name]))
+  const documentLibrary: DocumentLibraryRow[] = (documentsResult.data ?? []).map((document) => ({
+    id: document.id,
+    title: document.title,
+    documentType: document.document_type ?? "document",
+    status: document.status ?? "active",
+    owner: candidateById.get(document.owner_candidate_id ?? "") ?? "Organization",
+  }))
   const automationRules = await getAutomationRulesForOrganization(supabase, organization.id)
   const linkedinIntegration = await getLinkedInSettingsForOrganization(supabase, organization.id)
   const jobPostSetup = await getJobPostSetupData()
@@ -720,6 +741,7 @@ export async function getHrDashboardData() {
     pipeline,
     hotPositions,
     candidateCount: candidates.length,
+    documentLibrary,
     automationRules,
     linkedinIntegration,
     jobPostSetup,
