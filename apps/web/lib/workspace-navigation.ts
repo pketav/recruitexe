@@ -324,10 +324,22 @@ export function getAllCandidateModules() {
 
 export function findHrModule(slug: string[]) {
   const href = `/hr/modules/${slug.join("/")}`
-  return getAllHrModules().find((module) => module.href === href)
+  const canonicalHref =
+    hrModuleAliasMap[href as keyof typeof hrModuleAliasMap] ?? href
+
+  return getAllHrModules().find((module) => module.href === canonicalHref)
 }
 
 export function findCandidateModule(slug: string[]) {
   const href = `/candidate/modules/${slug.join("/")}`
   return getAllCandidateModules().find((module) => module.href === href)
 }
+
+const hrModuleAliasMap = {
+  "/hr/modules/documents/file-manager": "/hr/modules/utilities/file-manager",
+  "/hr/modules/operations/client-workspaces": "/hr/modules/setup/agency",
+  "/hr/modules/operations/system-readiness": "/hr/modules/admin/dashboard",
+  "/hr/modules/operations/automation-center": "/hr/modules/setup/automation-rules",
+  "/hr/modules/operations/customer-links": "/hr/modules/setup/customer-links",
+  "/hr/modules/operations/automation-rules": "/hr/modules/setup/automation-rules",
+} as const
