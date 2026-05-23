@@ -66,6 +66,18 @@ const apiContractChecks = [
     payload: { organizationMode: "enterprise" },
     expectedText: "Organization mode",
   },
+  {
+    path: "/api/ai/linkedin-post",
+    expectedStatus: 400,
+    payload: { organizationMode: "enterprise", jobTitle: "Branch Manager" },
+    expectedText: "Organization mode",
+  },
+  {
+    path: "/api/ai/linkedin-post",
+    expectedStatus: 400,
+    payload: { organizationMode: "agency", companyName: "Fincoopers RecruitExe Demo" },
+    expectedText: "Job title is required",
+  },
 ]
 
 const publicApplyChecks = [
@@ -82,6 +94,24 @@ const publicApplyChecks = [
       resumeUrl: "https://example.com/resume.pdf",
     },
     expectedText: "applicationId",
+  },
+]
+
+const linkedInDraftChecks = [
+  {
+    path: "/api/ai/linkedin-post",
+    expectedStatus: 200,
+    payload: {
+      organizationMode: "agency",
+      companyName: "Fincoopers RecruitExe Demo",
+      clientName: "Smoke Client",
+      jobTitle: "Branch Manager",
+      location: "Mumbai",
+      tone: "Professional",
+      audience: "qualified BFSI candidates",
+      notes: "Keep client details safe and push fast screening.",
+    },
+    expectedText: "drafts",
   },
 ]
 
@@ -153,6 +183,10 @@ for (const check of apiContractChecks) {
 }
 
 for (const check of publicApplyChecks) {
+  await assertPostContract(check)
+}
+
+for (const check of linkedInDraftChecks) {
   await assertPostContract(check)
 }
 

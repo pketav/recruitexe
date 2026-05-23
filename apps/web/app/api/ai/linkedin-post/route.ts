@@ -26,6 +26,75 @@ type Draft = {
   hashtags: string[]
 }
 
+function readTextField(body: Record<string, unknown>, field: string, fallback: string | undefined, maxLength: number) {
+  const value = body[field]
+
+  if (value === undefined || value === null) {
+    return fallback
+  }
+
+  if (typeof value !== "string") {
+    return { error: `${field} must be a string.` }
+  }
+
+  const cleanValue = value.trim()
+
+  if (cleanValue.length > maxLength) {
+    return { error: `${field} is too long.` }
+  }
+
+  return cleanValue || fallback
+}
+
+function validateAndNormalizePayload(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { error: "LinkedIn draft payload must be an object." }
+  }
+
+  const record = value as Record<string, unknown>
+
+  if (
+    record.organizationMode !== undefined &&
+    record.organizationMode !== "company" &&
+    record.organizationMode !== "agency"
+  ) {
+    return { error: "Organization mode must be company or agency." }
+  }
+
+  const fields = {
+    companyName: readTextField(record, "companyName", "RecruitExe Demo", 140),
+    clientName: readTextField(record, "clientName", "", 140),
+    jobTitle: readTextField(record, "jobTitle", undefined, 160),
+    location: readTextField(record, "location", "India", 120),
+    tone: readTextField(record, "tone", "professional", 60),
+    audience: readTextField(record, "audience", "qualified candidates", 180),
+    notes: readTextField(record, "notes", "", 700),
+  }
+
+  for (const fieldValue of Object.values(fields)) {
+    if (typeof fieldValue === "object" && fieldValue?.error) {
+      return { error: fieldValue.error }
+    }
+  }
+
+  if (!fields.jobTitle) {
+    return { error: "Job title is required for LinkedIn draft generation." }
+  }
+
+  return {
+    payload: {
+      organizationMode: record.organizationMode === "agency" ? "agency" : "company",
+      companyName: fields.companyName,
+      clientName: fields.clientName,
+      jobTitle: fields.jobTitle,
+      location: fields.location,
+      tone: fields.tone,
+      audience: fields.audience,
+      notes: fields.notes,
+    } satisfies LinkedInPostPayload,
+  }
+}
+
 function cleanText(value: unknown, fallback: string, maxLength: number) {
   const text = typeof value === "string" ? value.trim() : ""
 
@@ -111,7 +180,14 @@ function parseGeminiText(text: string, payload: LinkedInPostPayload) {
 }
 
 export async function POST(request: Request) {
-  const payload = (await request.json().catch(() => ({}))) as LinkedInPostPayload
+  const body = await request.json().catch(() => null)
+  const validation = validateAndNormalizePayload(body)
+
+  if ("error" in validation) {
+    return NextResponse.json({ ok: false, error: validation.error }, { status: 400 })
+  }
+
+  const payload = validation.payload
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY
 
   if (!apiKey) {
