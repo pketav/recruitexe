@@ -37,6 +37,24 @@ const apiContractChecks = [
     expectedText: "Full name is required",
   },
   {
+    path: "/api/candidate/apply",
+    expectedStatus: 400,
+    payload: { organizationSlug: "recruitexe-demo", jobTitle: "Branch Manager", fullName: "Smoke Candidate", email: "bad-email" },
+    expectedText: "Valid email is required",
+  },
+  {
+    path: "/api/candidate/apply",
+    expectedStatus: 400,
+    payload: { organizationSlug: "recruitexe-demo", jobTitle: "Branch Manager", fullName: "Smoke Candidate", email: "smoke@example.com", resumeUrl: "javascript:alert(1)" },
+    expectedText: "Resume link must be",
+  },
+  {
+    path: "/api/candidate/apply",
+    expectedStatus: 404,
+    payload: { organizationSlug: "recruitexe-demo", jobTitle: "Definitely Missing Smoke Role", fullName: "Smoke Candidate", email: "smoke-missing-role@example.com" },
+    expectedText: "Published job not found",
+  },
+  {
     path: "/api/hr/automation-rules",
     expectedStatus: 400,
     payload: { rules: [{ id: "unknown-rule", enabled: true }] },
@@ -47,6 +65,23 @@ const apiContractChecks = [
     expectedStatus: 400,
     payload: { organizationMode: "enterprise" },
     expectedText: "Organization mode",
+  },
+]
+
+const publicApplyChecks = [
+  {
+    path: "/api/candidate/apply",
+    expectedStatus: 200,
+    payload: {
+      organizationSlug: "recruitexe-demo",
+      jobTitle: "Branch Manager",
+      fullName: "Smoke Candidate",
+      email: `smoke+${Date.now()}@example.com`,
+      phone: "+91 90000 00000",
+      currentLocation: "Mumbai",
+      resumeUrl: "https://example.com/resume.pdf",
+    },
+    expectedText: "applicationId",
   },
 ]
 
@@ -114,6 +149,10 @@ for (const check of redirectChecks) {
 }
 
 for (const check of apiContractChecks) {
+  await assertPostContract(check)
+}
+
+for (const check of publicApplyChecks) {
   await assertPostContract(check)
 }
 
