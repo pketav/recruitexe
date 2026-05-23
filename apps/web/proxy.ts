@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server"
 
 const legacyPathMap = new Map<string, string>([
   ["/home", "/hr/dashboard"],
+  ["/recruiter", "/hr/dashboard"],
+  ["/recruiter/dashboard", "/hr/dashboard"],
   ["/jobpost", "/hr/modules/recruitment/job-posts"],
   ["/RecruiterPerformance", "/hr/modules/recruitment/recruiter-analytics"],
   ["/jobpost/createNewPost", "/hr/modules/recruitment/create-post"],
@@ -40,6 +42,7 @@ const legacyPathMap = new Map<string, string>([
   ["/Careers", "/candidate/modules/careers"],
   ["/Careers/jobPostDashboard", "/candidate/modules/careers"],
   ["/Careers/jobDescription", "/candidate/modules/careers"],
+  ["/candidate/jobs", "/candidate/modules/careers"],
   ["/applications", "/candidate/modules/applications"],
   ["/myAppliedJobs", "/candidate/modules/applications"],
   ["/interviews", "/candidate/modules/interviews"],
@@ -56,6 +59,10 @@ export function proxy(request: NextRequest) {
 
   if (url.pathname.startsWith("/CareerPage/")) {
     destination = url.pathname.replace("/CareerPage", "/careers")
+  }
+
+  if (url.pathname.startsWith("/candidate/jobs/")) {
+    destination = "/candidate/modules/careers"
   }
 
   if (url.pathname === "/JobApplications") {
@@ -82,6 +89,8 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/home",
+    "/recruiter",
+    "/recruiter/:path*",
     "/jobpost/:path*",
     "/RecruiterPerformance",
     "/LinkedinPosting",
@@ -105,6 +114,8 @@ export const config = {
     "/viewProfile",
     "/Careers",
     "/Careers/:path*",
+    "/candidate/jobs",
+    "/candidate/jobs/:path*",
     "/CareerPage",
     "/CareerPage/:path*",
     "/applications",
