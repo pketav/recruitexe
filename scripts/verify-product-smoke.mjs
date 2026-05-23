@@ -78,6 +78,18 @@ const apiContractChecks = [
     payload: { organizationMode: "agency", companyName: "Fincoopers RecruitExe Demo" },
     expectedText: "Job title is required",
   },
+  {
+    path: "/api/hr/ai-screening",
+    expectedStatus: 400,
+    payload: { mode: "screen-all" },
+    expectedText: "AI screening mode",
+  },
+  {
+    path: "/api/hr/ai-screening",
+    expectedStatus: 400,
+    payload: { mode: "screen-pending", limit: 0 },
+    expectedText: "between 1 and 50",
+  },
 ]
 
 const publicApplyChecks = [
@@ -112,6 +124,15 @@ const linkedInDraftChecks = [
       notes: "Keep client details safe and push fast screening.",
     },
     expectedText: "drafts",
+  },
+]
+
+const aiScreeningChecks = [
+  {
+    path: "/api/hr/ai-screening",
+    expectedStatus: 200,
+    payload: { mode: "screen-pending", limit: 5 },
+    expectedText: "screenedCount",
   },
 ]
 
@@ -187,6 +208,10 @@ for (const check of publicApplyChecks) {
 }
 
 for (const check of linkedInDraftChecks) {
+  await assertPostContract(check)
+}
+
+for (const check of aiScreeningChecks) {
   await assertPostContract(check)
 }
 

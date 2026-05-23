@@ -1341,7 +1341,7 @@ export async function applyToJobPostFromPublicLink(payload: PublicApplyPayload) 
   }
 }
 
-export async function runAiScreeningForDemoApplications() {
+export async function runAiScreeningForDemoApplications(options: { limit?: number } = {}) {
   const supabase = getSupabaseAdminClient()
   const { organization } = await ensureRecruitExeDemoData()
 
@@ -1355,7 +1355,9 @@ export async function runAiScreeningForDemoApplications() {
   }
 
   const rows = applicationsResult.data ?? []
-  const screenableRows = rows.filter((row) => ["applied", "pending"].includes(row.status))
+  const screenableRows = rows
+    .filter((row) => ["applied", "pending"].includes(row.status))
+    .slice(0, options.limit)
   const screened = []
 
   for (const row of screenableRows) {
