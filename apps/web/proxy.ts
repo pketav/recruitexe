@@ -80,8 +80,9 @@ export function proxy(request: NextRequest) {
   }
 
   const redirectUrl = request.nextUrl.clone()
+  const preserveSearch = url.pathname === "/CareerPage" || url.pathname.startsWith("/CareerPage/")
   redirectUrl.pathname = destination
-  redirectUrl.search = ""
+  redirectUrl.search = preserveSearch ? url.search : ""
 
   return NextResponse.redirect(redirectUrl, 307)
 }
