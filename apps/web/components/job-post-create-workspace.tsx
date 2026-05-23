@@ -1,13 +1,22 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { BriefcaseBusiness, CheckCircle2, Loader2, MapPin, Send, Sparkles } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { BriefcaseBusiness, CheckCircle2, Copy, ExternalLink, Loader2, MapPin, Send, Sparkles } from "lucide-react"
 
 import type { JobPostSetupData } from "@/lib/demo/recruitexe-data"
 import { legacyTheme } from "@/lib/legacy-theme"
 
 type JobPostCreateWorkspaceProps = {
   initialData: JobPostSetupData
+}
+
+type CreatedJob = {
+  id: string
+  title: string
+  status: string
+  openings: number
+  department: string
+  location: string
 }
 
 const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship"]
@@ -22,19 +31,49 @@ export function JobPostCreateWorkspace({ initialData }: JobPostCreateWorkspacePr
   const [skills, setSkills] = useState("Communication, BFSI hiring, CRM follow-up")
   const [status, setStatus] = useState<"draft" | "published">("published")
   const [recentJobs, setRecentJobs] = useState(initialData.recentJobs)
+  const [createdJob, setCreatedJob] = useState<CreatedJob | null>(null)
+  const [copied, setCopied] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
   const [saving, setSaving] = useState(false)
+  const [origin, setOrigin] = useState("")
 
   const previewSkills = useMemo(
     () => skills.split(",").map((skill) => skill.trim()).filter(Boolean).slice(0, 8),
     [skills],
   )
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin)
+    }
+  }, [])
+
+  function publicRolePath(jobTitle: string) {
+    return `/careers/recruitexe-demo?role=${encodeURIComponent(jobTitle)}`
+  }
+
+  function publicRoleUrl(jobTitle: string) {
+    const path = publicRolePath(jobTitle)
+    return origin ? `${origin}${path}` : path
+  }
+
+  async function copyPublicLink(jobTitle: string) {
+    try {
+      await navigator.clipboard.writeText(publicRoleUrl(jobTitle))
+    } catch {
+      // Some embedded browsers block clipboard access; the URL is visible for manual copy.
+    }
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1800)
+  }
+
   async function createJob() {
     setSaving(true)
     setMessage("")
     setError("")
+    setCreatedJob(null)
+    setCopied(false)
 
     try {
       const response = await fetch("/api/hr/job-posts", {
@@ -57,18 +96,20 @@ export function JobPostCreateWorkspace({ initialData }: JobPostCreateWorkspacePr
         throw new Error(result.error || "Job post create failed")
       }
 
+      const nextJob: CreatedJob = {
+        id: result.job.id,
+        title: result.job.title,
+        status: result.job.status,
+        openings: result.job.openings,
+        department: result.job.department,
+        location: result.job.location,
+      }
+
       setRecentJobs((currentJobs) => [
-        {
-          id: result.job.id,
-          title: result.job.title,
-          status: result.job.status,
-          openings: result.job.openings,
-          department: result.job.department,
-          location: result.job.location,
-          applicants: 0,
-        },
+        { ...nextJob, applicants: 0 },
         ...currentJobs.slice(0, 7),
       ])
+      setCreatedJob(nextJob)
       setMessage(`${result.job.title} ${result.job.status === "published" ? "published" : "saved as draft"} in Supabase.`)
     } catch (createError) {
       setError(createError instanceof Error ? createError.message : "Job post create failed.")
@@ -145,6 +186,42 @@ export function JobPostCreateWorkspace({ initialData }: JobPostCreateWorkspacePr
 
         {message ? <p className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{message}</p> : null}
         {error ? <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800">{error}</p> : null}
+
+        {createdJob ? (
+          <div className="mt-4 rounded-lg border bg-white p-4" style={{ borderColor: "rgba(40, 199, 111, 0.28)" }}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold" style={{ color: legacyTheme.success }}>Supabase job ready</p>
+                <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>
+                  {createdJob.title} {createdJob.status === "published" ? "public careers page pe share ke liye ready hai." : "draft me save hua hai; publish karoge tab public board pe dikhega."}
+                </p>
+                <p className="mt-3 rounded-md px-3 py-2 text-xs font-bold" style={{ background: legacyTheme.body, color: legacyTheme.primary }}>
+                  {publicRoleUrl(createdJob.title)}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => copyPublicLink(createdJob.title)}
+                  className="inline-flex h-10 items-center gap-2 rounded-md border bg-white px-3 text-sm font-bold"
+                  style={{ borderColor: legacyTheme.divider, color: legacyTheme.primary }}
+                >
+                  <Copy className="h-4 w-4" />
+                  {copied ? "Copied" : "Copy"}
+                </button>
+                <a
+                  href={publicRolePath(createdJob.title)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex h-10 items-center gap-2 rounded-md px-3 text-sm font-bold text-white"
+                  style={{ background: legacyTheme.primary }}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Open
+                </a>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="space-y-5">
