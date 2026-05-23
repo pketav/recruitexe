@@ -785,16 +785,20 @@ async function getHrDashboardDataUncached() {
       .from("job_applications")
       .select("id,status,ai_score,ai_summary,job_posts(title),candidates(candidate_code,full_name,current_location)")
       .eq("organization_id", organization.id)
-      .order("applied_at", { ascending: false }),
+      .order("applied_at", { ascending: false })
+      .limit(80),
     supabase
       .from("candidates")
       .select("id,candidate_code,full_name")
-      .eq("organization_id", organization.id),
+      .eq("organization_id", organization.id)
+      .limit(120),
     supabase
       .from("job_posts")
       .select("id,title,metadata")
       .eq("organization_id", organization.id)
-      .eq("status", "published"),
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(40),
     supabase
       .from("departments")
       .select("name,metadata")
@@ -802,7 +806,8 @@ async function getHrDashboardDataUncached() {
     supabase
       .from("documents")
       .select("id,title,document_type,status,owner_candidate_id")
-      .eq("organization_id", organization.id),
+      .eq("organization_id", organization.id)
+      .limit(80),
   ])
 
   for (const result of [applicationsResult, candidatesResult, jobsResult, departmentsResult, documentsResult]) {
@@ -1036,7 +1041,8 @@ async function getCandidateDashboardDataUncached() {
       .select("id,title,openings,content,metadata,departments(name),work_locations(name)")
       .eq("organization_id", organization.id)
       .eq("status", "published")
-      .order("published_at", { ascending: false }),
+      .order("published_at", { ascending: false })
+      .limit(50),
     supabase
       .from("candidates")
       .select("id,full_name,profile_data")
@@ -1046,7 +1052,8 @@ async function getCandidateDashboardDataUncached() {
     supabase
       .from("documents")
       .select("id,title")
-      .eq("organization_id", organization.id),
+      .eq("organization_id", organization.id)
+      .limit(20),
   ])
 
   for (const result of [jobsResult, candidateResult, documentsResult]) {
@@ -1065,6 +1072,7 @@ async function getCandidateDashboardDataUncached() {
     .select("id,status,job_post_id")
     .eq("organization_id", organization.id)
     .eq("candidate_id", candidate.id)
+    .limit(80)
 
   if (applicationsResult.error) {
     throw new Error(applicationsResult.error.message)
