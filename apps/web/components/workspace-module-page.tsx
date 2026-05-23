@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft, BadgeCheck, BriefcaseBusiness, ClipboardList, FileText, MapPin, Users } from "lucide-react"
+import { ArrowLeft, BadgeCheck, BriefcaseBusiness, CalendarClock, ClipboardList, FileText, MapPin, UserRound, Users } from "lucide-react"
 
 import type { WorkspaceGroup, WorkspaceModule } from "@/lib/workspace-navigation"
 import { legacyTheme } from "@/lib/legacy-theme"
@@ -31,7 +31,7 @@ type CandidateDashboardData = {
   interviews: number
   documents: number
   checks: string
-  jobs: Array<{ title: string; department: string; location: string; action: "Apply" | "Applied"; applicants: number }>
+  jobs: Array<{ title: string; department: string; location: string; action: "Apply" | "Applied"; applicants: number; status?: string }>
 }
 
 type WorkspaceModulePageProps = {
@@ -189,7 +189,7 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 }
 
 function CandidateModuleContent({ module, data }: { module: WorkspaceModule; data: CandidateDashboardData }) {
-  if (module.dataKey === "jobs" || module.dataKey === "applications") {
+  if (module.href === "/candidate/modules/careers") {
     return (
       <section className="space-y-3">
         {data.jobs.map((job) => (
@@ -201,6 +201,104 @@ function CandidateModuleContent({ module, data }: { module: WorkspaceModule; dat
             <span className="rounded-md px-3 py-2 text-sm font-semibold" style={{ background: legacyTheme.selected, color: legacyTheme.primary }}>{job.action}</span>
           </div>
         ))}
+      </section>
+    )
+  }
+
+  if (module.href === "/candidate/modules/applications") {
+    const appliedJobs = data.jobs.filter((job) => job.action === "Applied")
+
+    return (
+      <section className="space-y-4">
+        {appliedJobs.map((job) => (
+          <article key={job.title} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="font-bold" style={{ color: legacyTheme.text }}>{job.title}</h2>
+                <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{job.department} · {job.location}</p>
+              </div>
+              <span className="rounded-full px-3 py-1 text-xs font-bold capitalize" style={{ background: legacyTheme.selected, color: legacyTheme.primary }}>{job.status ?? "applied"}</span>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {[
+                ["Application", "Submitted"],
+                ["AI Screening", job.status === "applied" ? "Pending" : "Completed"],
+                ["HR Review", job.status === "approved" ? "Shortlisted" : "In progress"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-lg p-3" style={{ background: legacyTheme.body }}>
+                  <p className="text-xs font-semibold" style={{ color: legacyTheme.textMuted }}>{label}</p>
+                  <p className="mt-1 font-bold" style={{ color: legacyTheme.text }}>{value}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
+    )
+  }
+
+  if (module.href === "/candidate/modules/profile") {
+    return (
+      <section className="grid gap-5 lg:grid-cols-[0.8fr_1fr]">
+        <article className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <UserRound className="h-7 w-7" style={{ color: legacyTheme.primary }} />
+          <h2 className="mt-4 text-xl font-bold" style={{ color: legacyTheme.text }}>{data.candidateName}</h2>
+          <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>Candidate profile synced from Supabase.</p>
+          <div className="mt-5 h-2 overflow-hidden rounded-full" style={{ background: legacyTheme.selected }}>
+            <div className="h-full rounded-full" style={{ width: `${data.profileCompletion}%`, background: legacyTheme.primary }} />
+          </div>
+          <p className="mt-2 text-sm font-semibold" style={{ color: legacyTheme.primary }}>{data.profileCompletion}% complete</p>
+        </article>
+        <article className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <h2 className="text-lg font-bold" style={{ color: legacyTheme.text }}>Profile Checklist</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {[
+              ["Basic details", "Completed"],
+              ["Resume", data.documents ? "Uploaded" : "Pending"],
+              ["Identity proof", data.documents > 1 ? "Uploaded" : "Pending"],
+              ["Interview readiness", data.interviews ? "Scheduled" : "Awaiting HR"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-lg border p-3" style={{ borderColor: legacyTheme.divider, background: legacyTheme.body }}>
+                <p className="text-sm font-semibold" style={{ color: legacyTheme.text }}>{label}</p>
+                <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{value}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+    )
+  }
+
+  if (module.href === "/candidate/modules/documents") {
+    const documents = ["Resume", "Identity Proof", "Education Certificate"].slice(0, Math.max(1, data.documents))
+
+    return (
+      <section className="grid gap-4 md:grid-cols-3">
+        {documents.map((documentTitle) => (
+          <article key={documentTitle} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <FileText className="h-6 w-6" style={{ color: legacyTheme.primary }} />
+            <h2 className="mt-4 font-bold" style={{ color: legacyTheme.text }}>{documentTitle}</h2>
+            <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>Uploaded and available for HR verification.</p>
+            <span className="mt-4 inline-flex rounded-full px-3 py-1 text-xs font-bold" style={{ background: "rgba(40, 199, 111, 0.12)", color: legacyTheme.success }}>Active</span>
+          </article>
+        ))}
+      </section>
+    )
+  }
+
+  if (module.href === "/candidate/modules/interviews") {
+    return (
+      <section className="grid gap-4 md:grid-cols-2">
+        <article className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <CalendarClock className="h-6 w-6" style={{ color: legacyTheme.primary }} />
+          <h2 className="mt-4 text-lg font-bold" style={{ color: legacyTheme.text }}>Interview Status</h2>
+          <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>{data.interviews ? "HR review is active. Interview confirmation is pending." : "No interview scheduled yet."}</p>
+        </article>
+        <article className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <BadgeCheck className="h-6 w-6" style={{ color: legacyTheme.success }} />
+          <h2 className="mt-4 text-lg font-bold" style={{ color: legacyTheme.text }}>Readiness</h2>
+          <p className="mt-1 text-sm" style={{ color: legacyTheme.textSoft }}>Resume, documents, and application status stay linked to the candidate workspace.</p>
+        </article>
       </section>
     )
   }
