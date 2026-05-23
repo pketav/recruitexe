@@ -1631,7 +1631,7 @@ export async function saveAutomationRules(rules: Array<Pick<AutomationRule, "id"
   }
 }
 
-export async function runAutomationRulesForDemoApplications() {
+export async function runAutomationRulesForDemoApplications(options: { limit?: number } = {}) {
   const supabase = getSupabaseAdminClient()
   const { organization, rules } = await getAutomationRulesData()
   const enabledRules = new Set(rules.filter((rule) => rule.enabled).map((rule) => rule.id))
@@ -1647,7 +1647,7 @@ export async function runAutomationRulesForDemoApplications() {
 
   const actions = []
 
-  for (const application of applicationsResult.data ?? []) {
+  for (const application of (applicationsResult.data ?? []).slice(0, options.limit)) {
     const score = Number(application.ai_score ?? 0)
     const metadata = (application.metadata as Record<string, unknown> | null) ?? {}
     const automationMetadata = typeof metadata.automation === "object" && metadata.automation !== null

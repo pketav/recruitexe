@@ -61,6 +61,24 @@ const apiContractChecks = [
     expectedText: "Unknown automation rule",
   },
   {
+    path: "/api/hr/automation-rules",
+    expectedStatus: 400,
+    payload: [],
+    expectedText: "payload must be an object",
+  },
+  {
+    path: "/api/hr/automation-rules/run",
+    expectedStatus: 400,
+    payload: { mode: "dry-run" },
+    expectedText: "Automation run mode",
+  },
+  {
+    path: "/api/hr/automation-rules/run",
+    expectedStatus: 400,
+    payload: { mode: "apply-enabled-rules", limit: 0 },
+    expectedText: "between 1 and 100",
+  },
+  {
     path: "/api/hr/linkedin-settings",
     expectedStatus: 400,
     payload: { organizationMode: "enterprise" },
@@ -133,6 +151,28 @@ const aiScreeningChecks = [
     expectedStatus: 200,
     payload: { mode: "screen-pending", limit: 5 },
     expectedText: "screenedCount",
+  },
+]
+
+const automationRuleChecks = [
+  {
+    path: "/api/hr/automation-rules",
+    expectedStatus: 200,
+    payload: {
+      rules: [
+        { id: "auto-approve-high-match", enabled: true },
+        { id: "review-mid-match", enabled: true },
+        { id: "reject-low-match", enabled: true },
+        { id: "candidate-followup", enabled: true },
+      ],
+    },
+    expectedText: "rules",
+  },
+  {
+    path: "/api/hr/automation-rules/run",
+    expectedStatus: 200,
+    payload: { mode: "apply-enabled-rules", limit: 20 },
+    expectedText: "actionCount",
   },
 ]
 
@@ -212,6 +252,10 @@ for (const check of linkedInDraftChecks) {
 }
 
 for (const check of aiScreeningChecks) {
+  await assertPostContract(check)
+}
+
+for (const check of automationRuleChecks) {
   await assertPostContract(check)
 }
 

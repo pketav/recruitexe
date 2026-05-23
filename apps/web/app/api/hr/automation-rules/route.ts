@@ -23,11 +23,20 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const body = await request.json().catch(() => null)
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Automation rules payload must be an object." }, { status: 400 })
+    }
+
     const rules = Array.isArray(body.rules) ? body.rules : null
 
     if (!rules) {
       return NextResponse.json({ error: "Rules array is required." }, { status: 400 })
+    }
+
+    if (rules.length > automationRuleIds.size) {
+      return NextResponse.json({ error: "Rules array contains too many entries." }, { status: 400 })
     }
 
     for (const rule of rules) {
