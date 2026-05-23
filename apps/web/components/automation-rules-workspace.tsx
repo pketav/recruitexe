@@ -42,17 +42,7 @@ export function AutomationRulesWorkspace({ organizationName, initialRules }: Aut
     setError("")
 
     try {
-      const response = await fetch("/api/hr/automation-rules", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rules: rules.map(({ id, enabled }) => ({ id, enabled })) }),
-      })
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error ?? "Unable to save rules.")
-      }
-
+      const result = await persistRules()
       setRules(result.rules ?? rules)
       setStatus("Automation rules saved in Supabase organization settings.")
     } catch (saveError) {
@@ -62,12 +52,30 @@ export function AutomationRulesWorkspace({ organizationName, initialRules }: Aut
     }
   }
 
+  async function persistRules() {
+    const response = await fetch("/api/hr/automation-rules", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rules: rules.map(({ id, enabled }) => ({ id, enabled })) }),
+    })
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(result.error ?? "Unable to save rules.")
+    }
+
+    return result
+  }
+
   async function runRules() {
     setRunning(true)
     setStatus("")
     setError("")
 
     try {
+      const saved = await persistRules()
+      setRules(saved.rules ?? rules)
+
       const response = await fetch("/api/hr/automation-rules/run", { method: "POST" })
       const result = await response.json()
 
@@ -78,8 +86,8 @@ export function AutomationRulesWorkspace({ organizationName, initialRules }: Aut
       setActions(result.actions ?? [])
       setStatus(
         result.actionCount
-          ? `${result.actionCount} automation actions applied across ${result.totalApplications} applications.`
-          : "Rules checked. No application needed a status change right now.",
+          ? `${result.actionCount} automation actions applied across ${result.totalApplications} applications. Current toggles were saved before run.`
+          : "Current toggles saved. Rules checked; no application needed a status change right now.",
       )
     } catch (runError) {
       setError(runError instanceof Error ? runError.message : "Unable to run rules.")
