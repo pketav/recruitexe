@@ -8,6 +8,7 @@
     "dev:web": "npm --prefix apps/web run dev -- --port 4030",
     "build": "npm --prefix apps/web run build",
     "verify:security": "node scripts/verify-active-app-security.mjs",
+    "verify:smoke": "node scripts/verify-product-smoke.mjs",
     "dev:hr-legacy": "npm --prefix apps/hr-portal run dev",
     "dev:candidate-legacy": "npm --prefix apps/candidate-portal run dev"
   },
