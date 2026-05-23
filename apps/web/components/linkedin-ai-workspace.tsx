@@ -40,6 +40,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
   const [drafts, setDrafts] = useState<Draft[]>([])
   const [selectedDraftIndex, setSelectedDraftIndex] = useState(0)
   const [status, setStatus] = useState("")
+  const [statusTone, setStatusTone] = useState<"success" | "warning" | "error">("success")
   const [loading, setLoading] = useState(false)
   const [savingSettings, setSavingSettings] = useState(false)
 
@@ -52,6 +53,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
   async function saveSettings() {
     setSavingSettings(true)
     setStatus("")
+    setStatusTone("success")
 
     try {
       const response = await fetch("/api/hr/linkedin-settings", {
@@ -77,8 +79,10 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
       setSettings(result.settings)
       setLinkedinAccessToken("")
       setStatus("LinkedIn/Gemini setup Supabase organization settings me saved.")
+      setStatusTone("success")
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "LinkedIn setup save failed.")
+      setStatusTone("error")
     } finally {
       setSavingSettings(false)
     }
@@ -87,6 +91,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
   async function disconnectLinkedIn() {
     setSavingSettings(true)
     setStatus("")
+    setStatusTone("success")
 
     try {
       const response = await fetch("/api/hr/linkedin-settings", {
@@ -111,8 +116,10 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
 
       setSettings(result.settings)
       setStatus("LinkedIn token removed from Supabase settings.")
+      setStatusTone("warning")
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "LinkedIn disconnect failed.")
+      setStatusTone("error")
     } finally {
       setSavingSettings(false)
     }
@@ -121,6 +128,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
   async function generateDrafts() {
     setLoading(true)
     setStatus("")
+    setStatusTone("success")
 
     try {
       const response = await fetch("/api/ai/linkedin-post", {
@@ -138,11 +146,18 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
         }),
       })
       const result = await response.json()
+
+      if (!response.ok || result.ok === false) {
+        throw new Error(result.error || "Draft generation failed.")
+      }
+
       setDrafts(result.drafts ?? [])
       setSelectedDraftIndex(0)
       setStatus(result.provider === "gemini" ? "Gemini AI draft generated." : "Server fallback draft generated. Add Gemini key in backend env for live AI.")
+      setStatusTone(result.provider === "gemini" ? "success" : "warning")
     } catch {
       setStatus("Draft generation failed. Please retry after backend check.")
+      setStatusTone("error")
     } finally {
       setLoading(false)
     }
@@ -154,7 +169,26 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
         ? "Draft moved to client approval queue. LinkedIn posting will run after approval and OAuth connection."
         : "Draft queued for LinkedIn scheduling. OAuth token stays backend-side.",
     )
+    setStatusTone("success")
   }
+
+  const statusStyle = {
+    success: {
+      borderColor: "rgba(40, 199, 111, 0.24)",
+      background: "rgba(40, 199, 111, 0.08)",
+      color: legacyTheme.success,
+    },
+    warning: {
+      borderColor: "rgba(255, 159, 67, 0.28)",
+      background: "rgba(255, 159, 67, 0.12)",
+      color: "#B85F00",
+    },
+    error: {
+      borderColor: "rgba(255, 76, 81, 0.24)",
+      background: "rgba(255, 76, 81, 0.08)",
+      color: legacyTheme.error,
+    },
+  }[statusTone]
 
   return (
     <section className="space-y-5">
@@ -355,7 +389,7 @@ export function LinkedInAiWorkspace({ jobs, initialSettings }: LinkedInAiWorkspa
       </div>
 
       {status ? (
-        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+        <p className="rounded-lg border px-4 py-3 text-sm font-semibold" style={statusStyle}>
           {status}
         </p>
       ) : null}
