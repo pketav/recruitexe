@@ -29,6 +29,27 @@ const redirectChecks = [
   { path: "/completeProfile", expectedPath: "/candidate/modules/profile" },
 ]
 
+const apiContractChecks = [
+  {
+    path: "/api/candidate/apply",
+    expectedStatus: 400,
+    payload: { organizationSlug: "recruitexe-demo", jobTitle: "Branch Manager", email: "smoke@example.com" },
+    expectedText: "Full name is required",
+  },
+  {
+    path: "/api/hr/automation-rules",
+    expectedStatus: 400,
+    payload: { rules: [{ id: "unknown-rule", enabled: true }] },
+    expectedText: "Unknown automation rule",
+  },
+  {
+    path: "/api/hr/linkedin-settings",
+    expectedStatus: 400,
+    payload: { organizationMode: "enterprise" },
+    expectedText: "Organization mode",
+  },
+]
+
 function normalizeBaseUrl(value) {
   const withProtocol = value.startsWith("http") ? value : `https://${value}`
 
@@ -65,12 +86,35 @@ async function assertRedirect({ path, expectedPath }) {
   console.log(`${path} -> ${finalUrl.pathname}`)
 }
 
+async function assertPostContract({ path, expectedStatus, payload, expectedText }) {
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  const text = await response.text()
+
+  if (response.status !== expectedStatus) {
+    throw new Error(`${path} expected ${expectedStatus}, got ${response.status}: ${text.slice(0, 180)}`)
+  }
+
+  if (expectedText && !text.includes(expectedText)) {
+    throw new Error(`${path} did not include expected error text: ${expectedText}`)
+  }
+
+  console.log(`${path} POST ${response.status}`)
+}
+
 for (const check of [...pageChecks, ...apiChecks]) {
   await assertResponse(check)
 }
 
 for (const check of redirectChecks) {
   await assertRedirect(check)
+}
+
+for (const check of apiContractChecks) {
+  await assertPostContract(check)
 }
 
 console.log(`Product smoke passed for ${baseUrl}.`)
