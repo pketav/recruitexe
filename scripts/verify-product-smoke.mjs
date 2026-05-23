@@ -79,6 +79,24 @@ const apiContractChecks = [
     expectedText: "between 1 and 100",
   },
   {
+    path: "/api/hr/job-posts",
+    expectedStatus: 400,
+    payload: { title: "", openings: 2 },
+    expectedText: "Job title is required",
+  },
+  {
+    path: "/api/hr/job-posts",
+    expectedStatus: 400,
+    payload: { title: "Smoke QA Role", openings: 0 },
+    expectedText: "Openings must be",
+  },
+  {
+    path: "/api/hr/job-posts",
+    expectedStatus: 400,
+    payload: { title: "Smoke QA Role", skills: ["Recruitment", 42] },
+    expectedText: "Each skill must be a string",
+  },
+  {
     path: "/api/hr/linkedin-settings",
     expectedStatus: 400,
     payload: { organizationMode: "enterprise" },
@@ -176,6 +194,24 @@ const automationRuleChecks = [
   },
 ]
 
+const jobPostChecks = [
+  {
+    path: "/api/hr/job-posts",
+    expectedStatus: 201,
+    payload: {
+      title: `Smoke QA Role ${Date.now()}`,
+      department: "QA Hiring",
+      location: "Mumbai",
+      employmentType: "Full-time",
+      openings: 1,
+      summary: "Smoke-created role to verify the Supabase-backed job post create pipeline.",
+      skills: ["Recruitment", "Automation", "QA"],
+      status: "draft",
+    },
+    expectedText: "job",
+  },
+]
+
 function normalizeBaseUrl(value) {
   const withProtocol = value.startsWith("http") ? value : `https://${value}`
 
@@ -248,6 +284,10 @@ for (const check of publicApplyChecks) {
 }
 
 for (const check of linkedInDraftChecks) {
+  await assertPostContract(check)
+}
+
+for (const check of jobPostChecks) {
   await assertPostContract(check)
 }
 
