@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { BriefcaseBusiness, Building2, Command, Files, Home, Menu, ShieldCheck, UserRound, X } from "lucide-react"
 
 import { legacyTheme } from "@/lib/legacy-theme"
@@ -18,11 +18,19 @@ const groupIcons = [Home, BriefcaseBusiness, Building2, Command, Files, ShieldCh
 
 export function WorkspaceSidebar({ brand, groups, homeHref }: WorkspaceSidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [pendingHref, setPendingHref] = useState("")
+  const moduleHrefs = useMemo(() => [homeHref, ...groups.flatMap((group) => group.modules.map((module) => module.href))], [groups, homeHref])
 
   useEffect(() => {
     setMobileOpen(false)
+    setPendingHref("")
   }, [pathname])
+
+  useEffect(() => {
+    moduleHrefs.forEach((href) => router.prefetch(href))
+  }, [moduleHrefs, router])
 
   return (
     <>
@@ -77,20 +85,26 @@ export function WorkspaceSidebar({ brand, groups, homeHref }: WorkspaceSidebarPr
                   <div className="space-y-1">
                     {group.modules.map((module) => {
                       const active = pathname === module.href
+                      const pending = pendingHref === module.href && !active
 
                       return (
                         <Link
                           key={module.href}
                           href={module.href}
                           aria-current={active ? "page" : undefined}
+                          onClick={() => setPendingHref(module.href)}
                           className={`flex items-center justify-between gap-3 rounded-md px-3 py-2.5 text-[13px] font-medium transition ${
-                            active
+                            active || pending
                               ? "bg-[#F8F7FA] text-[#262E3D] shadow-[inset_3px_0_0_#7367F0]"
                               : "text-[#262E3D] hover:bg-[#F8F7FA] hover:text-[#262E3D]"
                           }`}
                         >
                           <span className="min-w-0 flex-1 leading-5">{module.title}</span>
-                          {module.source === "supabase-live" ? (
+                          {pending ? (
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "rgba(115, 103, 240, 0.12)", color: legacyTheme.primary }}>
+                              Opening
+                            </span>
+                          ) : module.source === "supabase-live" ? (
                             <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "rgba(40, 199, 111, 0.12)", color: legacyTheme.success }}>
                               Live
                             </span>

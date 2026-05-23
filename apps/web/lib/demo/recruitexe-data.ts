@@ -1,5 +1,7 @@
 import "server-only"
 
+import { unstable_cache as nextCache, revalidateTag } from "next/cache"
+
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
 
 export const organizationSlug = "recruitexe-demo"
@@ -673,7 +675,7 @@ async function ensureDocument(
   )
 }
 
-export async function ensureRecruitExeDemoData() {
+async function ensureRecruitExeDemoDataUncached() {
   const supabase = getSupabaseAdminClient()
   const [product, organization] = await Promise.all([ensureProduct(supabase), ensureOrganization(supabase)])
 
@@ -762,7 +764,13 @@ export async function ensureRecruitExeDemoData() {
   }
 }
 
-export async function getHrDashboardData() {
+export const ensureRecruitExeDemoData = nextCache(
+  ensureRecruitExeDemoDataUncached,
+  ["recruitexe-demo-foundation"],
+  { revalidate: 300, tags: ["recruitexe-demo-foundation"] },
+)
+
+async function getHrDashboardDataUncached() {
   const supabase = getSupabaseAdminClient()
   const { organization } = await ensureRecruitExeDemoData()
 
@@ -875,7 +883,13 @@ export async function getHrDashboardData() {
   }
 }
 
-export async function getJobPostSetupData(): Promise<JobPostSetupData> {
+export const getHrDashboardData = nextCache(
+  getHrDashboardDataUncached,
+  ["recruitexe-hr-dashboard-data"],
+  { revalidate: 20, tags: ["recruitexe-dashboard-data"] },
+)
+
+async function getJobPostSetupDataUncached(): Promise<JobPostSetupData> {
   const supabase = getSupabaseAdminClient()
   const { organization } = await ensureRecruitExeDemoData()
 
@@ -924,6 +938,12 @@ export async function getJobPostSetupData(): Promise<JobPostSetupData> {
     }),
   }
 }
+
+export const getJobPostSetupData = nextCache(
+  getJobPostSetupDataUncached,
+  ["recruitexe-job-post-setup-data"],
+  { revalidate: 20, tags: ["recruitexe-dashboard-data"] },
+)
 
 export async function createRecruitExeJobPost(payload: {
   title?: string
@@ -985,6 +1005,8 @@ export async function createRecruitExeJobPost(payload: {
     throw new Error(jobResult.error.message)
   }
 
+  revalidateTag("recruitexe-dashboard-data")
+
   const job = jobResult.data
   const jobDepartment = Array.isArray(job.departments) ? job.departments[0] : job.departments
   const jobLocation = Array.isArray(job.work_locations) ? job.work_locations[0] : job.work_locations
@@ -1004,7 +1026,7 @@ export async function createRecruitExeJobPost(payload: {
   }
 }
 
-export async function getCandidateDashboardData() {
+async function getCandidateDashboardDataUncached() {
   const supabase = getSupabaseAdminClient()
   const { organization } = await ensureRecruitExeDemoData()
 
@@ -1076,6 +1098,12 @@ export async function getCandidateDashboardData() {
     jobs,
   }
 }
+
+export const getCandidateDashboardData = nextCache(
+  getCandidateDashboardDataUncached,
+  ["recruitexe-candidate-dashboard-data"],
+  { revalidate: 20, tags: ["recruitexe-dashboard-data"] },
+)
 
 export async function getPublicCareersData(slug: string) {
   const supabase = getSupabaseAdminClient()
@@ -1325,6 +1353,8 @@ export async function applyToJobPostFromPublicLink(payload: PublicApplyPayload) 
       .throwOnError()
   }
 
+  revalidateTag("recruitexe-dashboard-data")
+
   return {
     applicationId: applicationResult.data.id,
     candidateName: candidate.full_name,
@@ -1397,6 +1427,10 @@ export async function runAiScreeningForDemoApplications(options: { limit?: numbe
       aiScore: updateResult.data.ai_score ? `${updateResult.data.ai_score}%` : "Pending",
       aiSummary: updateResult.data.ai_summary,
     })
+  }
+
+  if (screened.length) {
+    revalidateTag("recruitexe-dashboard-data")
   }
 
   return {
@@ -1588,6 +1622,8 @@ export async function saveLinkedInIntegrationSettings(payload: {
     .eq("id", organization.id)
     .throwOnError()
 
+  revalidateTag("recruitexe-dashboard-data")
+
   return {
     organization,
     settings: normalizeLinkedInSettings(nextSettings),
@@ -1624,6 +1660,8 @@ export async function saveAutomationRules(rules: Array<Pick<AutomationRule, "id"
     })
     .eq("id", organization.id)
     .throwOnError()
+
+  revalidateTag("recruitexe-dashboard-data")
 
   return {
     organization,
@@ -1715,6 +1753,10 @@ export async function runAutomationRulesForDemoApplications(options: { limit?: n
       nextStatus,
       aiScore: application.ai_score ? `${application.ai_score}%` : "Pending",
     })
+  }
+
+  if (actions.length) {
+    revalidateTag("recruitexe-dashboard-data")
   }
 
   return {
