@@ -61,6 +61,13 @@ type PublicApplyPayload = {
   source?: string
 }
 
+type ScreeningDecision = {
+  score: number
+  status: string
+  summary: string
+  provider: "gemini" | "rules-fallback"
+}
+
 export type JobPostSetupData = {
   organization: { id: string; name: string }
   departments: Array<{ id: string; name: string }>
@@ -506,6 +513,89 @@ function scoreCandidateMatch(candidateName: string, jobTitle: string, status: st
     score,
     status: "rejected",
     summary: "Low match: profile needs stronger evidence against current role requirements.",
+  }
+}
+
+function fallbackScreeningDecision(candidateName: string, jobTitle: string, status: string): ScreeningDecision {
+  const result = scoreCandidateMatch(candidateName, jobTitle, status)
+
+  return {
+    ...result,
+    provider: "rules-fallback",
+  }
+}
+
+function parseGeminiScreeningText(text: string, fallback: ScreeningDecision): ScreeningDecision {
+  const cleaned = text
+    .trim()
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/```$/i, "")
+    .trim()
+
+  try {
+    const parsed = JSON.parse(cleaned) as Partial<ScreeningDecision>
+    const score = Math.max(0, Math.min(100, Number(parsed.score ?? fallback.score)))
+    const status = ["approved", "review", "rejected"].includes(String(parsed.status)) ? String(parsed.status) : fallback.status
+    const summary = typeof parsed.summary === "string" && parsed.summary.trim() ? parsed.summary.trim() : fallback.summary
+
+    return {
+      score,
+      status,
+      summary,
+      provider: "gemini",
+    }
+  } catch {
+    return fallback
+  }
+}
+
+async function generateScreeningDecision(candidateName: string, jobTitle: string, status: string): Promise<ScreeningDecision> {
+  const fallback = fallbackScreeningDecision(candidateName, jobTitle, status)
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY
+
+  if (!apiKey) {
+    return fallback
+  }
+
+  const prompt = `Score this candidate application as JSON only.
+Schema: {"score":number,"status":"approved|review|rejected","summary":"string"}
+Rules:
+- approved means score >= 85 and strong role fit.
+- review means score 74-84 or useful but needs HR review.
+- rejected means score <= 73 or clear mismatch.
+- Summary must be one concise HR-facing sentence.
+Application:
+- Candidate: ${candidateName}
+- Role: ${jobTitle}
+- Current status: ${status}`
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.2,
+            responseMimeType: "application/json",
+          },
+        }),
+      },
+    )
+
+    if (!response.ok) {
+      throw new Error(`Gemini screening failed with ${response.status}`)
+    }
+
+    const result = (await response.json()) as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
+    const text = result.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("\n") ?? ""
+
+    return parseGeminiScreeningText(text, fallback)
+  } catch {
+    return fallback
   }
 }
 
@@ -1239,7 +1329,7 @@ export async function runAiScreeningForDemoApplications() {
 
   const applicationsResult = await supabase
     .from("job_applications")
-    .select("id,status,ai_score,candidates(full_name,candidate_code),job_posts(title)")
+    .select("id,status,ai_score,metadata,candidates(full_name,candidate_code),job_posts(title)")
     .eq("organization_id", organization.id)
 
   if (applicationsResult.error) {
@@ -1253,7 +1343,7 @@ export async function runAiScreeningForDemoApplications() {
   for (const row of screenableRows) {
     const candidate = Array.isArray(row.candidates) ? row.candidates[0] : row.candidates
     const job = Array.isArray(row.job_posts) ? row.job_posts[0] : row.job_posts
-    const result = scoreCandidateMatch(candidate?.full_name ?? "Candidate", job?.title ?? "Open role", row.status)
+    const result = await generateScreeningDecision(candidate?.full_name ?? "Candidate", job?.title ?? "Open role", row.status)
 
     const updateResult = await supabase
       .from("job_applications")
@@ -1262,8 +1352,9 @@ export async function runAiScreeningForDemoApplications() {
         ai_score: result.score,
         ai_summary: result.summary,
         metadata: {
+          ...((row.metadata as Record<string, unknown> | null) ?? {}),
           aiScreening: {
-            provider: process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY ? "gemini-ready" : "rules-fallback",
+            provider: result.provider,
             screenedAt: new Date().toISOString(),
             sourceStatus: row.status,
           },
@@ -1292,7 +1383,7 @@ export async function runAiScreeningForDemoApplications() {
     screened,
     screenedCount: screened.length,
     totalApplications: rows.length,
-    provider: process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY ? "gemini-ready" : "rules-fallback",
+    provider: isGeminiConfigured() ? "gemini-ready" : "rules-fallback",
   }
 }
 
@@ -1536,24 +1627,33 @@ export async function runAutomationRulesForDemoApplications() {
 
   for (const application of applicationsResult.data ?? []) {
     const score = Number(application.ai_score ?? 0)
+    const metadata = (application.metadata as Record<string, unknown> | null) ?? {}
+    const automationMetadata = typeof metadata.automation === "object" && metadata.automation !== null
+      ? metadata.automation as { ruleId?: string }
+      : null
     let nextStatus = application.status
     let matchedRule: AutomationRule["id"] | null = null
 
-    if (enabledRules.has("auto-approve-high-match") && score >= 85 && application.status !== "rejected") {
+    if (enabledRules.has("auto-approve-high-match") && score >= 85 && !["approved", "rejected"].includes(application.status)) {
       nextStatus = "approved"
       matchedRule = "auto-approve-high-match"
     } else if (
       enabledRules.has("review-mid-match") &&
       score >= 74 &&
       score <= 84 &&
-      !["approved", "rejected"].includes(application.status)
+      !["approved", "rejected", "review"].includes(application.status)
     ) {
       nextStatus = "review"
       matchedRule = "review-mid-match"
-    } else if (enabledRules.has("reject-low-match") && score > 0 && score <= 72 && application.status !== "approved") {
+    } else if (enabledRules.has("reject-low-match") && score > 0 && score <= 72 && !["approved", "rejected"].includes(application.status)) {
       nextStatus = "rejected"
       matchedRule = "reject-low-match"
-    } else if (enabledRules.has("candidate-followup") && application.status === "applied" && !application.ai_score) {
+    } else if (
+      enabledRules.has("candidate-followup") &&
+      application.status === "applied" &&
+      !application.ai_score &&
+      automationMetadata?.ruleId !== "candidate-followup"
+    ) {
       matchedRule = "candidate-followup"
     }
 
@@ -1570,10 +1670,12 @@ export async function runAutomationRulesForDemoApplications() {
         .update({
           status: nextStatus,
           metadata: {
-            ...((application.metadata as Record<string, unknown> | null) ?? {}),
+            ...metadata,
             automation: {
               ruleId: matchedRule,
               appliedAt: new Date().toISOString(),
+              previousStatus: application.status,
+              nextStatus,
             },
           },
         })
