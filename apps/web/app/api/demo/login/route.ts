@@ -1,7 +1,6 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
-import { ensureRecruitExeDemoData } from "@/lib/demo/recruitexe-data"
 import { appRoutes } from "@/lib/routes"
 
 export const dynamic = "force-dynamic"
@@ -13,7 +12,6 @@ type LoginPayload = {
 export async function POST(request: Request) {
   const payload = (await request.json().catch(() => ({}))) as LoginPayload
   const role = payload.role === "candidate" ? "candidate" : "hr"
-  const demoData = await ensureRecruitExeDemoData()
   const cookieStore = await cookies()
 
   cookieStore.set("recruitexe_demo_role", role, {
@@ -28,6 +26,10 @@ export async function POST(request: Request) {
     ok: true,
     role,
     redirectTo: role === "candidate" ? appRoutes.candidateDashboard : appRoutes.hrDashboard,
-    profile: role === "candidate" ? demoData.candidateProfile : demoData.hrProfile,
+    profile: {
+      role,
+      name: role === "candidate" ? "Priya Mehta" : "Demo Admin",
+      email: role === "candidate" ? "candidate.demo@recruitexe.local" : "hr.demo@recruitexe.local",
+    },
   })
 }

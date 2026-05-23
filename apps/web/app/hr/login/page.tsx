@@ -109,7 +109,7 @@ export default function HrLoginPage() {
               disabled={isSigningIn}
               className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-400 to-pink-500 font-semibold shadow-lg shadow-pink-950/30 transition hover:translate-y-[-1px] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isSigningIn ? "Connecting Supabase..." : "Sign In"} <ArrowRight className="h-4 w-4" />
+              {isSigningIn ? "Starting session..." : "Sign In"} <ArrowRight className="h-4 w-4" />
             </button>
           </div>
 
@@ -120,7 +120,7 @@ export default function HrLoginPage() {
           ) : null}
 
           <p className="mt-6 text-center text-xs text-violet-100">
-            Demo session is backed by Supabase data.
+            Session starts instantly; dashboard loads live Supabase data.
           </p>
           <div className="mt-5 text-center">
             <Link href="/" className="text-sm font-medium text-cyan-200 hover:text-white">

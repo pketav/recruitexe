@@ -101,7 +101,7 @@ export default function CandidateLoginPage() {
               className="h-12 w-full rounded-md font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
               style={{ background: legacyTheme.primary }}
             >
-              {isSigningUp ? "Connecting Supabase..." : "Sign Up"}
+              {isSigningUp ? "Starting session..." : "Sign Up"}
             </button>
 
             {error ? (

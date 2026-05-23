@@ -31,6 +31,18 @@ const redirectChecks = [
 
 const apiContractChecks = [
   {
+    path: "/api/demo/login",
+    expectedStatus: 200,
+    payload: { role: "hr" },
+    expectedText: "redirectTo",
+  },
+  {
+    path: "/api/demo/login",
+    expectedStatus: 200,
+    payload: { role: "candidate" },
+    expectedText: "redirectTo",
+  },
+  {
     path: "/api/candidate/apply",
     expectedStatus: 400,
     payload: { organizationSlug: "recruitexe-demo", jobTitle: "Branch Manager", email: "smoke@example.com" },
