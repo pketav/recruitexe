@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { BriefcaseBusiness, CheckCircle2, MapPin, Search, Send, Sparkles, Users } from "lucide-react"
 
@@ -44,6 +44,14 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
   const [appliedJobs, setAppliedJobs] = useState<Set<string>>(new Set())
   const [notice, setNotice] = useState("")
   const [error, setError] = useState("")
+
+  useEffect(() => {
+    const role = new URLSearchParams(window.location.search).get("role")
+
+    if (role) {
+      setQuery(role)
+    }
+  }, [])
 
   const filteredJobs = useMemo(
     () =>
