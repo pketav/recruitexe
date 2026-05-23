@@ -11,6 +11,7 @@ import { CustomerLinksWorkspace } from "@/components/customer-links-workspace"
 import { AutomationRulesWorkspace } from "@/components/automation-rules-workspace"
 import { JobPostCreateWorkspace } from "@/components/job-post-create-workspace"
 import { ApplicationWorkspace } from "@/components/application-workspace"
+import { InterviewWorkspace } from "@/components/interview-workspace"
 import { organizationSlug, type AutomationRule, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
@@ -135,6 +136,14 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.href === "/hr/modules/applications/map") {
     return <ApplicationWorkspace pipeline={data.pipeline} variant="map" />
+  }
+
+  if (module.href === "/hr/modules/interviews/monitor") {
+    return <InterviewWorkspace pipeline={data.pipeline} variant="monitor" />
+  }
+
+  if (module.href === "/hr/modules/interviews/call-logs") {
+    return <InterviewWorkspace pipeline={data.pipeline} variant="call-logs" />
   }
 
   if (module.href === "/hr/modules/setup/customer-links") {
