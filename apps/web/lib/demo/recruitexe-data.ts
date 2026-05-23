@@ -886,7 +886,7 @@ async function getHrDashboardDataUncached() {
 export const getHrDashboardData = nextCache(
   getHrDashboardDataUncached,
   ["recruitexe-hr-dashboard-data"],
-  { revalidate: 20, tags: ["recruitexe-dashboard-data"] },
+  { revalidate: 180, tags: ["recruitexe-dashboard-data"] },
 )
 
 async function getJobPostSetupDataUncached(): Promise<JobPostSetupData> {
@@ -942,7 +942,7 @@ async function getJobPostSetupDataUncached(): Promise<JobPostSetupData> {
 export const getJobPostSetupData = nextCache(
   getJobPostSetupDataUncached,
   ["recruitexe-job-post-setup-data"],
-  { revalidate: 20, tags: ["recruitexe-dashboard-data"] },
+  { revalidate: 180, tags: ["recruitexe-dashboard-data"] },
 )
 
 export async function createRecruitExeJobPost(payload: {
@@ -1102,7 +1102,7 @@ async function getCandidateDashboardDataUncached() {
 export const getCandidateDashboardData = nextCache(
   getCandidateDashboardDataUncached,
   ["recruitexe-candidate-dashboard-data"],
-  { revalidate: 20, tags: ["recruitexe-dashboard-data"] },
+  { revalidate: 180, tags: ["recruitexe-dashboard-data"] },
 )
 
 export async function getPublicCareersData(slug: string) {
