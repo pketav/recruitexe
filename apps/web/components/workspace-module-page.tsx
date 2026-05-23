@@ -14,6 +14,7 @@ import { ApplicationWorkspace } from "@/components/application-workspace"
 import { InterviewWorkspace } from "@/components/interview-workspace"
 import { FileManagerWorkspace } from "@/components/file-manager-workspace"
 import { UtilitiesWorkspace } from "@/components/utilities-workspace"
+import { OperationsWorkspace } from "@/components/operations-workspace"
 import { organizationSlug, type AutomationRule, type DocumentLibraryRow, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
@@ -159,6 +160,30 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.href === "/hr/modules/utilities/chats") {
     return <UtilitiesWorkspace pipeline={data.pipeline} variant="chats" />
+  }
+
+  const operationsVariantByHref = {
+    "/hr/modules/expenses/dashboard": "expenses",
+    "/hr/modules/setup/agency": "agency",
+    "/hr/modules/admin/dashboard": "admin",
+    "/hr/modules/admin/plan-usage": "plan",
+    "/hr/modules/commandexe/dashboard": "command-dashboard",
+    "/hr/modules/commandexe/add-case": "command-add-case",
+    "/hr/modules/commandexe/backoffice": "command-backoffice",
+    "/hr/modules/commandexe/invoice": "command-invoice",
+  } as const
+  const operationsVariant = operationsVariantByHref[module.href as keyof typeof operationsVariantByHref]
+
+  if (operationsVariant) {
+    return (
+      <OperationsWorkspace
+        variant={operationsVariant}
+        organizationName={data.organization.name}
+        metrics={data.metrics}
+        pipeline={data.pipeline}
+        jobs={data.hotPositions}
+      />
+    )
   }
 
   if (module.href === "/hr/modules/setup/customer-links") {
