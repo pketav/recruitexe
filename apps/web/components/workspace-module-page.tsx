@@ -246,6 +246,25 @@ function CandidateModuleContent({ module, data }: { module: WorkspaceModule; dat
   if (module.href === "/candidate/modules/applications") {
     const appliedJobs = data.jobs.filter((job) => job.action === "Applied")
 
+    if (!appliedJobs.length) {
+      return (
+        <section className="rounded-lg border bg-white p-6 text-center shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          <BriefcaseBusiness className="mx-auto h-8 w-8" style={{ color: legacyTheme.primary }} />
+          <h2 className="mt-3 text-lg font-bold" style={{ color: legacyTheme.text }}>No applications yet</h2>
+          <p className="mx-auto mt-2 max-w-xl text-sm" style={{ color: legacyTheme.textSoft }}>
+            Open roles are available in the careers workspace. Apply once and this page will show AI screening, HR review, and interview progress.
+          </p>
+          <Link
+            href="/candidate/modules/careers"
+            className="mt-4 inline-flex rounded-md px-4 py-2 text-sm font-bold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)]"
+            style={{ background: legacyTheme.primary }}
+          >
+            Browse careers
+          </Link>
+        </section>
+      )
+    }
+
     return (
       <section className="space-y-4">
         {appliedJobs.map((job) => (

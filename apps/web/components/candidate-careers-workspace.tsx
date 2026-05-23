@@ -74,6 +74,16 @@ export function CandidateCareersWorkspace({ jobs: initialJobs }: { jobs: Candida
       ) : null}
 
       <div className="space-y-3">
+        {!jobs.length ? (
+          <div className="rounded-lg border bg-white p-6 text-center shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <Send className="mx-auto h-8 w-8" style={{ color: legacyTheme.primary }} />
+            <h2 className="mt-3 text-lg font-bold" style={{ color: legacyTheme.text }}>No open roles right now</h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm" style={{ color: legacyTheme.textSoft }}>
+              Your candidate workspace is active. New company and agency jobs will appear here as soon as they are published.
+            </p>
+          </div>
+        ) : null}
+
         {jobs.map((job) => {
           const applied = job.action === "Applied"
           const submitting = submittingJob === job.title
