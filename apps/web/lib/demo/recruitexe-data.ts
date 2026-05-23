@@ -776,7 +776,8 @@ export async function getHrDashboardData() {
     supabase
       .from("job_applications")
       .select("id,status,ai_score,ai_summary,job_posts(title),candidates(candidate_code,full_name,current_location)")
-      .eq("organization_id", organization.id),
+      .eq("organization_id", organization.id)
+      .order("applied_at", { ascending: false }),
     supabase
       .from("candidates")
       .select("id,candidate_code,full_name")
@@ -823,7 +824,7 @@ export async function getHrDashboardData() {
     { label: "Open Roles", value: String(jobs.length), note: "Published jobs" },
   ]
 
-  const pipeline: CandidateRow[] = applications.slice(0, 6).map((application) => {
+  const pipeline: CandidateRow[] = applications.map((application) => {
     const candidate = Array.isArray(application.candidates) ? application.candidates[0] : application.candidates
     const job = Array.isArray(application.job_posts) ? application.job_posts[0] : application.job_posts
 

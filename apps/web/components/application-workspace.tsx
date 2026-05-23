@@ -52,6 +52,26 @@ function statusTone(status: string) {
   return { background: "rgba(255, 159, 67, 0.14)", color: "#B85F00" }
 }
 
+function nextAction(row: PipelineRow) {
+  if (row.status === "approved") {
+    return "Move to shortlist/interview"
+  }
+
+  if (row.status === "rejected") {
+    return "Keep closed with audit trail"
+  }
+
+  if (row.status === "review") {
+    return "HR review required"
+  }
+
+  if (row.aiScore === "Pending") {
+    return "Run AI screening"
+  }
+
+  return "Run automation rules"
+}
+
 export function ApplicationWorkspace({ pipeline, variant }: ApplicationWorkspaceProps) {
   const approved = pipeline.filter((row) => row.status === "approved").length
   const review = pipeline.filter((row) => row.status === "review" || row.status === "pending").length
@@ -143,7 +163,8 @@ function CandidateTable({ rows, title }: { rows: PipelineRow[]; title: string })
       <div className="border-b px-5 py-4" style={{ borderColor: legacyTheme.divider }}>
         <h2 className="text-lg font-bold" style={{ color: legacyTheme.text }}>{title}</h2>
       </div>
-      <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[920px] text-left text-sm">
         <thead style={{ background: legacyTheme.body, color: legacyTheme.textSoft }}>
           <tr>
             <th className="px-4 py-3">ID</th>
@@ -152,6 +173,8 @@ function CandidateTable({ rows, title }: { rows: PipelineRow[]; title: string })
             <th className="px-4 py-3">Location</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">AI Match</th>
+            <th className="px-4 py-3">Next Action</th>
+            <th className="px-4 py-3">AI Summary</th>
           </tr>
         </thead>
         <tbody>
@@ -171,10 +194,17 @@ function CandidateTable({ rows, title }: { rows: PipelineRow[]; title: string })
                   {candidate.aiScore}
                 </span>
               </td>
+              <td className="px-4 py-3 font-semibold" style={{ color: legacyTheme.primary }}>
+                {nextAction(candidate)}
+              </td>
+              <td className="max-w-sm px-4 py-3" style={{ color: legacyTheme.textSoft }}>
+                {candidate.aiSummary ?? "Awaiting AI screening"}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
     </section>
   )
 }
