@@ -60,7 +60,9 @@ export function CandidateDashboardClient({ data }: { data: CandidateDashboardDat
             : job,
         ),
       )
-      setNotice(`${title} application submitted to Supabase. AI match: ${result.application?.aiScore ?? "Pending"}.`)
+      const applicationState = result.application?.isNewApplication ? "submitted" : "updated"
+      const nextStep = result.application?.nextStep ? ` Next: ${result.application.nextStep}.` : ""
+      setNotice(`${title} application ${applicationState} in Supabase. AI match: ${result.application?.aiScore ?? "Pending"}.${nextStep}`)
     } catch (applyError) {
       setError(applyError instanceof Error ? applyError.message : "Application submit failed.")
     } finally {

@@ -87,7 +87,9 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
       }
 
       setAppliedJobs((current) => new Set(current).add(jobTitle))
-      setNotice(`${result.application?.candidateName ?? "Candidate"} applied for ${jobTitle}. AI match: ${result.application?.aiScore ?? "Pending"}.`)
+      const applicationState = result.application?.isNewApplication ? "Application submitted" : "Application updated"
+      const nextStep = result.application?.nextStep ? ` Next: ${result.application.nextStep}.` : ""
+      setNotice(`${applicationState} for ${result.application?.candidateName ?? "Candidate"} on ${jobTitle}. AI match: ${result.application?.aiScore ?? "Pending"}.${nextStep}`)
       setSelectedJob("")
       setApplicant({ fullName: "", email: "", phone: "", currentLocation: "", resumeUrl: "" })
     } catch (applyError) {

@@ -1330,6 +1330,13 @@ export async function applyToJobPostFromPublicLink(payload: PublicApplyPayload) 
     jobTitle: jobResult.data.title,
     status: applicationResult.data.status,
     aiScore: applicationResult.data.ai_score ? `${applicationResult.data.ai_score}%` : "Pending",
+    isNewApplication: !existingApplication.data,
+    nextStep:
+      applicationResult.data.status === "approved"
+        ? "HR shortlist queue"
+        : applicationResult.data.status === "rejected"
+          ? "Closed by screening rules"
+          : "AI screening and HR review",
   }
 }
 
