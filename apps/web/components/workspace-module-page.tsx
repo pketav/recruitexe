@@ -13,6 +13,7 @@ import { JobPostCreateWorkspace } from "@/components/job-post-create-workspace"
 import { ApplicationWorkspace } from "@/components/application-workspace"
 import { InterviewWorkspace } from "@/components/interview-workspace"
 import { FileManagerWorkspace } from "@/components/file-manager-workspace"
+import { UtilitiesWorkspace } from "@/components/utilities-workspace"
 import { organizationSlug, type AutomationRule, type DocumentLibraryRow, type JobPostSetupData, type LinkedInIntegrationSettings } from "@/lib/demo/recruitexe-data"
 
 type HrDashboardData = {
@@ -150,6 +151,14 @@ function HrModuleContent({ module, data }: { module: WorkspaceModule; data: HrDa
 
   if (module.href === "/hr/modules/utilities/file-manager") {
     return <FileManagerWorkspace documents={data.documentLibrary ?? []} />
+  }
+
+  if (module.href === "/hr/modules/utilities/notes") {
+    return <UtilitiesWorkspace pipeline={data.pipeline} variant="notes" />
+  }
+
+  if (module.href === "/hr/modules/utilities/chats") {
+    return <UtilitiesWorkspace pipeline={data.pipeline} variant="chats" />
   }
 
   if (module.href === "/hr/modules/setup/customer-links") {
