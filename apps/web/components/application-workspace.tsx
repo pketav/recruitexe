@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart3, BriefcaseBusiness, CheckCircle2, MapPin, UserRoundCheck, Users } from "lucide-react"
+import { BarChart3, BriefcaseBusiness, CheckCircle2, MapPin, UserRoundCheck, Users, type LucideIcon } from "lucide-react"
 
 import { legacyTheme } from "@/lib/legacy-theme"
 
@@ -19,6 +19,8 @@ type ApplicationWorkspaceProps = {
   pipeline: PipelineRow[]
   variant: "dashboard" | "candidates" | "map"
 }
+
+type StatCard = [string, number, LucideIcon, string]
 
 function scoreTone(score: string) {
   const value = Number(score.replace("%", ""))
@@ -94,16 +96,16 @@ export function ApplicationWorkspace({ pipeline, variant }: ApplicationWorkspace
     return (
       <section className="space-y-5">
         <div className="grid gap-4 md:grid-cols-4">
-          {[
-            ["Candidates", pipeline.length, Users],
-            ["AI Screened", screened, BarChart3],
-            ["Approved", approved, CheckCircle2],
-            ["Needs Review", review, UserRoundCheck],
-          ].map(([label, value, Icon]) => (
-            <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+          {([
+            ["Candidates", pipeline.length, Users, legacyTheme.primary],
+            ["AI Screened", screened, BarChart3, legacyTheme.primary],
+            ["Approved", approved, CheckCircle2, legacyTheme.primary],
+            ["Needs Review", review, UserRoundCheck, legacyTheme.primary],
+          ] satisfies StatCard[]).map(([label, value, Icon]) => (
+            <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
               <Icon className="h-5 w-5" style={{ color: legacyTheme.primary }} />
-              <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-              <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+              <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+              <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
             </article>
           ))}
         </div>
@@ -116,16 +118,16 @@ export function ApplicationWorkspace({ pipeline, variant }: ApplicationWorkspace
   return (
     <section className="space-y-5">
       <div className="grid gap-4 md:grid-cols-4">
-        {[
+        {([
           ["Total Applications", pipeline.length, BriefcaseBusiness, legacyTheme.primary],
           ["Approved", approved, CheckCircle2, legacyTheme.success],
           ["Review Queue", review, UserRoundCheck, legacyTheme.warning],
           ["Rejected", rejected, BarChart3, legacyTheme.error],
-        ].map(([label, value, Icon, color]) => (
-          <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-            <Icon className="h-5 w-5" style={{ color: color as string }} />
-            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+        ] satisfies StatCard[]).map(([label, value, Icon, color]) => (
+          <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <Icon className="h-5 w-5" style={{ color }} />
+            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
           </article>
         ))}
       </div>

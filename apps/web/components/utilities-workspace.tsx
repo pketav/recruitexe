@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, MessageSquareText, NotebookTabs, Share2, UserRoundCheck } from "lucide-react"
+import { Bell, MessageSquareText, NotebookTabs, Share2, UserRoundCheck, type LucideIcon } from "lucide-react"
 
 import { legacyTheme } from "@/lib/legacy-theme"
 
@@ -19,6 +19,8 @@ type UtilitiesWorkspaceProps = {
   pipeline: PipelineRow[]
   variant: "notes" | "chats"
 }
+
+type StatCard = [string, number, LucideIcon, string]
 
 function buildNotes(pipeline: PipelineRow[]) {
   return pipeline.slice(0, 6).map((row, index) => ({
@@ -53,16 +55,16 @@ export function UtilitiesWorkspace({ pipeline, variant }: UtilitiesWorkspaceProp
     return (
       <section className="space-y-5">
         <div className="grid gap-4 md:grid-cols-4">
-          {[
+          {([
             ["Channels", 2, MessageSquareText, legacyTheme.primary],
             ["Active Threads", chats.length, UserRoundCheck, legacyTheme.info],
             ["Action Ready", chats.filter((chat) => chat.status === "Action ready").length, Bell, legacyTheme.success],
             ["Owners", new Set(chats.map((chat) => chat.owner)).size, Share2, legacyTheme.warning],
-          ].map(([label, value, Icon, color]) => (
-            <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-              <Icon className="h-5 w-5" style={{ color: color as string }} />
-              <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-              <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+          ] satisfies StatCard[]).map(([label, value, Icon, color]) => (
+            <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+              <Icon className="h-5 w-5" style={{ color }} />
+              <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+              <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
             </article>
           ))}
         </div>
@@ -96,16 +98,16 @@ export function UtilitiesWorkspace({ pipeline, variant }: UtilitiesWorkspaceProp
   return (
     <section className="space-y-5">
       <div className="grid gap-4 md:grid-cols-4">
-        {[
+        {([
           ["Notes", notes.length, NotebookTabs, legacyTheme.primary],
           ["Boards", new Set(notes.map((note) => note.board)).size, Share2, legacyTheme.info],
           ["Reminders", notes.filter((note) => note.reminder).length, Bell, legacyTheme.warning],
           ["Shared", notes.length, UserRoundCheck, legacyTheme.success],
-        ].map(([label, value, Icon, color]) => (
-          <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-            <Icon className="h-5 w-5" style={{ color: color as string }} />
-            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+        ] satisfies StatCard[]).map(([label, value, Icon, color]) => (
+          <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <Icon className="h-5 w-5" style={{ color }} />
+            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
           </article>
         ))}
       </div>

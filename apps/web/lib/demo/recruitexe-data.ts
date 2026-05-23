@@ -50,6 +50,17 @@ type PublicCareerJob = {
   skills: string[]
 }
 
+type PublicApplyPayload = {
+  organizationSlug?: string
+  jobTitle?: string
+  fullName?: string
+  email?: string
+  phone?: string
+  currentLocation?: string
+  resumeUrl?: string
+  source?: string
+}
+
 export type JobPostSetupData = {
   organization: { id: string; name: string }
   departments: Array<{ id: string; name: string }>
@@ -507,6 +518,21 @@ function slugifyJobTitle(title: string) {
     .slice(0, 72)
 }
 
+function normalizeEmail(email?: string) {
+  return email?.trim().toLowerCase() ?? ""
+}
+
+function candidateCodeFromEmail(email: string) {
+  const seed = email
+    .split("")
+    .reduce((total, char) => total + char.charCodeAt(0), 0)
+    .toString(36)
+    .toUpperCase()
+  const prefix = email.split("@")[0]?.replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase() || "PUBLIC"
+
+  return `PUB-${prefix}-${seed}`
+}
+
 async function ensureDocument(
   supabase: SupabaseAdmin,
   organizationId: string,
@@ -907,6 +933,10 @@ export async function getCandidateDashboardData() {
   }
 
   const candidate = candidateResult.data
+  if (!candidate) {
+    throw new Error("Candidate profile not found")
+  }
+
   const applicationsResult = await supabase
     .from("job_applications")
     .select("id,status,job_post_id")
@@ -998,54 +1028,187 @@ export async function getPublicCareersData(slug: string) {
 }
 
 export async function applyToJobPostForDemoCandidate(jobTitle: string) {
+  return applyToJobPostFromPublicLink({ jobTitle })
+}
+
+export async function applyToJobPostFromPublicLink(payload: PublicApplyPayload) {
   const supabase = getSupabaseAdminClient()
-  const { organization } = await ensureRecruitExeDemoData()
+  await ensureRecruitExeDemoData()
+  const jobTitle = payload.jobTitle?.trim()
+  const email = normalizeEmail(payload.email)
+  const fullName = payload.fullName?.trim()
 
-  const [candidateResult, jobResult] = await Promise.all([
-    supabase
-      .from("candidates")
-      .select("id,full_name")
-      .eq("organization_id", organization.id)
-      .eq("candidate_code", "CAND002")
-      .single(),
-    supabase
-      .from("job_posts")
-      .select("id,title,metadata")
-      .eq("organization_id", organization.id)
-      .eq("title", jobTitle)
-      .eq("status", "published")
-      .single(),
-  ])
-
-  if (candidateResult.error) {
-    throw new Error(candidateResult.error.message)
+  if (!jobTitle) {
+    throw new Error("Job title is required")
   }
+
+  if ((email || fullName) && (!fullName || !email)) {
+    throw new Error("Candidate name and email are required for public applications")
+  }
+
+  const organizationResult = await supabase
+    .from("organizations")
+    .select("id,name,slug")
+    .eq("slug", payload.organizationSlug?.trim() || organizationSlug)
+    .single()
+
+  if (organizationResult.error) {
+    throw new Error(organizationResult.error.message)
+  }
+
+  const organization = organizationResult.data
+  const jobResult = await supabase
+    .from("job_posts")
+    .select("id,title,metadata")
+    .eq("organization_id", organization.id)
+    .eq("title", jobTitle)
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
   if (jobResult.error) {
     throw new Error(jobResult.error.message)
   }
 
+  if (!jobResult.data) {
+    throw new Error("Published job not found")
+  }
+
+  const candidateResult = email
+    ? await supabase
+      .from("candidates")
+      .select("id,full_name,email,current_location,metadata")
+      .eq("organization_id", organization.id)
+      .eq("email", email)
+      .limit(1)
+      .maybeSingle()
+    : await supabase
+      .from("candidates")
+      .select("id,full_name,email,current_location,metadata")
+      .eq("organization_id", organization.id)
+      .eq("candidate_code", "CAND002")
+      .single()
+
+  if (candidateResult.error) {
+    throw new Error(candidateResult.error.message)
+  }
+
+  let candidate = candidateResult.data
+
+  if (!candidate && email && fullName) {
+    const createdCandidate = await supabase
+      .from("candidates")
+      .insert({
+        organization_id: organization.id,
+        candidate_code: candidateCodeFromEmail(email),
+        full_name: fullName,
+        email,
+        phone: payload.phone?.trim() || null,
+        current_location: payload.currentLocation?.trim() || null,
+        resume_url: payload.resumeUrl?.trim() || null,
+        source: payload.source?.trim() || "Public careers link",
+        profile_data: { profileCompletion: payload.resumeUrl ? 82 : 58 },
+        metadata: {
+          product: "recruitexe",
+          intake: "public-careers",
+          organizationSlug: organization.slug,
+        },
+      })
+      .select("id,full_name,email,current_location,metadata")
+      .single()
+
+    if (createdCandidate.error) {
+      throw new Error(createdCandidate.error.message)
+    }
+
+    candidate = createdCandidate.data
+  } else if (candidate && email && fullName) {
+    const updatedCandidate = await supabase
+      .from("candidates")
+      .update({
+        full_name: fullName,
+        phone: payload.phone?.trim() || null,
+        current_location: payload.currentLocation?.trim() || candidate.current_location,
+        resume_url: payload.resumeUrl?.trim() || null,
+        source: payload.source?.trim() || "Public careers link",
+        metadata: {
+          ...((candidate.metadata as Record<string, unknown> | null) ?? {}),
+          latestIntake: "public-careers",
+          latestIntakeAt: new Date().toISOString(),
+          organizationSlug: organization.slug,
+        },
+      })
+      .eq("id", candidate.id)
+      .select("id,full_name,email,current_location,metadata")
+      .single()
+
+    if (updatedCandidate.error) {
+      throw new Error(updatedCandidate.error.message)
+    }
+
+    candidate = updatedCandidate.data
+  }
+
+  if (!candidate) {
+    throw new Error("Candidate profile could not be created")
+  }
+
   const existingApplication = await supabase
     .from("job_applications")
-    .select("id")
+    .select("id,status,ai_score,metadata")
     .eq("organization_id", organization.id)
     .eq("job_post_id", jobResult.data.id)
-    .eq("candidate_id", candidateResult.data.id)
+    .eq("candidate_id", candidate.id)
     .maybeSingle()
 
   if (existingApplication.error) {
     throw new Error(existingApplication.error.message)
   }
 
-  const aiScore = Math.max(70, Math.min(94, 72 + Math.round(jobTitle.length * 1.8)))
-  const application = await ensureApplication(
-    supabase,
-    organization.id,
-    jobResult.data.id,
-    candidateResult.data.id,
-    "applied",
-    aiScore,
-  )
+  const aiScore = Math.max(70, Math.min(94, 72 + Math.round(`${candidate.full_name} ${jobTitle}`.length * 0.9)))
+  const applicationPayload = {
+    status: existingApplication.data?.status ?? "applied",
+    ai_score: existingApplication.data?.ai_score ?? aiScore,
+    ai_summary: aiScore >= 80 ? "Strong match for current role requirements." : "Needs HR review before next stage.",
+    source: payload.source?.trim() || (email ? "Public careers link" : "RecruitExe demo"),
+    answers: {
+      fullName: candidate.full_name,
+      email: candidate.email,
+      phone: payload.phone?.trim() || null,
+      currentLocation: payload.currentLocation?.trim() || candidate.current_location,
+      resumeUrl: payload.resumeUrl?.trim() || null,
+    },
+    metadata: {
+      ...((existingApplication.data?.metadata as Record<string, unknown> | null) ?? {}),
+      product: "recruitexe",
+      intake: email ? "public-careers" : "demo-candidate",
+      organizationSlug: organization.slug,
+      submittedAt: new Date().toISOString(),
+    },
+  }
+
+  const applicationResult = existingApplication.data
+    ? await supabase
+      .from("job_applications")
+      .update(applicationPayload)
+      .eq("id", existingApplication.data.id)
+      .select("id,status,ai_score")
+      .single()
+    : await supabase
+      .from("job_applications")
+      .insert({
+        organization_id: organization.id,
+        job_post_id: jobResult.data.id,
+        candidate_id: candidate.id,
+        ...applicationPayload,
+      })
+      .select("id,status,ai_score")
+      .single()
+
+  if (applicationResult.error) {
+    throw new Error(applicationResult.error.message)
+  }
 
   if (!existingApplication.data) {
     const existingApplicants = Number((jobResult.data.metadata as { applicants?: number } | null)?.applicants ?? 0)
@@ -1062,11 +1225,11 @@ export async function applyToJobPostForDemoCandidate(jobTitle: string) {
   }
 
   return {
-    applicationId: application.id,
-    candidateName: candidateResult.data.full_name,
+    applicationId: applicationResult.data.id,
+    candidateName: candidate.full_name,
     jobTitle: jobResult.data.title,
-    status: application.status,
-    aiScore: application.ai_score ? `${application.ai_score}%` : "Pending",
+    status: applicationResult.data.status,
+    aiScore: applicationResult.data.ai_score ? `${applicationResult.data.ai_score}%` : "Pending",
   }
 }
 

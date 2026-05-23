@@ -1,6 +1,6 @@
 "use client"
 
-import { FileCheck2, FileText, FolderOpen, ShieldCheck, UploadCloud } from "lucide-react"
+import { FileCheck2, FileText, FolderOpen, ShieldCheck, UploadCloud, type LucideIcon } from "lucide-react"
 
 import type { DocumentLibraryRow } from "@/lib/demo/recruitexe-data"
 import { legacyTheme } from "@/lib/legacy-theme"
@@ -8,6 +8,8 @@ import { legacyTheme } from "@/lib/legacy-theme"
 type FileManagerWorkspaceProps = {
   documents: DocumentLibraryRow[]
 }
+
+type StatCard = [string, number, LucideIcon, string]
 
 function documentTone(type: string) {
   if (type.includes("identity")) {
@@ -29,16 +31,16 @@ export function FileManagerWorkspace({ documents }: FileManagerWorkspaceProps) {
   return (
     <section className="space-y-5">
       <div className="grid gap-4 md:grid-cols-4">
-        {[
+        {([
           ["Documents", documents.length, FolderOpen, legacyTheme.primary],
           ["Active Files", activeDocuments, FileCheck2, legacyTheme.success],
           ["Owners", owners, ShieldCheck, legacyTheme.info],
           ["ID Proofs", identityDocs, FileText, legacyTheme.warning],
-        ].map(([label, value, Icon, color]) => (
-          <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-            <Icon className="h-5 w-5" style={{ color: color as string }} />
-            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+        ] satisfies StatCard[]).map(([label, value, Icon, color]) => (
+          <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <Icon className="h-5 w-5" style={{ color }} />
+            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
           </article>
         ))}
       </div>

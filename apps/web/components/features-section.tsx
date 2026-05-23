@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
+import type { Easing } from "framer-motion"
 import { motion, AnimatePresence } from "framer-motion"
 import { Bot, Users, BarChart3, FileText, Zap, Globe, Target, MessageCircle, Linkedin, Mail } from "lucide-react"
 
@@ -243,7 +244,7 @@ export function FeaturesSection() {
     }, USER_INTERACTION_PAUSE)
   }
 
-  const smoothEasing = [0.25, 0.46, 0.45, 0.94]
+  const smoothEasing: Easing = [0.25, 0.46, 0.45, 0.94]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -356,7 +357,9 @@ export function FeaturesSection() {
               {skills.map((skill, index) => (
                 <motion.div
                   key={index}
-                  ref={(el) => (featureRefs.current[index] = el)}
+                  ref={(el) => {
+                    featureRefs.current[index] = el
+                  }}
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}

@@ -32,6 +32,14 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
   const [query, setQuery] = useState("")
   const [department, setDepartment] = useState("all")
   const [location, setLocation] = useState("all")
+  const [selectedJob, setSelectedJob] = useState("")
+  const [applicant, setApplicant] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    currentLocation: "",
+    resumeUrl: "",
+  })
   const [applyingJob, setApplyingJob] = useState("")
   const [appliedJobs, setAppliedJobs] = useState<Set<string>>(new Set())
   const [notice, setNotice] = useState("")
@@ -58,7 +66,11 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
       const response = await fetch("/api/candidate/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobTitle }),
+        body: JSON.stringify({
+          organizationSlug: organization.slug,
+          jobTitle,
+          ...applicant,
+        }),
       })
       const result = await response.json()
 
@@ -67,7 +79,9 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
       }
 
       setAppliedJobs((current) => new Set(current).add(jobTitle))
-      setNotice(`${jobTitle} application received. AI match: ${result.application?.aiScore ?? "Pending"}.`)
+      setNotice(`${result.application?.candidateName ?? "Candidate"} applied for ${jobTitle}. AI match: ${result.application?.aiScore ?? "Pending"}.`)
+      setSelectedJob("")
+      setApplicant({ fullName: "", email: "", phone: "", currentLocation: "", resumeUrl: "" })
     } catch (applyError) {
       setError(applyError instanceof Error ? applyError.message : "Application submit failed.")
     } finally {
@@ -177,15 +191,72 @@ export function PublicCareersWorkspace({ organization, jobs, departments, locati
                     </div>
                   </div>
                   <button
-                    onClick={() => applyToJob(job.title)}
-                    disabled={applied || applyingJob === job.title}
+                    onClick={() => setSelectedJob((current) => current === job.title ? "" : job.title)}
+                    disabled={applied}
                     className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-bold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)] disabled:shadow-none"
                     style={{ background: applied ? "rgba(115, 103, 240, 0.12)" : legacyTheme.primary, color: applied ? legacyTheme.primary : "#fff" }}
                   >
                     {applied ? <CheckCircle2 className="h-4 w-4" /> : <Send className="h-4 w-4" />}
-                    {applyingJob === job.title ? "Applying..." : applied ? "Applied" : "Apply"}
+                    {applied ? "Applied" : selectedJob === job.title ? "Close" : "Apply"}
                   </button>
                 </div>
+                {selectedJob === job.title && !applied ? (
+                  <form
+                    className="mt-5 grid gap-3 border-t pt-5 md:grid-cols-2"
+                    style={{ borderColor: legacyTheme.divider }}
+                    onSubmit={(event) => {
+                      event.preventDefault()
+                      applyToJob(job.title)
+                    }}
+                  >
+                    <input
+                      required
+                      value={applicant.fullName}
+                      onChange={(event) => setApplicant((current) => ({ ...current, fullName: event.target.value }))}
+                      placeholder="Full name"
+                      className="h-11 rounded-md border px-3 text-sm outline-none focus:border-[#7367F0]"
+                      style={{ borderColor: legacyTheme.divider }}
+                    />
+                    <input
+                      required
+                      type="email"
+                      value={applicant.email}
+                      onChange={(event) => setApplicant((current) => ({ ...current, email: event.target.value }))}
+                      placeholder="Email"
+                      className="h-11 rounded-md border px-3 text-sm outline-none focus:border-[#7367F0]"
+                      style={{ borderColor: legacyTheme.divider }}
+                    />
+                    <input
+                      value={applicant.phone}
+                      onChange={(event) => setApplicant((current) => ({ ...current, phone: event.target.value }))}
+                      placeholder="Phone"
+                      className="h-11 rounded-md border px-3 text-sm outline-none focus:border-[#7367F0]"
+                      style={{ borderColor: legacyTheme.divider }}
+                    />
+                    <input
+                      value={applicant.currentLocation}
+                      onChange={(event) => setApplicant((current) => ({ ...current, currentLocation: event.target.value }))}
+                      placeholder="Current location"
+                      className="h-11 rounded-md border px-3 text-sm outline-none focus:border-[#7367F0]"
+                      style={{ borderColor: legacyTheme.divider }}
+                    />
+                    <input
+                      value={applicant.resumeUrl}
+                      onChange={(event) => setApplicant((current) => ({ ...current, resumeUrl: event.target.value }))}
+                      placeholder="Resume link"
+                      className="h-11 rounded-md border px-3 text-sm outline-none focus:border-[#7367F0] md:col-span-2"
+                      style={{ borderColor: legacyTheme.divider }}
+                    />
+                    <button
+                      disabled={applyingJob === job.title}
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-bold text-white shadow-[0_2px_6px_rgba(115,103,240,0.35)] disabled:bg-slate-400 md:col-span-2"
+                      style={{ background: applyingJob === job.title ? undefined : legacyTheme.primary }}
+                    >
+                      <Send className="h-4 w-4" />
+                      {applyingJob === job.title ? "Submitting..." : "Submit application"}
+                    </button>
+                  </form>
+                ) : null}
               </article>
             )
           })}

@@ -1,6 +1,6 @@
 "use client"
 
-import { CalendarClock, CheckCircle2, Clock3, PhoneCall, UserRoundCheck, Video } from "lucide-react"
+import { CalendarClock, CheckCircle2, Clock3, PhoneCall, UserRoundCheck, Video, type LucideIcon } from "lucide-react"
 
 import { legacyTheme } from "@/lib/legacy-theme"
 
@@ -19,6 +19,8 @@ type InterviewWorkspaceProps = {
   pipeline: PipelineRow[]
   variant: "monitor" | "call-logs"
 }
+
+type StatCard = [string, number, LucideIcon, string]
 
 function scoreValue(score: string) {
   const value = Number(score.replace("%", ""))
@@ -54,16 +56,16 @@ export function InterviewWorkspace({ pipeline, variant }: InterviewWorkspaceProp
     return (
       <section className="space-y-5">
         <div className="grid gap-4 md:grid-cols-4">
-          {[
+          {([
             ["Total Calls", rows.length, PhoneCall, legacyTheme.primary],
             ["Connected", scheduled, CheckCircle2, legacyTheme.success],
             ["Follow-up", pending, Clock3, legacyTheme.warning],
             ["Telephonic", telephonic, PhoneCall, legacyTheme.info],
-          ].map(([label, value, Icon, color]) => (
-            <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-              <Icon className="h-5 w-5" style={{ color: color as string }} />
-              <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-              <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+          ] satisfies StatCard[]).map(([label, value, Icon, color]) => (
+            <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+              <Icon className="h-5 w-5" style={{ color }} />
+              <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+              <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
             </article>
           ))}
         </div>
@@ -81,16 +83,16 @@ export function InterviewWorkspace({ pipeline, variant }: InterviewWorkspaceProp
   return (
     <section className="space-y-5">
       <div className="grid gap-4 md:grid-cols-4">
-        {[
+        {([
           ["Scheduled", scheduled, CalendarClock, legacyTheme.success],
           ["Pending Slots", pending, Clock3, legacyTheme.warning],
           ["Video Interviews", video, Video, legacyTheme.primary],
           ["HR Review Queue", rows.length, UserRoundCheck, legacyTheme.info],
-        ].map(([label, value, Icon, color]) => (
-          <article key={label as string} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
-            <Icon className="h-5 w-5" style={{ color: color as string }} />
-            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label as string}</p>
-            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value as number}</p>
+        ] satisfies StatCard[]).map(([label, value, Icon, color]) => (
+          <article key={label} className="rounded-lg border bg-white p-5 shadow-sm" style={{ borderColor: legacyTheme.divider }}>
+            <Icon className="h-5 w-5" style={{ color }} />
+            <p className="mt-3 text-sm" style={{ color: legacyTheme.textSoft }}>{label}</p>
+            <p className="text-2xl font-bold" style={{ color: legacyTheme.text }}>{value}</p>
           </article>
         ))}
       </div>
